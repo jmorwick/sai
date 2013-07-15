@@ -18,13 +18,28 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sai;
 
+import info.km.funcles.BinaryRelation;
+import info.km.funcles.Funcles;
+import info.km.funcles.T2;
+import info.km.funcles.Tuple;
+
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Sets;
+
 import sai.comparison.FeatureSetComparator;
 import sai.comparison.featuresetcomparators.ManyTo1;
 import sai.indexing.Index;
@@ -47,11 +62,11 @@ public class DBInterface {
             String DBName,
             String DBUsername,
             String DBPassword,
-            Map<String, Function<Feature, T2<Integer, String>>> featureFactories) {
+            Map<String, Function<T2<Integer, String>,Feature>> featureFactories) {
         this(DBHost, DBName, DBUsername, DBPassword);
         this.featureFactories = featureFactories;
         if (this.featureFactories == null) {
-            this.featureFactories = new Map<String, Function<Feature, T2<Integer, String>>>();
+            this.featureFactories = new HashMap<String, Function<T2<Integer, String>,Feature>>();
         }
 
     }
@@ -90,9 +105,9 @@ public class DBInterface {
     private String DBName;
     private String DBUsername;
     private String DBPassword;
-    private Map<String, Function<Feature, T2<Integer, String>>> featureFactories =
-            new Map<String, Function<Feature, T2<Integer, String>>>();
-    private Set<String> registeredFeatureClasses = new Set<String>();
+    private Map<String, Function<T2<Integer, String>, Feature>> featureFactories =
+            new HashMap<String, Function<T2<Integer, String>,Feature>>();
+    private Set<String> registeredFeatureClasses = new HashSet<String>();
     private String extensionSQL = "";
     private Statement retrievalStatement;
     private Connection retrievalConnection;
@@ -154,7 +169,7 @@ public class DBInterface {
     }
 
     private synchronized List<Map<String, String>> queryDB(String sql, boolean update) {
-        List<Map<String, String>> ls = new List<Map<String, String>>();
+        List<Map<String, String>> ls = new ArrayList<Map<String, String>>();
         try {
             if (update) {
                 retrievalStatement.executeUpdate(sql);
@@ -163,7 +178,7 @@ public class DBInterface {
                 ResultSetMetaData rsmd = rs.getMetaData();
 
                 while (rs.next()) {
-                    Map<String, String> m = new Map<String, String>();
+                    Map<String, String> m = new HashMap<String, String>();
                     for (int i = 1; i <= rsmd.getColumnCount(); i++) {
                         m.put(rsmd.getColumnName(i), rs.getString(i));
                     }
@@ -233,7 +248,7 @@ public class DBInterface {
         throw new RuntimeException("Error creating new graph in database");
     }
     //---------------------  Caching methods and fields -----------------------
-    private Set<Integer> ignoreIDs = new Set<Integer>();
+    private Set<Integer> ignoreIDs = new HashSet<Integer>();
 
     /** instructs this DB interface to begin memoizing results from basic retrieval
      * functions.  Since structures cannot be altered, cache consistency is not
@@ -251,19 +266,19 @@ public class DBInterface {
      */
     public void useCache(String method, int size) {
         if (method.equals("getFeatureName")) {
-            getFeatureName.startCaching(size);
+        	startCaching(getFeatureName, size);
         }
         if (method.equals("getFeatureID")) {
-            getFeatureID.startCaching(size);
+        	startCaching(getFeatureID, size);
         }
         if (method.equals("getFeatureInstances")) {
-            getFeatureInstances.startCaching(size);
+        	startCaching(getFeatureInstances, size);
         }
         if (method.equals("loadStructureFromDatabase")) {
-            loadStructureFromDatabase.startCaching(size);
+        	startCaching(loadStructureFromDatabase, size);
         }
         if (method.equals("loadFeature")) {
-            loadFeature.startCaching(size);
+        	startCaching(loadFeature, size);
         }
     }
 
@@ -273,37 +288,37 @@ public class DBInterface {
      */
     public void resetCache(String method) {
         if (method.equals("getFeatureName")) {
-            getFeatureName.clearCache();
+        	clearCache(getFeatureName);
         }
         if (method.equals("getFeatureID")) {
-            getFeatureID.clearCache();
+        	clearCache(getFeatureID);
         }
         if (method.equals("getFeatureInstances")) {
-            getFeatureInstances.clearCache();
+        	clearCache(getFeatureInstances);
         }
         if (method.equals("loadStructureFromDatabase")) {
-            loadStructureFromDatabase.clearCache();
+        	clearCache(loadStructureFromDatabase);
         }
         if (method.equals("loadFeature")) {
-            loadFeature.clearCache();
+        	clearCache(loadFeature);
         }
     }
 
     /** don't include the identified structure in query results and statistics */
     public void ignoreStructure(int id) {
         ignoreIDs.add(id);
-        getFeatureInstances.clearCache();
+        clearCache(getFeatureInstances);
     }
 
     /** once again include the identified structure in query results and statistics */
     public void unignoreStructure(int id) {
         ignoreIDs.remove(id);
-        getFeatureInstances.clearCache();
+        clearCache(getFeatureInstances);
     }
 
     /** returns id's of structures currently being ignored */
     public Set<Integer> getIgnoredIDs() {
-        return ignoreIDs.copy();
+        return Sets.newHashSet(ignoreIDs);
     }
 
     /*
@@ -324,10 +339,10 @@ public class DBInterface {
         return ret.toString();
     }
     //create a function object so return values can be cached
-    private Function<Feature, Integer> loadFeature = new Function<Feature, Integer>() {
+    private Function<Integer,Feature> loadFeature = new Function<Integer,Feature>() {
 
         @Override
-        public Feature implementation(Integer ido) {
+        public Feature apply(Integer ido) {
             int id = ido.intValue();
             String featureclass = "";
             Constructor<Feature> loadFeature;
@@ -341,7 +356,7 @@ public class DBInterface {
             }
 
             if (featureFactories.containsKey(featureclass)) {
-                t = featureFactories.get(featureclass).f(makeTuple(id, ""));
+                t = Funcles.apply(featureFactories.get(featureclass), id, "");
             } else {
                 try {
                     loadFeature = (Constructor<Feature>) Class.forName(featureclass).getConstructor(java.lang.Integer.TYPE, DBInterface.class);
@@ -377,7 +392,7 @@ public class DBInterface {
 
     /** retrieves a Feature insance with the indicated feature ID */
     public Feature loadFeature(int id) {
-        return loadFeature.f(id);
+        return loadFeature.apply(id);
     }
 
     /** returns an iterator which iterates through every structure in the database */
@@ -407,10 +422,10 @@ public class DBInterface {
             }
         };
     }
-    private Function<Graph, Integer> loadStructureFromDatabase = new Function<Graph, Integer>() {
+    private Function<Integer,Graph> loadStructureFromDatabase = new Function<Integer,Graph>() {
 
         @Override
-        public Graph implementation(Integer id) {
+        public Graph apply(Integer id) {
             //insure graph exists in the database
             List<Map<String, String>> rs = getQueryResults("SELECT * FROM graph_instances WHERE id = " + id);
             if (rs.size() == 0) {
@@ -423,14 +438,14 @@ public class DBInterface {
     };
 
     public Graph loadStructureFromDatabase(int id) {
-        return (Graph) loadStructureFromDatabase.f(id);
+        return (Graph) loadStructureFromDatabase.apply(id);
     }
 
     /** deletes the structure with the indicated id from the database */
     public void removeStructureFromDatabase(int id) {
         removeStructureFromDatabase(
                 loadStructureFromDatabase(id));
-        loadStructureFromDatabase.unCache(id);
+        unCache(loadStructureFromDatabase, id);
     }
 
     /** removes the supplied structure from the database. */
@@ -452,11 +467,11 @@ public class DBInterface {
         }
 
     }
-    private Function<String, T2<String, Integer>> getFeatureName =
-            new Function<String, T2<String, Integer>>() {
+    private Function<T2<String, Integer>,String> getFeatureName =
+            new Function<T2<String, Integer>,String>() {
 
                 @Override
-                public String implementation(T2<String, Integer> args) {
+                public String apply(T2<String, Integer> args) {
                     String className = args.a1();
                     int id = args.a2();
                     String name = null;
@@ -476,7 +491,7 @@ public class DBInterface {
 
     /** returns the textual 'name' of the feature with the specified id */
     public String getFeatureName(String className, int id) {
-        return getFeatureName.f(makeTuple(className, id));
+        return Funcles.apply(getFeatureName, className, id);
     }
 
     /** returns an existing database ID for this tag, or creates one if needed
@@ -486,13 +501,13 @@ public class DBInterface {
      * @return id used for this tag in the database
      */
     public int getFeatureID(String className, String tagName) {
-        return getFeatureID.f(makeTuple(className, tagName));
+        return Funcles.apply(getFeatureID, className, tagName);
     }
-    private Function<Integer, T2<String, String>> getFeatureID =
-            new Function<Integer, T2<String, String>>() {
+    private Function<T2<String, String>,Integer> getFeatureID =
+            new Function<T2<String, String>,Integer>() {
 
                 @Override
-                public Integer implementation(T2<String, String> args) {
+                public Integer apply(T2<String, String> args) {
                     String className = args.a1();
                     String tagName = args.a2();
                     int tagID = -1;
@@ -529,14 +544,15 @@ public class DBInterface {
      * database between the two provided features
      */
     public boolean isa(Feature f1, Feature f2) {
-        return isa.relates(f1, f2);
+        return Funcles.apply(isa, f1, f2);
     }
-    private Relation<Feature> isa = new Relation<Feature>() {
+    
+    private BinaryRelation<Feature> isa = new BinaryRelation<Feature>() {
 
         @Override
-        public boolean relates(Feature p1, Feature p2) {
+        public boolean apply(T2<Feature,Feature> p) {
             return self.getQueryResults("SELECT * FROM feature_isa_relationships WHERE parent_id = "
-                    + p1.getID() + " AND feature_id = " + p2.getID()).size() > 0;
+                    + p.a1().getID() + " AND feature_id = " + p.a2().getID()).size() > 0;
         }
     };
 
@@ -583,14 +599,14 @@ public class DBInterface {
     
     /** returns all instances of a particular feature class */
     public Set<Feature> getAllFeatures(Class<? extends Feature> featureclass) {
-        return getAllFeatures.f(featureclass.getCanonicalName());
+        return getAllFeatures.apply(featureclass.getCanonicalName());
     }
-    private Function<Set<Feature>, String> getAllFeatures =
-            new Function<Set<Feature>, String>() {
+    private Function<String, Set<Feature>> getAllFeatures =
+            new Function<String, Set<Feature>>() {
 
                 @Override
-                public Set<Feature> implementation(String featureclass) {
-                    Set<Feature> tags = new Set<Feature>();
+                public Set<Feature> apply(String featureclass) {
+                    Set<Feature> tags = new HashSet<Feature>();
                     String sql = "SELECT id FROM feature_instances WHERE featureclass LIKE '" + featureclass + "';";
                     for (Map<String, String> m : getQueryResults(sql)) {
                         tags.add(loadFeature(Integer.parseInt(m.get("id"))));
@@ -604,7 +620,7 @@ public class DBInterface {
         if (getAllFeaturesCache != null) {
             return getAllFeaturesCache;
         }
-        Set<Feature> tags = new Set<Feature>();
+        Set<Feature> tags = new HashSet<Feature>();
         String sql = "SELECT id FROM feature_instances;";
         for (Map<String, String> m : this.getQueryResults(sql)) {
             tags.add(loadFeature(Integer.parseInt(m.get("id"))));
@@ -615,7 +631,7 @@ public class DBInterface {
     private Set<Feature> getAllFeaturesCache = null;
 
     public Set<Integer> getGraphIDsWithFeature(Feature f) {
-        Set<Integer> s = new Set<Integer>();
+        Set<Integer> s = new HashSet<Integer>();
         for (Map<String, String> m :
                 getQueryResults("SELECT gi.id FROM graph_instances gi, graph_features fi WHERE " + 
                 " fi.graph_id = gi.id AND fi.feature_id = " + f.getID())) {
@@ -639,7 +655,7 @@ public class DBInterface {
     }
     
     public Set<Graph> getGraphsWithFeature(Feature f) {
-        Set<Graph> s = new Set<Graph>();
+        Set<Graph> s = new HashSet<Graph>();
         for(int id : getGraphIDsWithFeature(f)) 
             s.add(this.loadStructureFromDatabase(id));
         return s;
@@ -647,13 +663,13 @@ public class DBInterface {
     
     /** returns the number of instances of the feature 't' in all stored structures */
     public int getNumberOfFeatureInstances(Feature t) {
-        return getFeatureInstances.f(t);
+        return getFeatureInstances.apply(t);
     }
-    private Function<Integer, Feature> getFeatureInstances =
-            new Function<Integer, Feature>() {
+    private Function<Feature,Integer> getFeatureInstances =
+            new Function<Feature,Integer>() {
 
                 @Override
-                public Integer implementation(Feature t) {
+                public Integer apply(Feature t) {
                     String sql = "SELECT COUNT(node_id) FROM node_features WHERE feature_id = " + t.getID();
                     List<Map<String, String>> ls = getQueryResults(sql);
                     if (ls.size() > 0) {
@@ -666,7 +682,7 @@ public class DBInterface {
 
     /** returns a set of all Feature classes used in this database */
     public Set<Class> getAllFeatureTypes() {
-        Set<Class> retVals = new Set<Class>();
+        Set<Class> retVals = new HashSet<Class>();
         for (Map<String, String> m :
                 getQueryResults("SELECT featureclass FROM feature_instances GROUP BY featureclass")) {
             try {
@@ -689,8 +705,8 @@ public class DBInterface {
         return fsc.compatible(t1s, t2s, featureTypes);
     }
     //----------------------- Indexing -------------------------------------
-    private Set<IndexGenerator> indexers = new Set<IndexGenerator>();
-    private Set<IndexRetriever> retrievers = new Set<IndexRetriever>();
+    private Set<IndexGenerator> indexers = new HashSet<IndexGenerator>();
+    private Set<IndexRetriever> retrievers = new HashSet<IndexRetriever>();
 
     /** adds an indexer for this interface.  whenever 'indexGraph' is called on a
      * graph 'g', all indexers added through this method will have their 'indexGraph'
@@ -747,7 +763,7 @@ public class DBInterface {
      * @return
      */
     public Set<Index> findIndices(Graph g) {
-        Set<Index> indices = new Set<Index>();
+        Set<Index> indices = new HashSet<Index>();
         for (IndexRetriever r : retrievers) {
             indices.addAll(r.retrieveIndices(g));
         }
@@ -769,7 +785,7 @@ public class DBInterface {
      * @return
      */
     public Set<Index> getIndices(int id) {
-        Set<Index> ret = new Set<Index>();
+        Set<Index> ret = new HashSet<Index>();
         if (id < 1) {
             throw new IllegalArgumentException("this method only retrieves indices for stored graphs.  Use 'findIndices' for graphs not yet stored.");
         }

@@ -17,17 +17,23 @@
 
  */
 
-package org.dataandsearch.sai.maintenance;
+package sai.maintenance;
 
-import info.kendallmorwick.util.List;
-import info.kendallmorwick.util.function.Function;
-import info.kendallmorwick.util.tuple.T2;
-import static info.kendallmorwick.util.tuple.Tuple.makeTuple;
+import info.km.funcles.Funcles;
+import info.km.funcles.T2;
+import info.km.funcles.Tuple;
+
+import java.util.ArrayList;
 import java.util.Iterator;
-import org.dataandsearch.sai.DBInterface;
-import org.dataandsearch.sai.Graph;
-import org.dataandsearch.sai.comparison.SubgraphComparator;
-import org.dataandsearch.sai.indexing.Index;
+import java.util.List;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Sets;
+
+import sai.DBInterface;
+import sai.Graph;
+import sai.comparison.SubgraphComparator;
+import sai.indexing.Index;
 
 /**
  * Updates compatibility relationships between indices to assist in hierarchical 
@@ -36,10 +42,10 @@ import org.dataandsearch.sai.indexing.Index;
  * @version 0.2.0
  * @author Joseph Kendall-Morwick
  */
-public class IndexCompatibilityChecker extends MaintenanceTask {
+public class IndexCompatabilityChecker extends MaintenanceTask {
 
-    private List<Function<SubgraphComparator,T2<Graph,Graph>>> comparatorFactories =
-            new List<Function<SubgraphComparator,T2<Graph,Graph>>>();
+    private List<Function<T2<Graph,Graph>,SubgraphComparator>> comparatorFactories =
+            new ArrayList<Function<T2<Graph,Graph>,SubgraphComparator>>();
     private DBInterface db;
     private final long timeIncrement;
     private Index currentSubgraphCandidate;
@@ -49,17 +55,18 @@ public class IndexCompatibilityChecker extends MaintenanceTask {
     boolean complete = true;
     private Iterator<Index> progress1;
     private Iterator<Index> progress2;
-    private List<SubgraphComparator> activeComparators = new List<SubgraphComparator>();
+    private List<SubgraphComparator> activeComparators = new ArrayList<SubgraphComparator>();
     private final long maxTime;
 
-    public IndexCompatibilityChecker(DBInterface db, long maxTime,
-            long timeIncrement, Function<SubgraphComparator,T2<Graph,Graph>> ... comparatorFactories) {
+    public IndexCompatabilityChecker(DBInterface db, long maxTime,
+            long timeIncrement, Function<T2<Graph,Graph>,SubgraphComparator> ... comparatorFactories) {
         this.timeIncrement = timeIncrement;
         this.maxTime = maxTime;
         this.db = db;
       
         if(comparatorFactories.length == 0) throw new IllegalArgumentException("Need at least one comparator");
-        for(Function<SubgraphComparator,T2<Graph,Graph>> f : comparatorFactories) this.comparatorFactories.add(f);
+        for(Function<T2<Graph,Graph>,SubgraphComparator> f : comparatorFactories) 
+        	this.comparatorFactories.add(f);
         progress1 = db.getIndexIterator();
         progress2 = db.getIndexIterator();
         currentSubgraphCandidate = progress1.next();
@@ -68,8 +75,8 @@ public class IndexCompatibilityChecker extends MaintenanceTask {
         else {
             nextPair();
             if(!done) {
-                for(Function<SubgraphComparator,T2<Graph,Graph>> f : comparatorFactories)
-                    activeComparators.add(f.f(makeTuple((Graph)currentSubgraphCandidate, (Graph)currentSupergraphCandidate)));
+                for(Function<T2<Graph,Graph>,SubgraphComparator> f : comparatorFactories)
+                    activeComparators.add(f.apply(Tuple.makeTuple((Graph)currentSubgraphCandidate, (Graph)currentSupergraphCandidate)));
             }
         }
         
@@ -96,8 +103,8 @@ public class IndexCompatibilityChecker extends MaintenanceTask {
             done = true;
             return;
         }
-        for(Function<SubgraphComparator,T2<Graph,Graph>> f : comparatorFactories)
-            activeComparators.add(f.f(makeTuple((Graph)currentSubgraphCandidate, (Graph)currentSupergraphCandidate)));
+        for(Function<T2<Graph,Graph>,SubgraphComparator> f : comparatorFactories)
+            activeComparators.add(Funcles.apply(f, (Graph)currentSubgraphCandidate, (Graph)currentSupergraphCandidate));
         if(currentSubgraphCandidate.getID() == currentSupergraphCandidate.getID()) nextPair();
     }
 
@@ -109,7 +116,7 @@ public class IndexCompatibilityChecker extends MaintenanceTask {
             nextPair();
 
 
-        for(SubgraphComparator c : activeComparators.copy()) {
+        for(SubgraphComparator c : Sets.newHashSet(activeComparators)) {
             c.waitTillDone(timeIncrement);
             elapsedTime += timeIncrement;
             if(elapsedTime > maxTime) {

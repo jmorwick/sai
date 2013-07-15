@@ -17,11 +17,12 @@
 
  */
 
-package org.dataandsearch.sai.indexing;
+package sai.indexing;
 
-import info.kendallmorwick.util.Set;
-import org.dataandsearch.sai.DBInterface;
-import org.dataandsearch.sai.Graph;
+import java.util.Set;
+
+import sai.DBInterface;
+import sai.Graph;
 
 /**
  * Implementations of this class are tasked with generating (or retrieving)

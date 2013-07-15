@@ -19,6 +19,13 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 package sai.comparison;
 
 import java.math.BigInteger;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Multimap;
+
 import sai.Edge;
 import sai.Node;
 import sai.Graph;
@@ -33,7 +40,7 @@ public class Util {
     /** returns a set containing only features of the specified type */
     public static Set<? extends Feature> retainOnly(Set<? extends Feature> features,
             Set<? extends Class<? extends Feature>> types) {
-        Set<Feature> ret = new Set<Feature>();
+        Set<Feature> ret = new HashSet<Feature>();
         for (Feature f : features) {
             for (Class<? extends Feature> type : types) {
                 if (type.isInstance(f)) {
@@ -49,7 +56,7 @@ public class Util {
     public static Set<? extends Feature> retainOnly(Set<? extends Feature> features,
             Class<? extends Feature>... types) {
         Set<Class<? extends Feature>> ntypes =
-                new Set<Class<? extends Feature>>();
+                new HashSet<Class<? extends Feature>>();
         for (Class<? extends Feature> t : types) {
             ntypes.add(t);
         }
@@ -67,30 +74,30 @@ public class Util {
      * @param featureTypes feature types to be considered when comparing nodes
      * @return a multi-map indicating which nodes in s1 can be mapped to which in s2
      */
-    public static MultiMap<Node, Node> nodeCompatibility(Graph s1, Graph s2,
+    public static Multimap<Node, Node> nodeCompatibility(Graph s1, Graph s2,
             Class<? extends Feature>... featureTypes) {
         return nodeCompatibility(s1.vertexSet(), s2.vertexSet(), featureTypes);
     }
 
-    public static MultiMap<Node, Node> nodeCompatibility(
+    public static Multimap<Node, Node> nodeCompatibility(
             Set<Node> s1,
             Set<Node> s2,
             Class<? extends Feature>... featureTypes) {
-        MultiMap<Node, Node> possibilities = new MultiMap<Node, Node>();
+        Multimap<Node, Node> possibilities = new Multimap<Node, Node>();
         for (Node n1 : s1) {
             for (Node n2 : s2) {
                 if (n1.compatible(n2, featureTypes)) {
-                    possibilities.add(n1, n2);
+                    possibilities.put(n1, n2);
                 }
             }
         }
         return possibilities;
     }
-    public static final Function<Integer, MultiMap<Edge, Edge>> completeEdgeMatchCounter =
-            new Function<Integer, MultiMap<Edge, Edge>>() {
+    public static final Function<MultiMap<Edge, Edge>,Integer> completeEdgeMatchCounter =
+            new Function<MultiMap<Edge, Edge>,Integer>() {
 
                 @Override
-                public Integer implementation(MultiMap<Edge, Edge> p1) {
+                public Integer implementation(Multimap<Edge, Edge> p1) {
                     return p1.findRepresentativesComplete().size();
                 }
             };
@@ -100,9 +107,9 @@ public class Util {
             Graph s2,
             Node n1,
             Map<Node, Node> m,
-            Function<Integer, MultiMap<Edge, Edge>> countMappableEdges,
+            Function<Integer, Multimap<Edge, Edge>> countMappableEdges,
             Class<? extends Feature>... featureTypes) {
-        MultiMap<Edge, Edge> possibleMappings = new MultiMap<Edge, Edge>();
+        Multimap<Edge, Edge> possibleMappings = new Multimap<Edge, Edge>();
         Node n2 = m.get(n1);
         if (n2 == null) {
             return 0;
@@ -116,24 +123,24 @@ public class Util {
                 if (n1 == s1.getEdgeSource(e1)
                         && n2 == s2.getEdgeSource(e2)
                         && m.get(s1.getEdgeTarget(e1)) == s2.getEdgeTarget(e2)) {
-                    possibleMappings.add(e1, e2);
+                    possibleMappings.put(e1, e2);
                 } else if (n1 == s1.getEdgeTarget(e1)
                         && n2 == s2.getEdgeTarget(e2)
                         && m.get(s1.getEdgeSource(e1)) == s2.getEdgeSource(e2)
                         && e1.subsumes(e2, featureTypes)) {
-                    possibleMappings.add(e1, e2);
+                    possibleMappings.put(e1, e2);
                 } else if (s1.getDB().directedGraphs()
                         && n1 == s1.getEdgeSource(e1)
                         && n2 == s2.getEdgeTarget(e2)
                         && m.get(s1.getEdgeTarget(e1)) == s2.getEdgeSource(e2)
                         && e1.subsumes(e2, featureTypes)) {
-                    possibleMappings.add(e1, e2);
+                    possibleMappings.put(e1, e2);
                 } else if (s1.getDB().directedGraphs()
                         && n1 == s1.getEdgeTarget(e1)
                         && n2 == s2.getEdgeSource(e2)
                         && m.get(s1.getEdgeSource(e1)) == s2.getEdgeTarget(e2)
                         && e1.subsumes(e2, featureTypes)) {
-                    possibleMappings.add(e1, e2);
+                    possibleMappings.put(e1, e2);
                 }
             }
         }
@@ -143,7 +150,7 @@ public class Util {
     public static int matchedEdges(Graph s1,
             Graph s2,
             Map<Node, Node> m,
-            Function<Integer, MultiMap<Edge, Edge>> countMappableEdges,
+            Function<Integer, Multimap<Edge, Edge>> countMappableEdges,
             Class<? extends Feature>... featureTypes) {
         int matches = 0;
         for (Map.Entry<Node, Node> e : m.entrySet()) {
@@ -160,13 +167,13 @@ public class Util {
 
     public static BigInteger getNumberOfCompleteMappings(Graph g1, Graph g2,
             Class<? extends Feature>... featureTypes) {
-        MultiMap<Node, Node> compatibility = nodeCompatibility(g1, g2, featureTypes);
+        Multimap<Node, Node> compatibility = nodeCompatibility(g1, g2, featureTypes);
         return compatibility.getNumberOfCompleteMappings();
     }
 
     public static BigInteger getNumberOfPartialMappings(Graph g1, Graph g2,
             Class<? extends Feature>... featureTypes) {
-        MultiMap<Node, Node> compatibility = nodeCompatibility(g1, g2, featureTypes);
+        Multimap<Node, Node> compatibility = nodeCompatibility(g1, g2, featureTypes);
         return compatibility.getNumberOfPartialMappings();
     }
 }

@@ -17,20 +17,22 @@
 
  */
 
-package org.dataandsearch.sai.indexing.generators.path;
+package sai.indexing.generators.path;
 
-import org.dataandsearch.sai.indexing.generators.path.Path1;
-import info.kendallmorwick.util.Set;
-import info.kendallmorwick.util.function.Function;
-import info.kendallmorwick.util.tuple.T2;
-import org.dataandsearch.sai.DBInterface;
-import org.dataandsearch.sai.Feature;
-import org.dataandsearch.sai.Graph;
-import org.dataandsearch.sai.comparison.SubgraphComparator;
-import org.dataandsearch.sai.indexing.Index;
-import org.dataandsearch.sai.indexing.IndexGenerator;
-import org.dataandsearch.sai.indexing.IndexRetriever;
-import org.dataandsearch.sai.indexing.retrievers.Path1Retriever;
+import java.util.Set;
+import info.km.funcles.T2;
+import com.google.common.base.Function;
+import com.google.common.collect.Sets;
+
+import sai.indexing.generators.path.Path1;
+import sai.DBInterface;
+import sai.Feature;
+import sai.Graph;
+import sai.comparison.SubgraphComparator;
+import sai.indexing.Index;
+import sai.indexing.IndexGenerator;
+import sai.indexing.IndexRetriever;
+import sai.indexing.retrievers.path.Path1Retriever;
 
 /**
  * Similar to the Path1 generator but only generates an index if it does not
@@ -42,7 +44,7 @@ import org.dataandsearch.sai.indexing.retrievers.Path1Retriever;
  */
 public class Path1Lookup extends IndexGenerator {
     private IndexRetriever retriever;
-    private Function<SubgraphComparator, T2<Graph, Graph>> compFactory;
+    private Function<T2<Graph, Graph>,SubgraphComparator> compFactory;
     private final Path1 gen;
 
 
@@ -60,7 +62,7 @@ public class Path1Lookup extends IndexGenerator {
         Set<Index> indices = gen.generateIndices(s);
         T2<Set<Index>,Set<Index>> t = 
                 Path1Retriever.findOriginalLinkIndices(getDB(), indices);
-        return t.a1().union(t.a2());
+        return Sets.union(t.a1(), t.a2());
     }
 
 

@@ -17,12 +17,14 @@
 
  */
 
-package org.dataandsearch.sai.indexing;
+package sai.indexing;
 
-import info.kendallmorwick.util.Map;
-import info.kendallmorwick.util.Set;
-import org.dataandsearch.sai.DBInterface;
-import org.dataandsearch.sai.Graph;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import sai.DBInterface;
+import sai.Graph;
 
 /**
  * A graph index
@@ -49,7 +51,7 @@ public class Index extends Graph {
     }
 
     public Set<Integer> getIndexedGraphIDs() {
-        Set<Integer> ids = new Set<Integer>();
+        Set<Integer> ids = new HashSet<Integer>();
         for(Map<String,String> row : db.getQueryResults("SELECT * FROM graph_instances, graph_indices WHERE index_id = " + getID() + " AND graph_id = id AND IS_INDEX = FALSE")) {
             ids.add(Integer.parseInt(row.get("id")));
         }
@@ -57,7 +59,7 @@ public class Index extends Graph {
     }
 
     public Set<Integer> getSuperIndexIDs() {
-        Set<Integer> ids = new Set<Integer>();
+        Set<Integer> ids = new HashSet<Integer>();
         for(Map<String,String> row : db.getQueryResults("SELECT * FROM graph_instances, graph_indices WHERE index_id = " + getID() + " AND graph_id = id AND IS_INDEX = TRUE")) {
             ids.add(Integer.parseInt(row.get("id")));
         }

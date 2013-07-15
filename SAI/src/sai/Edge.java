@@ -19,7 +19,14 @@
 
 package sai;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import sai.comparison.Util;
+
+import static com.google.common.collect.Sets.filter;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.base.Predicates.equalTo;
 
 /**
  * @version 2.0s.0
@@ -27,7 +34,7 @@ import sai.comparison.Util;
  */
 public class Edge {
     private int id = -1;
-    private Set<Feature> features = new Set<Feature>();
+    private Set<Feature> features = new HashSet<Feature>();
     private Graph parent;
 
     public Edge(Graph parent, Feature ... tags) {
@@ -55,13 +62,13 @@ public class Edge {
     public void addFeature(Feature t) {
         features.add(t);
         for(Feature f : features) {
-            if(!f.canAccompany(features.removeC(f)))
+            if(!f.canAccompany(filter(features, equalTo(f))))
                 throw new IllegalArgumentException("Added feature cannot accompany existing features");
         }
     }
 
     public Set<Feature> getFeatures() {
-        return features.copy();
+        return newHashSet(features);
     }
 
     public Graph getParent() {

@@ -19,6 +19,8 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
 package sai.comparison;
 
+import java.util.Set;
+
 import sai.Feature;
 
 /**

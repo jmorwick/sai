@@ -19,6 +19,12 @@
 
 package sai;
 
+import java.util.HashSet;
+import java.util.Set;
+import static com.google.common.collect.Sets.filter;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.base.Predicates.equalTo;
+
 
 /**
  * @version 2.0.0
@@ -26,7 +32,7 @@ package sai;
  */
 public class Node {
     private int id;
-    private Set<Feature> features = new Set<Feature>();
+    private Set<Feature> features = new HashSet<Feature>();
     private Graph parent;
     private String alternateID;
 
@@ -63,7 +69,7 @@ public class Node {
     public void addFeature(Feature tag) {
         features.add(tag);
         for(Feature f : features) {
-            if(!f.canAccompany(features.removeC(f)))
+            if(!f.canAccompany(filter(features, equalTo(f))))
                 throw new IllegalArgumentException("Added feature cannot accompany existing features");
         }
     }
@@ -86,7 +92,7 @@ public class Node {
 
     /** returns all features associated with this node */
     public Set<Feature> getFeatures() {
-        return features.copy();
+        return newHashSet(features);
     }
 
     /** returns the feature of the given feature-class associated with this node.

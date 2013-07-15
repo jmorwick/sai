@@ -18,6 +18,9 @@
  */
 package sai;
 
+import java.util.Collection;
+import java.util.Set;
+
 /**
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
@@ -127,7 +130,7 @@ public abstract class Feature {
      * @param features
      * @return
      */
-    public boolean canAccompany(Set<Feature> features) {
+    public boolean canAccompany(Collection<Feature> features) {
         return true;
     }
 

@@ -17,21 +17,27 @@
 
  */
 
-package org.dataandsearch.sai.indexing.retrievers;
+package sai.indexing.retrievers.path;
 
-import info.kendallmorwick.util.List;
-import info.kendallmorwick.util.Map;
-import info.kendallmorwick.util.Set;
-import info.kendallmorwick.util.tuple.T2;
-import info.kendallmorwick.util.tuple.Tuple;
-import org.dataandsearch.sai.DBInterface;
-import org.dataandsearch.sai.Edge;
-import org.dataandsearch.sai.Feature;
-import org.dataandsearch.sai.Graph;
-import org.dataandsearch.sai.Node;
-import org.dataandsearch.sai.indexing.Index;
-import org.dataandsearch.sai.indexing.IndexRetriever;
-import org.dataandsearch.sai.indexing.generators.path.Path1;
+import info.km.funcles.T2;
+import info.km.funcles.Tuple;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
+import sai.DBInterface;
+import sai.Edge;
+import sai.Feature;
+import sai.Graph;
+import sai.Node;
+import sai.indexing.Index;
+import sai.indexing.IndexRetriever;
+import sai.indexing.generators.path.Path1;
 
 
 /**
@@ -59,27 +65,27 @@ public class Path1Retriever extends IndexRetriever {
     }
 
     public static Set<Index> removeDuplicates(Set<Index> indices) {
-        Map<String,Index> m = new Map<String,Index>();
+        Map<String,Index> m = new HashMap<String,Index>();
         for(Index i : indices) {
-            Edge e = i.edgeSet().getFirstElement();
+            Edge e = i.edgeSet().iterator().next();
             Node fn = i.getEdgeSource(e);
             Node tn = i.getEdgeTarget(e);
             String str = 
-                    fn.getFeatures().getFirstElement().getID() + 
+                    fn.getFeatures().iterator().next().getID() + 
                     "-" + (e.getFeatures().size() != 0 ? 
-                        e.getFeatures().getFirstElement().getID() : "") +
-                    "->>" + tn.getFeatures().getFirstElement().getID();
+                        e.getFeatures().iterator().next().getID() : "") +
+                    "->>" + tn.getFeatures().iterator().next().getID();
             m.put(str, i);
         }
-        return m.values();
+        return Sets.newHashSet(m.values());
     }
 
     public static T2<Set<Index>, Set<Index>> findOriginalLinkIndices(
             DBInterface db, Set<Index> indices) {
-        Set<Index> discoveredIndices = new Set<Index>();
+        Set<Index> discoveredIndices = new HashSet<Index>();
         indices = removeDuplicates(indices);
-        for(Index i : indices.copy()) {
-            Edge e = i.edgeSet().getFirstElement();
+        for(Index i : Sets.newHashSet(indices)) {
+            Edge e = i.edgeSet().iterator().next();
             Node fn = i.getEdgeSource(e);
             Node tn = i.getEdgeTarget(e);
             String sql = "SELECT gi.id FROM graph_instances gi, " +
@@ -95,11 +101,11 @@ public class Path1Retriever extends IndexRetriever {
                     "ef.edge_id = e.id AND " : "") +
                     "gi.id = e.graph_id AND " +
                     " gi.is_index = TRUE AND " +
-                    "fnf.feature_id = " + fn.getFeatures().getFirstElement().getID() +
-                    " AND tnf.feature_id = " + tn.getFeatures().getFirstElement().getID() +
+                    "fnf.feature_id = " + fn.getFeatures().iterator().next().getID() +
+                    " AND tnf.feature_id = " + tn.getFeatures().iterator().next().getID() +
                     (e.getFeatures().size() != 0 ?
                     " AND ef.feature_id = " +
-                    e.getFeatures().getFirstElement().getID() : "") +
+                    e.getFeatures().iterator().next().getID() : "") +
                     " LIMIT 1";
             List<Map<String,String>> rows = db.getQueryResults(sql);
             if(rows.size() > 0) {

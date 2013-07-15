@@ -16,15 +16,19 @@ You should have received a copy of the Lesser GNU General Public License
 along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-package org.dataandsearch.sai.retrieval;
+package sai.retrieval;
 
-import info.kendallmorwick.util.Bag;
-import info.kendallmorwick.util.Set;
+import java.util.HashSet;
 import java.util.Iterator;
-import org.dataandsearch.sai.DBInterface;
-import org.dataandsearch.sai.Graph;
-import org.dataandsearch.sai.indexing.Index;
-import org.dataandsearch.sai.retrieval.GraphRetriever;
+import java.util.Set;
+
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Multisets;
+import sai.DBInterface;
+import sai.Graph;
+import sai.indexing.Index;
+import sai.retrieval.GraphRetriever;
 
 /**
  * A retriever which ranks graphs by the number of specified indices they are
@@ -35,23 +39,23 @@ import org.dataandsearch.sai.retrieval.GraphRetriever;
  */
 public class SimpleCountRetriever extends GraphRetriever {
 
-    private Set<Integer> lastConsideredGraphIDs = new Set<Integer>();
-    private Set<Integer> retrievedGraphIDs = new Set<Integer>();
+    private Set<Integer> lastConsideredGraphIDs = new HashSet<Integer>();
+    private Set<Integer> retrievedGraphIDs = new HashSet<Integer>();
 
     public SimpleCountRetriever(DBInterface db) {
         super(db);
     }
 
     public Iterator<Graph> retrieve(Set<Index> indices) {
-        final Bag<Integer> ranks = new Bag<Integer>();
+        final Multiset<Integer> ranks = HashMultiset.create();
         for (Index i : indices) {
             for (Integer gid : i.getIndexedGraphIDs()) {
                 ranks.add(gid);
             }
         }
         
-        retrievedGraphIDs = new Set<Integer>();
-        lastConsideredGraphIDs = ranks.keySet().copy();
+        retrievedGraphIDs = new HashSet<Integer>();
+        lastConsideredGraphIDs = ranks.elementSet();
 
         for (Integer id : getDB().getIgnoredIDs()) {
             ranks.remove(id);
@@ -65,7 +69,7 @@ public class SimpleCountRetriever extends GraphRetriever {
 
             public Graph next() {
                 if(!hasNext()) throw new IllegalStateException("Cannot retrieve next id -- there aren't any left");
-                int gid = ranks.getMostFrequentKeys().getFirstElement();
+                int gid = Multisets.copyHighestCountFirst(ranks).iterator().next();
                 ranks.remove(gid);
                 retrievedGraphIDs.add(gid);
                 return getDB().loadStructureFromDatabase(gid);

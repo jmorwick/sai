@@ -17,13 +17,14 @@
 
  */
 
-package org.dataandsearch.sai.retrieval;
+package sai.retrieval;
 
-import info.kendallmorwick.util.Set;
 import java.util.Iterator;
-import org.dataandsearch.sai.DBInterface;
-import org.dataandsearch.sai.Graph;
-import org.dataandsearch.sai.indexing.Index;
+import java.util.Set;
+
+import sai.DBInterface;
+import sai.Graph;
+import sai.indexing.Index;
 
 /** This class is used to provide custom algorithms for ordering and retrieving
  * graphs from the database in accordance with a set of Indices.  The algorithm

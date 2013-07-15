@@ -16,11 +16,14 @@
     along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-package org.dataandsearch.sai.maintenance;
+package sai.maintenance;
 
-import info.kendallmorwick.util.Map;
-import info.kendallmorwick.util.function.Function;
-import org.dataandsearch.sai.DBInterface;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.common.base.Supplier;
+
+import sai.DBInterface;
 
 /**
  * implementations of this class are intended to be run during idle time to 
@@ -31,17 +34,17 @@ import org.dataandsearch.sai.DBInterface;
  * @author Joseph Kendall-Morwick
  */
 public class DatabaseMaintainer implements Runnable {
-    private Map<Function<MaintenanceTask,Object>, MaintenanceTask> tasks =
-            new Map<Function<MaintenanceTask,Object>, MaintenanceTask> ();
+    private Map<Supplier<MaintenanceTask>, MaintenanceTask> tasks =
+            new HashMap<Supplier<MaintenanceTask>, MaintenanceTask> ();
     private DBInterface db;
 
-    public DatabaseMaintainer(DBInterface db, Function<MaintenanceTask,Object> ... factories) {
-        for(Function<MaintenanceTask,Object> f : factories)
-            tasks.put(f, f.f());
+    public DatabaseMaintainer(DBInterface db, Supplier<MaintenanceTask> ... factories) {
+        for(Supplier<MaintenanceTask> f : factories)
+            tasks.put(f, f.get());
     }
 
     public void nextIteration() {
-        for(Function<MaintenanceTask,Object> f : tasks.keySet()) {
+        for(Supplier<MaintenanceTask> f : tasks.keySet()) {
             MaintenanceTask t = tasks.get(f);
             if(!t.isDone()) {
                 t.nextIteration();
@@ -50,7 +53,7 @@ public class DatabaseMaintainer implements Runnable {
     }
 
     public boolean isDone() {
-        for(Function<MaintenanceTask,Object> f : tasks.keySet()) {
+        for(Supplier<MaintenanceTask> f : tasks.keySet()) {
             MaintenanceTask t = tasks.get(f);
             if(!t.isDone()) {
                 return false;

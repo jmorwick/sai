@@ -17,17 +17,19 @@
 
  */
 
-package org.dataandsearch.sai.indexing.generators.path;
+package sai.indexing.generators.path;
 
-import info.kendallmorwick.util.Set;
-import org.dataandsearch.sai.DBInterface;
-import org.dataandsearch.sai.Edge;
-import org.dataandsearch.sai.Feature;
-import org.dataandsearch.sai.Graph;
-import org.dataandsearch.sai.Node;
-import org.dataandsearch.sai.comparison.Util;
-import org.dataandsearch.sai.indexing.Index;
-import org.dataandsearch.sai.indexing.IndexGenerator;
+import java.util.HashSet;
+import java.util.Set;
+
+import sai.DBInterface;
+import sai.Edge;
+import sai.Feature;
+import sai.Graph;
+import sai.Node;
+import sai.comparison.Util;
+import sai.indexing.Index;
+import sai.indexing.IndexGenerator;
 
 /**
  * An index generator which generates sub-structure indices for each single 
@@ -47,11 +49,11 @@ public class Path1 extends IndexGenerator {
 
     @Override
     public Set<Index> generateIndices(Graph s) {
-        Set<Index> indices = new Set<Index>();
+        Set<Index> indices = new HashSet<Index>();
         for(Edge e : s.edgeSet()) {
-            Set<Feature> fromNodeFeatures = new Set<Feature>();
-            Set<Feature> toNodeFeatures = new Set<Feature>();
-            Set<Feature> edgeFeatures = new Set<Feature>();
+            Set<Feature> fromNodeFeatures = new HashSet<Feature>();
+            Set<Feature> toNodeFeatures = new HashSet<Feature>();
+            Set<Feature> edgeFeatures = new HashSet<Feature>();
             edgeFeatures.addAll(Util.retainOnly(e.getFeatures(), featureTypes));
             if(edgeFeatures.size() == 0) edgeFeatures.add(null); //make links without edge features
             fromNodeFeatures.addAll(

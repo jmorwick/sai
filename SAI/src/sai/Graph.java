@@ -18,8 +18,24 @@
  */
 package sai;
 
+import info.km.funcles.Funcles;
+import info.km.funcles.T2;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import sai.indexing.Index;
 import org.jgrapht.graph.DirectedMultigraph;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Sets;
 
 /**
  * @version 2.0.0
@@ -29,13 +45,13 @@ public class Graph
         extends DirectedMultigraph<Node, Edge> {
 
     private int DBID = -1;
-    private Bag<Index> indices = new Bag<Index>();
+    private Multiset<Index> indices = HashMultiset.<Index>create();
     final private DBInterface db;
-    private Set<Feature> features = new Set<Feature>();
+    private Set<Feature> features = new HashSet<Feature>();
 
     private final Graph self = this;
 
-    private Map<String, Node> alternateIDs = new Map<String, Node>();
+    private Map<String, Node> alternateIDs = new HashMap<String, Node>();
     
     public  Graph(DBInterface db,
                   Feature ... tags) {
@@ -63,7 +79,7 @@ public class Graph
                 try {
                     addFeature(db.loadFeature(Integer.parseInt(rm.get("feature_id"))));
                 } catch(NumberFormatException e) {
-                    throw new IllegalStateException("corrupt data for graph #"+id + " data: " + CollectionsUtil.prettyPrint(rm));
+                    throw new IllegalStateException("corrupt data for graph #"+id + " data: " + rm);
                 }
             }
 
@@ -97,7 +113,7 @@ public class Graph
                         db.getQueryResults("SELECT * FROM edge_features "+
                            "WHERE edge_id = "+eid + " AND " +
                            "graph_id = " + id);
-                Set<Integer> tagIDs = new Set<Integer>();
+                Set<Integer> tagIDs = new HashSet<Integer>();
                 Edge e = new Edge(eid, this);
 
                 for(Map<String,String> tagrm : tagrs)
@@ -179,7 +195,7 @@ public class Graph
     }
 
     public Set<Feature> getFeatures() {
-        return features.copy();
+        return Sets.newHashSet(features);
     }
     
 /** sets a temporary ID for the specified Node.  This ID is not saved to the
@@ -219,7 +235,9 @@ public class Graph
         features.add(t);
         
         for(Feature f : features) {
-            if(!f.canAccompany(features.removeC(f))) {
+        	
+        	
+            if(!f.canAccompany(Collections2.filter(features, Predicates.equalTo(f)))) {
                 features.remove(t);
                 throw new IllegalArgumentException("Added feature cannot accompany existing features");
             }
@@ -232,7 +250,7 @@ public class Graph
      * @return
      */
     public Set<Node> getLinkedFromNodes(Node n) {
-        Set<Node> nodes = new Set<Node>();
+        Set<Node> nodes = new HashSet<Node>();
         for(Edge e : edgeSet()) {
             if(getEdgeTarget(e) == n) {
                 nodes.add(getEdgeSource(e));
@@ -247,7 +265,7 @@ public class Graph
      * @return
      */
     public Set<Node> getLinkedToNodes(Node n) {
-        Set<Node> nodes = new Set<Node>();
+        Set<Node> nodes = new HashSet<Node>();
         for(Edge e : edgeSet()) {
             if(getEdgeSource(e) == n) {
                 nodes.add(getEdgeTarget(e));
@@ -262,12 +280,12 @@ public class Graph
      * @return
      */
     public Set<Node> getFringe(Set<Node> subStructure) {
-        Set<Node> extended = new Set<Node>();
+        Set<Node> extended = new HashSet<Node>();
         for(Node n : subStructure) {
             extended.addAll(getLinkedFromNodes(n));
             extended.addAll(getLinkedToNodes(n));
         }
-        return extended.difference(subStructure);
+        return Sets.difference(extended, subStructure);
     }
 
     /** returns true if an edge links 'source' to 'target' */
@@ -319,10 +337,10 @@ public class Graph
 
 
     @Override
-    public Set<Node> vertexSet() { return new Set<Node>(super.vertexSet()); }
+    public Set<Node> vertexSet() { return new HashSet<Node>(super.vertexSet()); }
 
     @Override
-    public Set<Edge> edgeSet() { return new Set<Edge>(super.edgeSet()); }
+    public Set<Edge> edgeSet() { return new HashSet<Edge>(super.edgeSet()); }
 
 /** creates a copy of this graph.
  * 
@@ -389,17 +407,17 @@ public class Graph
         all distances between nodes conntected by an edge is assumed to be 1.0
      */
     public Map<T2<Node,Node>, Double> allPairsShortestPaths() {
-        return allPairsShortestPaths(new Function<Double,Edge>() {
+        return allPairsShortestPaths(new Function<Edge,Double>() {
 
             @Override
-            public Double implementation(Edge args) {
+            public Double apply(Edge args) {
                 return 1.0;
             }
         });
     }
 
     /** implements the Floyd-Warshall algorithm for finding shortest paths between all pairs of nodes */
-    public Map<T2<Node,Node>, Double> allPairsShortestPaths(Function<Double,Edge> edgeCost) {
+    public Map<T2<Node,Node>, Double> allPairsShortestPaths(Function<Edge,Double> edgeCost) {
         int maxid=0;
         for(Node n : vertexSet()) {
             maxid = Math.max(maxid, n.getID());
@@ -412,7 +430,8 @@ public class Graph
                 Node n2 = this.getNode(j);
                 if(n1 == null || n2 == null) continue;
                 if(this.linkedTo(n1, n2)) {
-                    distance[i][j] = edgeCost.f(edgeCost.argmaxC(getAllEdges(n1, n2)));
+                    distance[i][j] = edgeCost.apply(
+                    		Funcles.argmaxCollection(edgeCost, getAllEdges(n1, n2)));
                 }
             }
         }
@@ -425,8 +444,8 @@ public class Graph
                 }
             }
         }
-        Map<T2<Node,Node>, Double> m = new Map<T2<Node,Node>, Double>();
-        for(Node n1 : vertexSet().copy()) {
+        Map<T2<Node,Node>, Double> m = new HashMap<T2<Node,Node>, Double>();
+        for(Node n1 : Sets.newHashSet(vertexSet())) {
             for(Node n2: vertexSet()) {
                 if(n1 == n2) m.put(T2.makeTuple(n1, n2), 0.0);
                 else if(distance[n1.getID()][n2.getID()] < Double.POSITIVE_INFINITY)
