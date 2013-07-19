@@ -17,12 +17,18 @@
 
  */
 
-package org.dataandsearch.sai.comparison;
+package sai.comparison;
 
 
+import java.util.Map;
+
+import info.km.funcles.T2;
+import info.km.funcles.T3;
 import sai.Graph;
 import sai.Node;
 import sai.comparison.mapgenerators.search.SearchState;
+import com.google.common.base.Function;
+import com.google.common.collect.Sets;
 
 /**
  * This class houses a method for judging the utility of a mapping between
@@ -31,15 +37,18 @@ import sai.comparison.mapgenerators.search.SearchState;
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
-public abstract class MapHeuristic {
-
+public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchState>,Double>{
 
     public static final MapHeuristic AVOID_LOWER_DEGREE = new MapHeuristic() {
 
         @Override
-        public double getValue(Graph g1, Graph g2, Map<Node, Node> m) {
+        public Double apply(T3<Graph,Graph,SearchState> args) {
+        	Graph g1 = args.a1();
+        	Graph g2 = args.a2();
+        	Map<Node,Node> m = args.a3().getMap();
+        	
             double tot = 0.0;
-            if(m.size() == 0) return 0;
+            if(m.size() == 0) return 0.0;
 
             for(Node n : m.keySet()) {
                 int degree = g1.inDegreeOf(n) + g1.outDegreeOf(n);
@@ -57,9 +66,13 @@ public abstract class MapHeuristic {
     public static final MapHeuristic AVOID_LOWER_OUT_DEGREE = new MapHeuristic() {
 
         @Override
-        public double getValue(Graph g1, Graph g2, Map<Node, Node> m) {
+        public Double apply(T3<Graph,Graph,SearchState> args) {
+        	Graph g1 = args.a1();
+        	Graph g2 = args.a2();
+        	Map<Node,Node> m = args.a3().getMap();
+        	
             double tot = 0.0;
-            if(m.size() == 0) return 0;
+            if(m.size() == 0) return 0.0;
 
             for(Node n : m.keySet()) {
                 int degree = g1.outDegreeOf(n);
@@ -77,9 +90,13 @@ public abstract class MapHeuristic {
     public static final MapHeuristic AVOID_LOWER_IN_DEGREE = new MapHeuristic() {
 
         @Override
-        public double getValue(Graph g1, Graph g2, Map<Node, Node> m) {
+        public Double apply(T3<Graph,Graph,SearchState> args) {
+        	Graph g1 = args.a1();
+        	Graph g2 = args.a2();
+        	Map<Node,Node> m = args.a3().getMap();
+        	
             double tot = 0.0;
-            if(m.size() == 0) return 0;
+            if(m.size() == 0) return 0.0;
 
             for(Node n : m.keySet()) {
                 int degree = g1.inDegreeOf(n);
@@ -96,9 +113,13 @@ public abstract class MapHeuristic {
     public static final MapHeuristic AVOID_HIGHER_DEGREE = new MapHeuristic() {
 
         @Override
-        public double getValue(Graph g1, Graph g2, Map<Node, Node> m) {
+        public Double apply(T3<Graph,Graph,SearchState> args) {
+        	Graph g1 = args.a1();
+        	Graph g2 = args.a2();
+        	Map<Node,Node> m = args.a3().getMap();
+        	
             double tot = 0.0;
-            if(m.size() == 0) return 0;
+            if(m.size() == 0) return 0.0;
 
             for(Node n : m.keySet()) {
                 int degree = g1.inDegreeOf(n) + g1.outDegreeOf(n);
@@ -117,9 +138,13 @@ public abstract class MapHeuristic {
     public static final MapHeuristic AVOID_HIGHER_OUT_DEGREE = new MapHeuristic() {
 
         @Override
-        public double getValue(Graph g1, Graph g2, Map<Node, Node> m) {
+        public Double apply(T3<Graph,Graph,SearchState> args) {
+        	Graph g1 = args.a1();
+        	Graph g2 = args.a2();
+        	Map<Node,Node> m = args.a3().getMap();
+        	
             double tot = 0.0;
-            if(m.size() == 0) return 0;
+            if(m.size() == 0) return 0.0;
 
             for(Node n : m.keySet()) {
                 int degree = g1.outDegreeOf(n);
@@ -137,9 +162,13 @@ public abstract class MapHeuristic {
     public static final MapHeuristic AVOID_HIGHER_IN_DEGREE = new MapHeuristic() {
 
         @Override
-        public double getValue(Graph g1, Graph g2, Map<Node, Node> m) {
+        public Double apply(T3<Graph,Graph,SearchState> args) {
+        	Graph g1 = args.a1();
+        	Graph g2 = args.a2();
+        	Map<Node,Node> m = args.a3().getMap();
+        	
             double tot = 0.0;
-            if(m.size() == 0) return 0;
+            if(m.size() == 0) return 0.0;
 
             for(Node n : m.keySet()) {
                 int degree = g1.inDegreeOf(n);
@@ -163,7 +192,11 @@ public abstract class MapHeuristic {
         private Map<T2<Node,Node>,Double> g2Dist;
 
         @Override
-        public double getValue(Graph g1, Graph g2, Map<Node, Node> m) {
+        public Double apply(T3<Graph,Graph,SearchState> args) {
+        	Graph g1 = args.a1();
+        	Graph g2 = args.a2();
+        	Map<Node,Node> m = args.a3().getMap();
+        	
             if(this.g1 != g1 || this.g2 != g2) {
                 this.g1 = g1;
                 this.g2 = g2;
@@ -174,8 +207,8 @@ public abstract class MapHeuristic {
             double worstTotal = 0;
             double mistakeTotal = 0;
 
-            for(Node n1 : m.keySet().copy()) {
-                for (Node n2 : m.keySet().copy()) {
+            for(Node n1 : Sets.newHashSet(m.keySet())) {
+                for (Node n2 : Sets.newHashSet(m.keySet())) {
                     T2<Node,Node> t = T2.makeTuple(n1, n2);
                     if(n1 == n2 || !g1Dist.containsKey(t)) continue;
                     double minDist = g1Dist.get(t);
@@ -190,19 +223,7 @@ public abstract class MapHeuristic {
                 }
             }
 
-            if(worstTotal == 0) return 1;
+            if(worstTotal == 0) return 1.0;
             return 1 - mistakeTotal/worstTotal;
     }};
-
-
-    public MapHeuristic getNestedHeuristic() {
-        return null;
-    }
-
-
-    public abstract double getValue(Graph g1, Graph g2, Map<Node,Node> m);
-
-    public double getValue(Graph g1, Graph g2, SearchState s) {
-        return getValue(g1, g2, s.getMap());
-    }
 }

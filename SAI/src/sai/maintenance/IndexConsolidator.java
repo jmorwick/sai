@@ -17,12 +17,11 @@
 
  */
 
-package org.dataandsearch.sai.maintenance;
+package sai.maintenance;
 
-import info.kendallmorwick.util.Set;
 import java.util.Iterator;
-import org.dataandsearch.sai.DBInterface;
-import org.dataandsearch.sai.indexing.Index;
+import sai.DBInterface;
+import sai.indexing.Index;
 
 /**
  * A maintenance task which locates equivalent indices and collapses them into 

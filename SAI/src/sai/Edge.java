@@ -32,7 +32,7 @@ import static com.google.common.base.Predicates.equalTo;
  * @version 2.0s.0
  * @author Joseph Kendall-Morwick
  */
-public class Edge {
+public class Edge implements Comparable {
     private int id = -1;
     private Set<Feature> features = new HashSet<Feature>();
     private Graph parent;
@@ -97,4 +97,12 @@ public class Edge {
                 "]"+features+"}";
 
     }
+
+	@Override
+	public int compareTo(Object o) {
+		if(o instanceof Edge) {
+			return id - ((Edge)o).id;
+		}
+		return 0;
+	}
 }

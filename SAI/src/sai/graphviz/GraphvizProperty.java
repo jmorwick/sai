@@ -16,11 +16,14 @@
     along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-package org.dataandsearch.sai.graphviz;
+package sai.graphviz;
 
-import info.kendallmorwick.util.Set;
-import org.dataandsearch.sai.DBInterface;
-import org.dataandsearch.sai.Feature;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
+import sai.DBInterface;
+import sai.Feature;
 
 /**
  * A feature which signals the graphviz encoder to use special formatting --
@@ -34,7 +37,7 @@ public class GraphvizProperty extends Feature {
     private final String propertyValue;
 
     public static final Set<String> legalProperties =
-            Set.makeSet("Damping", "K", "URL", "area");  ///TODO: finish list
+            Sets.newHashSet("Damping", "K", "URL", "area");  ///TODO: finish list
 
     public GraphvizProperty(int id, DBInterface db) {
         super(id, db);

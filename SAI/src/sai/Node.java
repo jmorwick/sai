@@ -30,7 +30,7 @@ import static com.google.common.base.Predicates.equalTo;
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
-public class Node {
+public class Node implements Comparable {
     private int id;
     private Set<Feature> features = new HashSet<Feature>();
     private Graph parent;
@@ -146,4 +146,12 @@ public class Node {
         id = parent.getUnusedNodeID();
     }
 
+
+	@Override
+	public int compareTo(Object o) {
+		if(o instanceof Node) {
+			return id - ((Node)o).id;
+		}
+		return 0;
+	}
 }

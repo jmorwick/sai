@@ -16,21 +16,22 @@ You should have received a copy of the Lesser GNU General Public License
 along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-package org.dataandsearch.sai.statistics;
+package sai.statistics;
 
-import org.dataandsearch.sai.DBInterface;
-import org.dataandsearch.sai.Edge;
-import org.dataandsearch.sai.Feature;
-import org.dataandsearch.sai.Graph;
+import sai.DBInterface;
+import sai.Edge;
+import sai.Feature;
+import sai.Graph;
+import sai.comparison.Util;
+import info.km.funcles.T3;
+import info.km.funcles.Tuple;
 
 import java.util.Iterator;
+import java.util.Set;
 
-import info.kendallmorwick.util.Bag;
-import info.kendallmorwick.util.Set;
-import info.kendallmorwick.util.tuple.T3;
-import org.dataandsearch.sai.comparison.Util;
-import static info.kendallmorwick.util.tuple.Tuple.makeTuple;
-
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Multisets;
 /**
  * @since 0.2.0
  * @author Joseph Kendall-Morwick
@@ -44,7 +45,7 @@ public class DatabaseStatistics {
     }
 
     /** TODO: testme */
-    public Bag<T3<Feature, Feature, Feature>> getFeatureLinkFrequencies() {
+    public Multiset<T3<Feature, Feature, Feature>> getFeatureLinkFrequencies() {
         return get3FeatureLinkOccurances(1.1);
     }
 
@@ -54,8 +55,8 @@ public class DatabaseStatistics {
      * connecting edge
      * @param progressIncrement the portion of the total progress after which an update should be printed (1.0 is the total)
      */
-    public Bag<T3<Feature, Feature, Feature>> get3FeatureLinkOccurances(double progressIncrement) {
-        Bag<T3<Feature, Feature, Feature>> features = new Bag<T3<Feature, Feature, Feature>>();
+    public Multiset<T3<Feature, Feature, Feature>> get3FeatureLinkOccurances(double progressIncrement) {
+    	Multiset<T3<Feature, Feature, Feature>> features = HashMultiset.create();
         int total = db.getDatabaseSize();
         int read = 0;
         double lastMessage = 0.0;
@@ -64,7 +65,7 @@ public class DatabaseStatistics {
         }
         Iterator<Graph> i = db.getStructureIterator();
         for (Graph g = i.next(); i.hasNext(); g = i.next()) {
-            features.combine(get3FeatureLinkOccurances(g));
+            features = Multisets.union(features, get3FeatureLinkOccurances(g));
             if ((double) read / (double) total > lastMessage + progressIncrement) {
                 lastMessage = (double) read / (double) total;
                 System.out.println((lastMessage * 100) + "% completed");
@@ -83,14 +84,14 @@ public class DatabaseStatistics {
      * feature on the connecting edge
      * @param g the graph in which to look for linked features
      */
-    public Bag<T3<Feature, Feature, Feature>> get3FeatureLinkOccurances(Graph g) {
-        Bag<T3<Feature, Feature, Feature>> features = new Bag<T3<Feature, Feature, Feature>>();
+    public Multiset<T3<Feature, Feature, Feature>> get3FeatureLinkOccurances(Graph g) {
+        Multiset<T3<Feature, Feature, Feature>> features = HashMultiset.create();
         System.out.println(g);
         for (Edge e : g.edgeSet()) {
             for (Feature nf1 : g.getEdgeSource(e).getFeatures()) {
                 for (Feature ef : e.getFeatures()) {
                     for (Feature nf2 : g.getEdgeTarget(e).getFeatures()) {
-                        features.add(makeTuple(nf1, ef, nf2));
+                        features.add(Tuple.makeTuple(nf1, ef, nf2));
                     }
                 }
             }
@@ -101,9 +102,9 @@ public class DatabaseStatistics {
     /** returns a bag of all features of edges (matching the specified edge 
      * class) incident to a node with the specified node feature in the Graph g.
      */
-    public Bag<Feature> incomingEdgeFeatures(Feature nodeFeature,
+    public Multiset<Feature> incomingEdgeFeatures(Feature nodeFeature,
             Class<? extends Feature> edgeFeatureType, Graph g) {
-        Bag<Feature> b = new Bag<Feature>();
+        Multiset<Feature> b = HashMultiset.create();
         for (Edge e : g.edgeSet()) {
             if (!g.getEdgeTarget(e).getFeatures().contains(nodeFeature)) {
                 continue;
@@ -119,18 +120,18 @@ public class DatabaseStatistics {
      * class) incident to a node with the specified node feature.
      * @param progressIncrement the portion of the total progress after which an update should be printed (1.0 is the total)
      */
-    public Bag<Feature> incomingEdgeFeatures(Feature nodeFeature,
+    public Multiset<Feature> incomingEdgeFeatures(Feature nodeFeature,
             Class<? extends Feature> edgeFeatureType, double progressIncrement) {
         int total = db.getDatabaseSize();
         int read = 0;
         double lastMessage = 0.0;
-        Bag<Feature> b = new Bag<Feature>();
+        Multiset<Feature> b = HashMultiset.create();
         if (progressIncrement < 1.0) {
             //System.out.println("0% completed");
         }
         Iterator<Graph> i = db.getStructureIterator();
         for (Graph g = i.next(); i.hasNext(); g = i.next()) {
-            b.combine(incomingEdgeFeatures(nodeFeature, edgeFeatureType, g));
+            b = Multisets.union(b,incomingEdgeFeatures(nodeFeature, edgeFeatureType, g));
             if ((double) read / (double) total > lastMessage + progressIncrement) {
                 lastMessage = (double) read / (double) total;
                 //System.out.println((lastMessage * 100) + "% completed");
@@ -148,8 +149,8 @@ public class DatabaseStatistics {
      * pair of connected nodes and the feature-sets of the connecting edges.
      * @param progressIncrement the portion of the total progress after which an update should be printed (1.0 is the total)
      */
-    public Bag<T3<Set<Feature>, Set<Feature>, Set<Feature>>> getAllFeatureLinkOccurances(double progressIncrement) {
-        Bag<T3<Set<Feature>, Set<Feature>, Set<Feature>>> features = new Bag<T3<Set<Feature>, Set<Feature>, Set<Feature>>>();
+    public Multiset<T3<Set<Feature>, Set<Feature>, Set<Feature>>> getAllFeatureLinkOccurances(double progressIncrement) {
+        Multiset<T3<Set<Feature>, Set<Feature>, Set<Feature>>> features = HashMultiset.create();
         int total = db.getDatabaseSize();
         int read = 0;
         double lastMessage = 0.0;
@@ -158,7 +159,7 @@ public class DatabaseStatistics {
         }
         Iterator<Graph> i = db.getStructureIterator();
         for (Graph g = i.next(); i.hasNext(); g = i.next()) {
-            features.combine(getAllFeatureLinkOccurances(g));
+            features = Multisets.union(features, getAllFeatureLinkOccurances(g));
 
             if ((double) read / (double) total > lastMessage + progressIncrement) {
                 lastMessage = (double) read / (double) total;
@@ -176,15 +177,15 @@ public class DatabaseStatistics {
      * pair of connected nodes and the feature-sets of the connecting edges for
      * the specified graph.
      */
-    public Bag<T3<Set<Feature>, Set<Feature>, Set<Feature>>> getAllFeatureLinkOccurances(Graph g) {
-        Bag<T3<Set<Feature>, Set<Feature>, Set<Feature>>> features = new Bag<T3<Set<Feature>, Set<Feature>, Set<Feature>>>();
+    public Multiset<T3<Set<Feature>, Set<Feature>, Set<Feature>>> getAllFeatureLinkOccurances(Graph g) {
+        Multiset<T3<Set<Feature>, Set<Feature>, Set<Feature>>> features = HashMultiset.create();
         int total = db.getDatabaseSize();
         System.out.println(g);
         for (Edge e : g.edgeSet()) {
-            for (Set<Feature> nf1s : g.getEdgeSource(e).getFeatures().getAllSubsets()) {
-                for (Set<Feature> efs : e.getFeatures().getAllSubsets()) {
-                    for (Set<Feature> nf2s : g.getEdgeTarget(e).getFeatures().getAllSubsets()) {
-                        features.add(makeTuple(nf1s, efs, nf2s));
+            for (Set<Feature> nf1s : Util.getAllSubsets(g.getEdgeSource(e).getFeatures())) {
+                for (Set<Feature> efs : Util.getAllSubsets(e.getFeatures())) {
+                    for (Set<Feature> nf2s : Util.getAllSubsets(g.getEdgeTarget(e).getFeatures())) {
+                        features.add(Tuple.makeTuple(nf1s, efs, nf2s));
                     }
                 }
             }

@@ -17,7 +17,7 @@
 
  */
 
-package org.dataandsearch.sai.maintenance;
+package sai.maintenance;
 
 /**
  * @version 0.2.0

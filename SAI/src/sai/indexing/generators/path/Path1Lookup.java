@@ -20,6 +20,8 @@
 package sai.indexing.generators.path;
 
 import java.util.Set;
+
+import info.km.funcles.BinaryRelation;
 import info.km.funcles.T2;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
@@ -28,7 +30,6 @@ import sai.indexing.generators.path.Path1;
 import sai.DBInterface;
 import sai.Feature;
 import sai.Graph;
-import sai.comparison.SubgraphComparator;
 import sai.indexing.Index;
 import sai.indexing.IndexGenerator;
 import sai.indexing.IndexRetriever;
@@ -44,7 +45,7 @@ import sai.indexing.retrievers.path.Path1Retriever;
  */
 public class Path1Lookup extends IndexGenerator {
     private IndexRetriever retriever;
-    private Function<T2<Graph, Graph>,SubgraphComparator> compFactory;
+    private Function<T2<Graph, Graph>,BinaryRelation<Graph>> compFactory;
     private final Path1 gen;
 
 

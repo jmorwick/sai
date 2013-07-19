@@ -19,15 +19,19 @@
 
 package sai.comparison;
 
+import java.util.Map;
+
+import info.km.funcles.T2;
 import sai.Graph;
 import sai.Node;
+import com.google.common.base.Function;
 
 /**
- * This class houses a method for generating mappings between graphs
+ * A shortcut type for a function generating mappings between two graphs
  *
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
-public abstract class MapGenerator {
-    public abstract Map<Node, Node> findBestSubgraphMapping(Graph graph, Graph c);
+public abstract interface MapGenerator extends 
+		Function<T2<Graph,Graph>,Map<Node,Node>> {
 }

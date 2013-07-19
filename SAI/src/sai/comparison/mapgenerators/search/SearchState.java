@@ -19,6 +19,10 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
 package sai.comparison.mapgenerators.search;
 
+import java.util.Map;
+
+import com.google.common.collect.Multimap;
+
 import sai.Node;
 
 /**
@@ -29,16 +33,16 @@ import sai.Node;
  */
 public class SearchState {
     private Map<Node, Node> m;
-    private MultiMap<Node,Node> possibilities;
+    private Multimap<Node,Node> possibilities;
 
-    public SearchState(Map<Node,Node> m, MultiMap<Node,Node> possibilities) {
+    public SearchState(Map<Node,Node> m, Multimap<Node,Node> possibilities) {
         this.m = m;
         this.possibilities = possibilities;
     }
 
     public Map<Node,Node> getMap() { return m; }
 
-    public MultiMap<Node,Node> getPossibilities() { return possibilities; }
+    public Multimap<Node,Node> getPossibilities() { return possibilities; }
 
     /** potentially performs an operation that was too expensive to perform at allocation time for a child node */
     public void doOperation() {}

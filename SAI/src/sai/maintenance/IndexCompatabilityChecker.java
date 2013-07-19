@@ -19,6 +19,7 @@
 
 package sai.maintenance;
 
+import info.km.funcles.BinaryRelation;
 import info.km.funcles.Funcles;
 import info.km.funcles.T2;
 import info.km.funcles.Tuple;
@@ -32,7 +33,6 @@ import com.google.common.collect.Sets;
 
 import sai.DBInterface;
 import sai.Graph;
-import sai.comparison.SubgraphComparator;
 import sai.indexing.Index;
 
 /**
@@ -44,8 +44,8 @@ import sai.indexing.Index;
  */
 public class IndexCompatabilityChecker extends MaintenanceTask {
 
-    private List<Function<T2<Graph,Graph>,SubgraphComparator>> comparatorFactories =
-            new ArrayList<Function<T2<Graph,Graph>,SubgraphComparator>>();
+    private List<Function<T2<Graph,Graph>,BinaryRelation<Graph>>> comparatorFactories =
+            new ArrayList<Function<T2<Graph,Graph>,BinaryRelation<Graph>>>();
     private DBInterface db;
     private final long timeIncrement;
     private Index currentSubgraphCandidate;
@@ -55,17 +55,17 @@ public class IndexCompatabilityChecker extends MaintenanceTask {
     boolean complete = true;
     private Iterator<Index> progress1;
     private Iterator<Index> progress2;
-    private List<SubgraphComparator> activeComparators = new ArrayList<SubgraphComparator>();
+    private List<BinaryRelation<Graph>> activeComparators = new ArrayList<BinaryRelation<Graph>>();
     private final long maxTime;
 
     public IndexCompatabilityChecker(DBInterface db, long maxTime,
-            long timeIncrement, Function<T2<Graph,Graph>,SubgraphComparator> ... comparatorFactories) {
+            long timeIncrement, Function<T2<Graph,Graph>,BinaryRelation<Graph>> ... comparatorFactories) {
         this.timeIncrement = timeIncrement;
         this.maxTime = maxTime;
         this.db = db;
       
         if(comparatorFactories.length == 0) throw new IllegalArgumentException("Need at least one comparator");
-        for(Function<T2<Graph,Graph>,SubgraphComparator> f : comparatorFactories) 
+        for(Function<T2<Graph,Graph>,BinaryRelation<Graph>> f : comparatorFactories) 
         	this.comparatorFactories.add(f);
         progress1 = db.getIndexIterator();
         progress2 = db.getIndexIterator();
@@ -75,7 +75,7 @@ public class IndexCompatabilityChecker extends MaintenanceTask {
         else {
             nextPair();
             if(!done) {
-                for(Function<T2<Graph,Graph>,SubgraphComparator> f : comparatorFactories)
+                for(Function<T2<Graph,Graph>,BinaryRelation<Graph>> f : comparatorFactories)
                     activeComparators.add(f.apply(Tuple.makeTuple((Graph)currentSubgraphCandidate, (Graph)currentSupergraphCandidate)));
             }
         }
@@ -103,7 +103,7 @@ public class IndexCompatabilityChecker extends MaintenanceTask {
             done = true;
             return;
         }
-        for(Function<T2<Graph,Graph>,SubgraphComparator> f : comparatorFactories)
+        for(Function<T2<Graph,Graph>,BinaryRelation<Graph>> f : comparatorFactories)
             activeComparators.add(Funcles.apply(f, (Graph)currentSubgraphCandidate, (Graph)currentSupergraphCandidate));
         if(currentSubgraphCandidate.getID() == currentSupergraphCandidate.getID()) nextPair();
     }
@@ -116,7 +116,7 @@ public class IndexCompatabilityChecker extends MaintenanceTask {
             nextPair();
 
 
-        for(SubgraphComparator c : Sets.newHashSet(activeComparators)) {
+        for(BinaryRelation<Graph> c : Sets.newHashSet(activeComparators)) {
             c.waitTillDone(timeIncrement);
             elapsedTime += timeIncrement;
             if(elapsedTime > maxTime) {

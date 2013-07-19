@@ -58,15 +58,13 @@ public class CompleteSubgraphComparator implements BinaryRelation<Graph> {
         return Funcles.applyInBackground(csc, g1, g2);
     }
 
-    private Set<Class<? extends Feature>> featureTypes = 
-    		new HashSet<Class<? extends Feature>>();
+    private Class<? extends Feature>[] featureTypes;
 	private DBInterface db;
 
     public CompleteSubgraphComparator(final DBInterface db,
             final Class<? extends Feature> ... featureTypes) {
     	this.db = db;
-    	for(Class<? extends Feature> f : featureTypes) 
-    		this.featureTypes.add(f);
+    	this.featureTypes = featureTypes;
     }
 
     
@@ -85,17 +83,17 @@ public class CompleteSubgraphComparator implements BinaryRelation<Graph> {
                         featureTypes);
                 BigInteger currentMapping = BigInteger.ZERO;
 
-
+                //make sure the features for the graphs themselves are compatible
                 if(!db.FeatureSetsCompatible(
-                        sub,
-                        sup,
+                        sub.getFeatures(),
+                        sup.getFeatures(),
                         featureTypes)) {
                     return false;
                 }
 
 
                 while(currentMapping.compareTo(numMappings) < 0) {
-                    Map<Node,Node> map = possibilities.getIthCompleteMapping(currentMapping);
+                    Map<Node,Node> map = Util.getIthCompleteMapping(possibilities,currentMapping);
                     if(map.size() < possibilities.size()) {
                         return false;
                     } else if(Util.matchedEdges(
@@ -119,8 +117,4 @@ public class CompleteSubgraphComparator implements BinaryRelation<Graph> {
                 }
                 throw new ResultUnavailableException();
             }
-        };
-    }
-
-
 }

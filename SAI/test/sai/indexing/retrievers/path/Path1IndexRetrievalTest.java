@@ -17,27 +17,24 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
 
-package org.dataandsearch.sai.indexing.retrievers;
+package sai.indexing.retrievers;
 
-import info.kendallmorwick.util.Set;
-import info.kendallmorwick.util.function.Function;
-import info.kendallmorwick.util.tuple.T2;
-import org.dataandsearch.sai.DBInterface;
-import org.dataandsearch.sai.DBInterfaceTest;
-import org.dataandsearch.sai.Graph;
-import org.dataandsearch.sai.comparison.SubgraphComparator;
-import org.dataandsearch.sai.comparison.subgraphcomparators.CompleteSubgraphComparator;
-import org.dataandsearch.sai.indexing.Index;
-import org.dataandsearch.sai.maintenance.IndexCompatibilityChecker;
-import org.dataandsearch.sai.maintenance.IndexConsolidator;
+import sai.DBInterface;
+import sai.DBInterfaceTest;
+import sai.Graph;
+import sai.comparison.SubgraphComparator;
+import sai.comparison.subgraphcomparators.CompleteSubgraphComparator;
+import sai.indexing.Index;
+import sai.maintenance.IndexCompatibilityChecker;
+import sai.maintenance.IndexConsolidator;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.dataandsearch.sai.DBInterfaceTest.*;
-import org.dataandsearch.sai.GenericFeature;
-import static org.dataandsearch.sai.comparison.subgraphcomparators.CompleteSubgraphComparatorTest.*;
+import static sai.DBInterfaceTest.*;
+import sai.GenericFeature;
+import static sai.comparison.subgraphcomparators.CompleteSubgraphComparatorTest.*;
 import static org.junit.Assert.*;
 
 /**

@@ -16,19 +16,27 @@
     along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-package org.dataandsearch.sai.graphviz;
+package sai.graphviz;
 
-import info.kendallmorwick.util.FileUtil;
-import info.kendallmorwick.util.Map;
-import info.kendallmorwick.util.Set;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.dataandsearch.sai.*;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
+import sai.DBInterface;
+import sai.Edge;
+import sai.Feature;
+import sai.Graph;
+import sai.Node;
 
 /**
  * Produces textual and png image visualizations of graphs using the 
@@ -112,13 +120,14 @@ public class GraphvizEncoder {
         StringBuilder encoding = new StringBuilder();
         g1 = g1.copy();
         g2 = g2.copy();
-        Set<String> colors = new Set<String>();
+        Set<String> colors = Sets.newHashSet();
         colors.addAll(Arrays.asList(ARROW_COLORS));
-        Map<Node, String> nodeColors = new Map<Node, String>();
+        Map<Node, String> nodeColors = Maps.newHashMap();
         for(Node n : g1.vertexSet()) colorNode(n, "gray", g1.getDB());
         for(Node n : g2.vertexSet()) colorNode(n, "gray", g2.getDB());
         for(Map.Entry<Node,Node> e : m.entrySet()) {
-            String arrowColor = colors.getRandomElement();
+        	// get a random element of the set colors
+            String arrowColor = Lists.newArrayList(colors).get((int)(Math.random() * colors.size()));
             colors.remove(arrowColor);
             Node n1 = g1.getNode(e.getKey().getID());
             Node n2 = g2.getNode(e.getValue().getID());

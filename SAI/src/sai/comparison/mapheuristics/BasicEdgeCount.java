@@ -19,10 +19,20 @@
 
 package sai.comparison.mapheuristics;
 
+import info.km.funcles.T3;
+import info.km.funcles.Tuple;
+import info.km.funcles.T2;
+
+import java.util.Map;
+
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+
 import sai.Edge;
 import sai.Graph;
 import sai.Node;
 import sai.comparison.MapHeuristic;
+import sai.comparison.mapgenerators.search.SearchState;
 
 
 /**
@@ -34,15 +44,18 @@ import sai.comparison.MapHeuristic;
  */
 public class BasicEdgeCount extends MapHeuristic {
 
-    public static int countMappedEdges(Graph g1, Graph g2, Map<Node,Node> m) {
-        return (int)(new BasicEdgeCount()).getValue(g1, g2, m);
+    public static int countMappedEdges(Graph g1, Graph g2, SearchState ss) {
+        return (int)(double)(new BasicEdgeCount()).apply(Tuple.makeTuple(g1, g2, ss));
     }
 
     @Override
-    public double getValue(Graph g1, Graph g2, Map<Node, Node> m) {
-            if(g1.edgeSet().size() == 0) return 0;
+	public Double apply(T3<Graph, Graph, SearchState> args) {
+    		Graph g1 = args.a1();
+    		Graph g2 = args.a2();
+    		Map<Node, Node> m = args.a3().getMap();
+            if(g1.edgeSet().size() == 0) return 0.0;
             int count = 0;
-            Bag<T2<Node,Node>> available = new Bag<T2<Node,Node>>();
+            Multiset<T2<Node,Node>> available = HashMultiset.create();
             for(Edge e : g2.edgeSet()) {
                 available.add(Tuple.makeTuple(
                         g2.getEdgeSource(e),
@@ -53,8 +66,8 @@ public class BasicEdgeCount extends MapHeuristic {
                 Node n2 = g1.getEdgeTarget(e);
                 if(m.containsKey(n1) && m.containsKey(n2)) {
                     T2<Node,Node> t = Tuple.makeTuple(m.get(n1), m.get(n2));
-                    if(available.get(t) > 0) {
-                        available.incrementCount(t, -1);
+                    if(available.count(t) > 0) {
+                        available.setCount(t, -1);
                         count++;
                     }
                 }
