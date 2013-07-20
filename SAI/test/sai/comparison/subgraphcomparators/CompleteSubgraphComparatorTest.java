@@ -17,17 +17,26 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
 package sai.comparison.subgraphcomparators;
-\
+
+import info.km.funcles.BinaryRelation;
+import info.km.funcles.T2;
+
 import java.util.Iterator;
+import java.util.List;
+
 import sai.*;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.google.common.base.Function;
+
 import sai.comparison.Util;
 import sai.indexing.Index;
 import sai.indexing.retrievers.path.Path1Retriever;
+import sai.maintenance.IndexCompatabilityChecker;
 import sai.maintenance.IndexConsolidator;
 import static org.junit.Assert.*;
 
@@ -41,15 +50,10 @@ public class CompleteSubgraphComparatorTest {
 
 
 
-  public static IndexCompatibilityChecker getCompleteChecker(final DBInterface db, long maxtime, long timeInc) {
-      return new IndexCompatibilityChecker(db, maxtime, timeInc,
-              new Function<SubgraphComparator,T2<Graph,Graph>>() {
-
-            @Override
-            public SubgraphComparator implementation(T2<Graph,Graph> args) {
-                return new CompleteSubgraphComparator(db, args.a1(), args.a2(), GenericFeature.class);
-            }
-        });
+  public static IndexCompatabilityChecker getCompleteChecker(DBInterface db, long maxtime, int numThreads) {
+      return new IndexCompatabilityChecker(db, maxtime, numThreads,
+              new CompleteSubgraphComparator(db));
+            
   }
 
     public CompleteSubgraphComparatorTest() {
@@ -137,11 +141,10 @@ public class CompleteSubgraphComparatorTest {
 
     db.addRetriever(new Path1Retriever(db, GenericFeature.class));
 
-      IndexCompatibilityChecker checker = getCompleteChecker(db, 10000, 1000);
+    IndexCompatabilityChecker checker = getCompleteChecker(db, 10000, 1000);
       assertEquals(2, db.getDatabaseSize());
-        while(!checker.isDone()) {  //check db with no indices
-            checker.nextIteration();
-        }
+      //TODO: add tests for list return value
+      	List<T2<Integer,Integer>> collapsed = checker.get();
 
         Iterator<Graph> it = db.getStructureIterator();
         Graph lastGraph = null;
@@ -163,9 +166,8 @@ public class CompleteSubgraphComparatorTest {
         }
 
         checker = getCompleteChecker(db, 10000, 1000);
-        while(!checker.isDone()) {  //check db with no indices
-            checker.nextIteration();
-        }
+      //TODO: add tests for list return value
+      	collapsed = checker.get();
         assertEquals(10, db.getDatabaseSize());
         iit = db.getIndexIterator();
         while(iit.hasNext()) {
@@ -194,12 +196,9 @@ public class CompleteSubgraphComparatorTest {
     db.initializeDatabase();
     DBInterfaceTest.loadBasicDB2(db);
 
-      IndexCompatibilityChecker checker = getCompleteChecker(db, 10000, 1000);
-      assertEquals(2, db.getDatabaseSize());
-        while(!checker.isDone()) {  //check db with no indices
-            checker.nextIteration();
-        }
-
+    IndexCompatabilityChecker checker = getCompleteChecker(db, 10000, 1000);
+  //TODO: add tests for list return value
+  	List<T2<Integer, Integer>> collapsed = checker.get();
         Iterator<Graph> it = db.getStructureIterator();
         while(it.hasNext()) {
             Graph g = it.next();
@@ -215,9 +214,8 @@ public class CompleteSubgraphComparatorTest {
         }
 
         checker = getCompleteChecker(db, 10000, 1000);
-        while(!checker.isDone()) {  //check db with no indices
-            checker.nextIteration();
-        }
+      //TODO: add tests for list return value
+      	collapsed = checker.get();
         assertEquals(6, db.getDatabaseSize());  //indices should already be consolidated
         iit = db.getIndexIterator();
         while(iit.hasNext()) {

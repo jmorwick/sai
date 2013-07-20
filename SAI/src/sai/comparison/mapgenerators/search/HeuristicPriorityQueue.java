@@ -39,7 +39,7 @@ import sai.comparison.MapHeuristic;
  */
 public class HeuristicPriorityQueue extends SearchQueue {
 
-    private final MinMaxPriorityQueue<SearchState> queue;
+    private final MinMaxPriorityQueue<GraphMapping> queue;
     private Map<Node, Node> best;
     private double bestScore = -1;
     private final MapHeuristic queueHueristic;
@@ -57,7 +57,7 @@ public class HeuristicPriorityQueue extends SearchQueue {
     }
 
     public HeuristicPriorityQueue(final MapHeuristic h,
-            Comparator<SearchState> c,
+            Comparator<GraphMapping> c,
             Class<? extends Feature>... featureTypes) {
         super(featureTypes);
         this.queueHueristic = h;
@@ -76,7 +76,7 @@ public class HeuristicPriorityQueue extends SearchQueue {
 
     public HeuristicPriorityQueue(final MapHeuristic queueHeuristic,
             final MapHeuristic judgeHeuristic,
-            Comparator<SearchState> c,
+            Comparator<GraphMapping> c,
             Class<? extends Feature>... featureTypes) {
         super(featureTypes);
         this.queueHueristic = queueHeuristic;
@@ -95,7 +95,7 @@ public class HeuristicPriorityQueue extends SearchQueue {
     }
 
     public HeuristicPriorityQueue(final MapHeuristic h, 
-            Comparator<SearchState> c,  int maxSize,
+            Comparator<GraphMapping> c,  int maxSize,
             Class<? extends Feature>... featureTypes) {
         super(featureTypes);
         this.queueHueristic = h;
@@ -116,7 +116,7 @@ public class HeuristicPriorityQueue extends SearchQueue {
 
     public HeuristicPriorityQueue(final MapHeuristic queueHeuristic, 
             final MapHeuristic judgeHeuristic,  int maxSize,
-            Comparator<SearchState> c,
+            Comparator<GraphMapping> c,
             Class<? extends Feature>... featureTypes) {
         super(featureTypes);
         this.queueHueristic = queueHeuristic;
@@ -174,13 +174,13 @@ public class HeuristicPriorityQueue extends SearchQueue {
     }
 
     public void expand() {
-        SearchState state = popState();
+        GraphMapping state = popState();
         state.doOperation();
         expand(state, limitPossibilities(state));
         
     }
 
-    public void expand(SearchState state, MultiMap<Node, Node> possibilities) {
+    public void expand(GraphMapping state, MultiMap<Node, Node> possibilities) {
         Map<Node, Node> m = state.getMap();
         considerMap(m);
 
@@ -191,7 +191,7 @@ public class HeuristicPriorityQueue extends SearchQueue {
 
         for (final Node n : possibilities.keySet()) {  //queue all child search states
             for (final Node n2 : possibilities.get(n).difference(m.values())) { //skip already mapped nodes (enforce a 1-1 mapping)
-                queue.add(new SearchState(m.putC(n, n2), possibilities));
+                queue.add(new GraphMapping(m.putC(n, n2), possibilities));
             }
         }
     }
@@ -215,24 +215,24 @@ public class HeuristicPriorityQueue extends SearchQueue {
         return best;
     }
 
-    public MinMaxPriorityQueue<SearchState> getQueue() {
+    public MinMaxPriorityQueue<GraphMapping> getQueue() {
         return queue;
     }
 
     @Override
-    public void queueState(SearchState s) {
+    public void queueState(GraphMapping s) {
         queue.add(s);
     }
 
-    public SearchState popState() {
+    public GraphMapping popState() {
         return queue.remove();
     }
 
-    public Comparator<SearchState> getDefaultQueueComparator() {
+    public Comparator<GraphMapping> getDefaultQueueComparator() {
 
-        return new Comparator<SearchState>() {
+        return new Comparator<GraphMapping>() {
 
-            public int compare(SearchState s1, SearchState s2) {
+            public int compare(GraphMapping s1, GraphMapping s2) {
                 double v1 = queueHueristic.getValue(getGraph1(), getGraph2(), s1);
                 double v2 = queueHueristic.getValue(getGraph1(), getGraph2(), s2);
                 if (v1 == v2) {

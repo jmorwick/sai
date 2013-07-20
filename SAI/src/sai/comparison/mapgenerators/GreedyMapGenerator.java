@@ -23,7 +23,7 @@ import sai.Node;
 import sai.comparison.MapHeuristic;
 import sai.comparison.mapgenerators.search.HeuristicPriorityQueue;
 import sai.comparison.mapgenerators.search.OneNodeAtATimeQueue;
-import sai.comparison.mapgenerators.search.SearchState;
+import sai.comparison.mapgenerators.search.GraphMapping;
 import com.google.common.collect.Multimap;
 
 /**
@@ -41,12 +41,12 @@ public class GreedyMapGenerator extends SearchMapGenerator {
         //super(new HeuristicPriorityQueue(h, featureTypes) {
 
             @Override
-            public void expand(SearchState state, Multimap<Node, Node> possibilities) {
+            public void expand(GraphMapping state, Multimap<Node, Node> possibilities) {
                 super.expand(state, possibilities);
 
                 //remove everything but the top-rated map
                 if (getQueue().size() > 1) {
-                    SearchState s = getQueue().peek();
+                    GraphMapping s = getQueue().peek();
                     getQueue().clear();
                     getQueue().add(s);
                 }

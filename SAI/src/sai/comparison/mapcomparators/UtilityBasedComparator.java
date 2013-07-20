@@ -20,35 +20,35 @@
 package sai.comparison.mapcomparators;
 
 
+import java.util.Map;
+
+import info.km.funcles.BinaryRelation;
+import info.km.funcles.Funcles;
+import info.km.funcles.T2;
+import info.km.funcles.T5;
 import sai.DBInterface;
 import sai.Graph;
 import sai.Node;
-import sai.comparison.MapComparator;
-import sai.comparison.MapComparator.Judgement;
 import sai.comparison.MapHeuristic;
+import sai.comparison.mapgenerators.search.SearchState;
 
 /**
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
-@Deprecated public class UtilityBasedComparator extends MapComparator {
+@Deprecated public class UtilityBasedComparator implements BinaryRelation<GraphMapping> {
 
     private final MapHeuristic h;
 
-    public UtilityBasedComparator(DBInterface db,
-            Graph s1, Graph s2, Map<Node,Node> m1, Map<Node,Node> m2,
-            final MapHeuristic h) {
-        super(db, s1, s2, m1, m2,
-                new Function<Judgement, T5<DBInterface, Graph, Graph,
-                    Map<Node,Node>, Map<Node,Node>>>() {
-
-            @Override
-            public Judgement implementation(T5<DBInterface, Graph, Graph, Map<Node, Node>, Map<Node, Node>> args) {
-                double v1 = h.getValue(args.a2(), args.a3(), args.a4());
+    public UtilityBasedComparator(final MapHeuristic h) {
+    	this.h = h;
+    }
+                @Override
+            public boolean apply(T2<SearchState,SearchState> args) {
+                double v1 = Funcles.apply(h, args.a1().);
                 double v2 = h.getValue(args.a2(), args.a3(), args.a5());
-                if( v1 > v2 ) return Judgement.FIRST_IS_BETTER;
-                if( v2 > v1 ) return Judgement.SECOND_IS_BETTER;
-                return Judgement.EQUIVALENT;
+                if( v1 >= v2 ) return true;
+                if( v2 > v1 ) return false;
             }
         });
         this.h = h;

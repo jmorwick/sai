@@ -20,7 +20,7 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 package sai.comparison.mapgenerators.search;
 
 import sai.Node;
-import sai.comparison.mapgenerators.search.SearchState;
+import sai.comparison.mapgenerators.search.GraphMapping;
 
 /**
  * An intermediate search state in which a single node to be mapped is chosen,
@@ -29,7 +29,7 @@ import sai.comparison.mapgenerators.search.SearchState;
  * @author jmorwick
  * @version 2.0.0
  */
-public class NodeChoiceSearchState extends SearchState {
+public class NodeChoiceSearchState extends GraphMapping {
     private final Node n;
 
     public NodeChoiceSearchState(Map<Node,Node> m, 

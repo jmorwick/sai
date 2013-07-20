@@ -21,19 +21,21 @@ package sai.maintenance;
 
 import info.km.funcles.BinaryRelation;
 import info.km.funcles.Funcles;
+import info.km.funcles.ProcessingThread;
 import info.km.funcles.T2;
-import info.km.funcles.Tuple;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Sets;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
 
 import sai.DBInterface;
 import sai.Graph;
 import sai.indexing.Index;
+
+import static info.km.funcles.Tuple.makeTuple;
 
 /**
  * Updates compatibility relationships between indices to assist in hierarchical 
@@ -42,98 +44,93 @@ import sai.indexing.Index;
  * @version 0.2.0
  * @author Joseph Kendall-Morwick
  */
-public class IndexCompatabilityChecker extends MaintenanceTask {
+public class IndexCompatabilityChecker 
+implements Supplier<List<T2<Integer,Integer>>> {
 
-    private List<Function<T2<Graph,Graph>,BinaryRelation<Graph>>> comparatorFactories =
-            new ArrayList<Function<T2<Graph,Graph>,BinaryRelation<Graph>>>();
-    private DBInterface db;
-    private final long timeIncrement;
-    private Index currentSubgraphCandidate;
-    private Index currentSupergraphCandidate;
-    private long elapsedTime = 0;
-    boolean done = false;
-    boolean complete = true;
-    private Iterator<Index> progress1;
-    private Iterator<Index> progress2;
-    private List<BinaryRelation<Graph>> activeComparators = new ArrayList<BinaryRelation<Graph>>();
-    private final long maxTime;
+	private List<BinaryRelation<Graph>> compatibilityCheckers = Lists.newArrayList();
+	private DBInterface db;
+	private int numThreads;
+	private final long maxTime;
+	private List<ProcessingThread<T2<Graph,Graph>,Boolean>>
+	activeComparisons = Lists.newArrayList();
+	private final Object LOCK = new Object();
 
-    public IndexCompatabilityChecker(DBInterface db, long maxTime,
-            long timeIncrement, Function<T2<Graph,Graph>,BinaryRelation<Graph>> ... comparatorFactories) {
-        this.timeIncrement = timeIncrement;
-        this.maxTime = maxTime;
-        this.db = db;
-      
-        if(comparatorFactories.length == 0) throw new IllegalArgumentException("Need at least one comparator");
-        for(Function<T2<Graph,Graph>,BinaryRelation<Graph>> f : comparatorFactories) 
-        	this.comparatorFactories.add(f);
-        progress1 = db.getIndexIterator();
-        progress2 = db.getIndexIterator();
-        currentSubgraphCandidate = progress1.next();
-        currentSupergraphCandidate = progress2.next();
-        if(currentSubgraphCandidate == null) done = true;
-        else {
-            nextPair();
-            if(!done) {
-                for(Function<T2<Graph,Graph>,BinaryRelation<Graph>> f : comparatorFactories)
-                    activeComparators.add(f.apply(Tuple.makeTuple((Graph)currentSubgraphCandidate, (Graph)currentSupergraphCandidate)));
-            }
-        }
-        
-    }
+	public IndexCompatabilityChecker(DBInterface db, long maxTime,
+			int numThreads, 
+			BinaryRelation<Graph> ... comparatorFactories) {
+		this.numThreads = numThreads;
+		this.maxTime = maxTime;
+		this.db = db;
 
-    private void nextPair() {
-        activeComparators.clear();
-        if(progress2.hasNext()) {
-            elapsedTime = 0;
-            currentSupergraphCandidate = progress2.next();
-        } else if(progress1.hasNext()) {
-            if(complete && !currentSubgraphCandidate.checkedForSubgraphRelationships()) {
-                db.updateDB("UPDATE graph_instances SET checked = TRUE WHERE id = " + currentSubgraphCandidate.getID());
-            }
-            elapsedTime = 0;
-            complete = true;
-            progress2 = db.getIndexIterator();
-            currentSubgraphCandidate = progress1.next();
-            currentSupergraphCandidate = progress2.next();
-        } else {
-            if(complete) {
-                db.updateDB("UPDATE graph_instances SET checked = TRUE WHERE id = " + currentSubgraphCandidate.getID());
-            }
-            done = true;
-            return;
-        }
-        for(Function<T2<Graph,Graph>,BinaryRelation<Graph>> f : comparatorFactories)
-            activeComparators.add(Funcles.apply(f, (Graph)currentSubgraphCandidate, (Graph)currentSupergraphCandidate));
-        if(currentSubgraphCandidate.getID() == currentSupergraphCandidate.getID()) nextPair();
-    }
+		if(comparatorFactories.length == 0) throw new IllegalArgumentException("Need at least one comparator");
+		for(BinaryRelation<Graph> r : comparatorFactories) 
+			this.compatibilityCheckers.add(r);
+	}
 
-    public void nextIteration() {
-        while(!isDone() &&
-              currentSubgraphCandidate.checkedForSubgraphRelationships() &&
-              currentSupergraphCandidate.checkedForSubgraphRelationships() 
-              )
-            nextPair();
+	@Override
+	public List<T2<Integer,Integer>> get() {
+		List<T2<Integer,Integer>> results = Lists.newArrayList();
+		Iterator<Index> progress1 = db.getIndexIterator();
 
+		while(progress1.hasNext()) {
+			Index i1 = progress1.next();
+			Iterator<Index> progress2 = db.getIndexIterator();
+			while(progress2.hasNext()) {
+				Index i2 = progress1.next();
+				if(i2.getID() == i1.getID()) continue;
 
-        for(BinaryRelation<Graph> c : Sets.newHashSet(activeComparators)) {
-            c.waitTillDone(timeIncrement);
-            elapsedTime += timeIncrement;
-            if(elapsedTime > maxTime) {
-                complete = false;
-                c.kill();
-                nextPair();
-            }
-            if(c.done()) {
-                if(c.isSubgraph()) {
-                    db.addIndex(currentSupergraphCandidate, currentSubgraphCandidate);
-                }
-                nextPair();
-            }
-        }
-    }
+				boolean foundAnswer = false; //set to true when an answer for this pair is found
+				for(BinaryRelation<Graph> r : compatibilityCheckers) {
+					if(foundAnswer) continue;
 
-    public boolean isDone() {
-        return done;
-    }
+					//start new thread
+					synchronized(LOCK) { //prevent thread from finishing and signaling before we wait
+						ProcessingThread<T2<Graph,Graph>,Boolean> pt = 
+								Funcles.applyInBackground(r, i1, i2);
+						pt.suggestProcessingTime(maxTime);
+						pt.wakeUpWhenDone(LOCK);
+						activeComparisons.add(pt);
+
+						//wait for one to finish if to many are running
+						if(activeComparisons.size() == numThreads)
+							try {
+								LOCK.wait();
+							} catch (InterruptedException e) {
+								//TODO: ignore here?
+							}
+					}
+					//process completed threads
+					Iterator<ProcessingThread<T2<Graph,Graph>,Boolean>> i = activeComparisons.iterator();
+					List<T2<Index,Index>> haltAll = Lists.newArrayList();
+					while(i.hasNext()) {
+						ProcessingThread<T2<Graph,Graph>,Boolean> pt = i.next();
+						if(!pt.isAlive()) {
+							if(pt.getResult() != null) {
+								i.remove();
+
+								//stop all other running checkers for this pair
+								if(pt.getInput().a1().getID() == i1.getID() &&
+										pt.getInput().a2().getID() == i2.getID())
+									foundAnswer = true;
+								haltAll.add(makeTuple(i1,i2));
+
+								//if compatible, record this compatibility
+								if(pt.getResult())
+									db.indexedBy(i1, i2);  // TODO: right order?
+							}
+						} else {
+							if(pt.getRunTime() > maxTime)
+								pt.kill();
+						}
+					}
+					for(ProcessingThread<T2<Graph,Graph>,Boolean> pt : activeComparisons) {
+						if(haltAll.contains(pt.getInput()))
+							pt.kill();
+					}
+				}
+			}
+		}
+
+		return results;
+	}
 }

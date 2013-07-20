@@ -19,6 +19,9 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
 package sai.indexing.retrievers.path;
 
+import info.km.funcles.T2;
+
+import java.util.List;
 import java.util.Set;
 
 import sai.DBInterface;
@@ -26,6 +29,7 @@ import sai.DBInterfaceTest;
 import sai.Graph;
 import sai.comparison.subgraphcomparators.CompleteSubgraphComparator;
 import sai.indexing.Index;
+import sai.maintenance.IndexCompatabilityChecker;
 import sai.maintenance.IndexConsolidator;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -45,9 +49,6 @@ import static org.junit.Assert.*;
  * @author jmorwick
  */
 public class Path1IndexRetrievalTest {
-
-    public LinkIndexRetrieverTest() {
-    }
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -85,10 +86,9 @@ public class Path1IndexRetrievalTest {
         Graph g2 = db.loadStructureFromDatabase(2);
         db.indexGraph(g1);
         db.indexGraph(g2);
-        IndexCompatibilityChecker checker = getCompleteChecker(db, 10000, 1000);
-        while(!checker.isDone()) {  //check db with no indices
-            checker.nextIteration();
-        }
+        IndexCompatabilityChecker checker = getCompleteChecker(db, 10000, 3);
+      //TODO: add tests for list return value
+      	List<T2<Integer, Integer>> collapsed = checker.get();
         IndexConsolidator ic = new IndexConsolidator(db);
         while(!ic.isDone()) ic.nextIteration();
         Set<Index> s1 = db.getIndices(g1);
@@ -112,10 +112,9 @@ public class Path1IndexRetrievalTest {
         g2 = db2.loadStructureFromDatabase(2);
         db2.indexGraph(g1);
         db2.indexGraph(g2);
-        checker = getCompleteChecker(db2, 10000, 1000);
-        while(!checker.isDone()) {  //check db with no indices
-            checker.nextIteration();
-        }
+        checker = getCompleteChecker(db, 10000, 2);
+      //TODO: add tests for list return value
+      	collapsed = checker.get();
         ic = new IndexConsolidator(db2);
         while(!ic.isDone()) {
             ic.nextIteration();

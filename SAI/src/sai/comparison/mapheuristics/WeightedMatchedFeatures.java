@@ -38,7 +38,7 @@ import sai.Graph;
 import sai.Node;
 import sai.comparison.MapHeuristic;
 import sai.comparison.Util;
-import sai.comparison.mapgenerators.search.SearchState;
+import sai.comparison.mapgenerators.search.GraphMapping;
 
 /**
  * A map heuristic which sums weightings for the number of compatibility
@@ -85,7 +85,7 @@ public class WeightedMatchedFeatures extends MapHeuristic {
     }
 
     @Override
-    public Double apply(T3<Graph,Graph,SearchState> args) {
+    public Double apply(T3<Graph,Graph,GraphMapping> args) {
     	Graph g1 = args.a1(); 
     	Graph g2 = args.a2(); 
     	Map<Node, Node> m = args.a3();

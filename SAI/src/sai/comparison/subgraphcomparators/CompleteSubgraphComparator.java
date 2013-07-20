@@ -75,19 +75,16 @@ public class CompleteSubgraphComparator implements BinaryRelation<Graph> {
     	Graph sup = args.a2();
                 BigInteger numMappings = Util.getNumberOfCompleteMappings(
                         sub,
-                        sup,
-                        featureTypes);
+                        sup);
                 Multimap<Node, Node> possibilities = Util.nodeCompatibility(
                         sub,
-                        sup,
-                        featureTypes);
+                        sup);
                 BigInteger currentMapping = BigInteger.ZERO;
 
                 //make sure the features for the graphs themselves are compatible
-                if(!db.FeatureSetsCompatible(
+                if(!db.featureSetsCompatible(
                         sub.getFeatures(),
-                        sup.getFeatures(),
-                        featureTypes)) {
+                        sup.getFeatures())) {
                     return false;
                 }
 
@@ -99,7 +96,7 @@ public class CompleteSubgraphComparator implements BinaryRelation<Graph> {
                     } else if(Util.matchedEdges(
                             sub,
                         sup,
-                        map, Util.completeEdgeMatchCounter, featureTypes) ==
+                        map, Util.completeEdgeMatchCounter) ==
                         sub.edgeSet().size() &&
                         map.size() == sup.vertexSet().size()) {
                         return true;

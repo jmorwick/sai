@@ -27,7 +27,7 @@ import info.km.funcles.T3;
 import info.km.funcles.Tuple;
 import sai.Graph;
 import sai.Node;
-import sai.comparison.mapgenerators.search.SearchState;
+import sai.comparison.mapgenerators.search.GraphMapping;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 
@@ -38,17 +38,17 @@ import com.google.common.collect.Sets;
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
-public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchState>,Double>{
+public abstract class MapHeuristic implements Function<T3<Graph,Graph,GraphMapping>,Double>{
 
 	public Double apply(Graph g1, Graph g2, Map<Node,Node> m) {
-		return apply(Tuple.makeTuple(g1, g2, new SearchState(m)));
+		return apply(Tuple.makeTuple(g1, g2, new GraphMapping(m)));
 	}
 	
 	
     public static final MapHeuristic AVOID_LOWER_DEGREE = new MapHeuristic() {
 
         @Override
-        public Double apply(T3<Graph,Graph,SearchState> args) {
+        public Double apply(T3<Graph,Graph,GraphMapping> args) {
         	Graph g1 = args.a1();
         	Graph g2 = args.a2();
         	Map<Node,Node> m = args.a3();
@@ -72,7 +72,7 @@ public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchStat
     public static final MapHeuristic AVOID_LOWER_OUT_DEGREE = new MapHeuristic() {
 
         @Override
-        public Double apply(T3<Graph,Graph,SearchState> args) {
+        public Double apply(T3<Graph,Graph,GraphMapping> args) {
         	Graph g1 = args.a1();
         	Graph g2 = args.a2();
         	Map<Node,Node> m = args.a3();
@@ -96,7 +96,7 @@ public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchStat
     public static final MapHeuristic AVOID_LOWER_IN_DEGREE = new MapHeuristic() {
 
         @Override
-        public Double apply(T3<Graph,Graph,SearchState> args) {
+        public Double apply(T3<Graph,Graph,GraphMapping> args) {
         	Graph g1 = args.a1();
         	Graph g2 = args.a2();
         	Map<Node,Node> m = args.a3();
@@ -119,7 +119,7 @@ public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchStat
     public static final MapHeuristic AVOID_HIGHER_DEGREE = new MapHeuristic() {
 
         @Override
-        public Double apply(T3<Graph,Graph,SearchState> args) {
+        public Double apply(T3<Graph,Graph,GraphMapping> args) {
         	Graph g1 = args.a1();
         	Graph g2 = args.a2();
         	Map<Node,Node> m = args.a3();
@@ -144,7 +144,7 @@ public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchStat
     public static final MapHeuristic AVOID_HIGHER_OUT_DEGREE = new MapHeuristic() {
 
         @Override
-        public Double apply(T3<Graph,Graph,SearchState> args) {
+        public Double apply(T3<Graph,Graph,GraphMapping> args) {
         	Graph g1 = args.a1();
         	Graph g2 = args.a2();
         	Map<Node,Node> m = args.a3();
@@ -168,7 +168,7 @@ public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchStat
     public static final MapHeuristic AVOID_HIGHER_IN_DEGREE = new MapHeuristic() {
 
         @Override
-        public Double apply(T3<Graph,Graph,SearchState> args) {
+        public Double apply(T3<Graph,Graph,GraphMapping> args) {
         	Graph g1 = args.a1();
         	Graph g2 = args.a2();
         	Map<Node,Node> m = args.a3();
@@ -198,7 +198,7 @@ public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchStat
         private Map<T2<Node,Node>,Double> g2Dist;
 
         @Override
-        public Double apply(T3<Graph,Graph,SearchState> args) {
+        public Double apply(T3<Graph,Graph,GraphMapping> args) {
         	Graph g1 = args.a1();
         	Graph g2 = args.a2();
         	Map<Node,Node> m = args.a3();

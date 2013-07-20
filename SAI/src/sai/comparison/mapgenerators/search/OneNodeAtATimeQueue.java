@@ -35,7 +35,7 @@ import sai.Graph;
 import sai.Node;
 import sai.comparison.MapHeuristic;
 import sai.comparison.mapgenerators.search.HeuristicPriorityQueue;
-import sai.comparison.mapgenerators.search.SearchState;
+import sai.comparison.mapgenerators.search.GraphMapping;
 
 /**
  * A search queue with a 2-phase expansion: 1 for selecting which node to
@@ -66,7 +66,7 @@ public class OneNodeAtATimeQueue extends HeuristicPriorityQueue {
     }
 
     @Override
-    public SearchState popState() {
+    public GraphMapping popState() {
 
 
             /***************************  DEBUG *************************
@@ -85,9 +85,9 @@ public class OneNodeAtATimeQueue extends HeuristicPriorityQueue {
 
         if(System.currentTimeMillis() - startTime < bfsTime) {
             System.out.println("Breadth");
-            List<SearchState> ls = Lists.newArrayList(this.getQueue());
-            SearchState s = ls.get(0);
-            for(SearchState ss : ls) {
+            List<GraphMapping> ls = Lists.newArrayList(this.getQueue());
+            GraphMapping s = ls.get(0);
+            for(GraphMapping ss : ls) {
                 if(ss.getMap().size() < s.getMap().size() ||
                    (
                      ss.getMap().size() == s.getMap().size()) &&
@@ -121,7 +121,7 @@ public class OneNodeAtATimeQueue extends HeuristicPriorityQueue {
             //***************************  END DEBUG *************************/
 
     @Override
-    public void expand(SearchState state, Multimap<Node, Node> possibilities) {
+    public void expand(GraphMapping state, Multimap<Node, Node> possibilities) {
             //***************************  DEBUG *************************
             System.out.println("expanding state " + state.hashCode());
             //***************************  END DEBUG *************************/
@@ -215,12 +215,12 @@ public class OneNodeAtATimeQueue extends HeuristicPriorityQueue {
 
 
     @Override
-    public Comparator<SearchState> getDefaultQueueComparator() {
-        final Comparator<SearchState> supercomp = super.getDefaultQueueComparator();
+    public Comparator<GraphMapping> getDefaultQueueComparator() {
+        final Comparator<GraphMapping> supercomp = super.getDefaultQueueComparator();
 
-        return new Comparator<SearchState>() {
+        return new Comparator<GraphMapping>() {
 
-            public int compare(SearchState s1, SearchState s2) {
+            public int compare(GraphMapping s1, GraphMapping s2) {
 
                 int orig =  supercomp.compare(s1, s2);
                 if(orig != 0) return orig;

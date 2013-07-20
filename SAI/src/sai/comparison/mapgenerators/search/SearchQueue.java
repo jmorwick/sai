@@ -85,12 +85,12 @@ public abstract class SearchQueue {
 
         Map<Node, Node> m = Maps.newHashMap();
         possibilities = Util.nodeCompatibility(g1, g2, types);
-        SearchState s = new SearchState(m, possibilities);
+        GraphMapping s = new GraphMapping(m, possibilities);
         limitPossibilities(s);
         queueState(s);
     }
 
-    public Multimap<Node,Node> limitPossibilities(SearchState s) {
+    public Multimap<Node,Node> limitPossibilities(GraphMapping s) {
         Multimap<Node,Node> possibilities = HashMultimap.create(possibilities);
         int newsize = -1;
         int oldsize = s.getMap().size();
@@ -110,7 +110,7 @@ public abstract class SearchQueue {
         return possibilities;
     }
 
-    public abstract void queueState(SearchState s);
+    public abstract void queueState(GraphMapping s);
 
     public abstract void expand();
 

@@ -32,7 +32,7 @@ import sai.Edge;
 import sai.Graph;
 import sai.Node;
 import sai.comparison.MapHeuristic;
-import sai.comparison.mapgenerators.search.SearchState;
+import sai.comparison.mapgenerators.search.GraphMapping;
 
 
 /**
@@ -44,12 +44,12 @@ import sai.comparison.mapgenerators.search.SearchState;
  */
 public class BasicEdgeCount extends MapHeuristic {
 
-    public static int countMappedEdges(Graph g1, Graph g2, SearchState ss) {
+    public static int countMappedEdges(Graph g1, Graph g2, GraphMapping ss) {
         return (int)(double)(new BasicEdgeCount()).apply(Tuple.makeTuple(g1, g2, ss));
     }
 
     @Override
-	public Double apply(T3<Graph, Graph, SearchState> args) {
+	public Double apply(T3<Graph, Graph, GraphMapping> args) {
     		Graph g1 = args.a1();
     		Graph g2 = args.a2();
     		Map<Node, Node> m = args.a3();

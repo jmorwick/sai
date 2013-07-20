@@ -27,28 +27,35 @@ import com.google.common.collect.Multimap;
 import sai.Node;
 
 /**
- *A state within a search for mappings between two graphs.
+ *A mapping between the components of two graphs.  This may be a 
+ *partial mapping, may not be maximal, and may be annotated as an 
+ *intermediate search state in a search for a more complete mapping.
  * 
  * @author jmorwick
  * @version 2.0.0
  */
-public class SearchState extends HashMap<Node,Node> {
+
+//TODO: 1) remove this class, 2) extend beyond node map, 3) never map edges/etc?
+//TODO: redo to base off of jgrapht's graph mapping
+//TODO: look up comparison algorithms used with jgrapht- do best to make these compatible
+
+@Deprecated public class GraphMapping extends HashMap<Node,Node> {
     private Multimap<Node,Node> possibilities;
 
-    public SearchState() {
+    public GraphMapping() {
     	//leave possibilities null to signify no restrictions (all possibilities)
     }
     
-    public SearchState(Map<Node,Node> m) {
+    public GraphMapping(Map<Node,Node> m) {
     	super(m);
     }
     
-    public SearchState(Multimap<Node,Node> possibilities) {
+    public GraphMapping(Multimap<Node,Node> possibilities) {
         this.possibilities = possibilities;
     }
 
     
-    public SearchState(Map<Node,Node> m, Multimap<Node,Node> possibilities) {
+    public GraphMapping(Map<Node,Node> m, Multimap<Node,Node> possibilities) {
     	super(m);
         this.possibilities = possibilities;
     }
