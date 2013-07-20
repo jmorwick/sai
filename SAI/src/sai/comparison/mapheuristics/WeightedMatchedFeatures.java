@@ -16,23 +16,35 @@ You should have received a copy of the Lesser GNU General Public License
 along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-package org.dataandsearch.sai.comparison.mapheuristics;
+package sai.comparison.mapheuristics;
 
-import info.kendallmorwick.util.Map;
-import info.kendallmorwick.util.MultiMap;
-import info.kendallmorwick.util.Set;
-import info.kendallmorwick.util.function.Function;
-import info.kendallmorwick.util.tuple.T2;
-import info.kendallmorwick.util.tuple.Tuple;
-import org.dataandsearch.sai.Edge;
-import org.dataandsearch.sai.Feature;
-import org.dataandsearch.sai.Graph;
-import org.dataandsearch.sai.Node;
-import org.dataandsearch.sai.comparison.MapHeuristic;
+import info.km.funcles.Funcles;
+import info.km.funcles.T2;
+import info.km.funcles.T3;
+import info.km.funcles.Tuple;
+
+import java.util.Map;
+import java.util.Set;
+
+import com.google.common.base.Function;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
+
+import sai.Edge;
+import sai.Feature;
+import sai.Graph;
+import sai.Node;
+import sai.comparison.MapHeuristic;
+import sai.comparison.Util;
+import sai.comparison.mapgenerators.search.SearchState;
 
 /**
  * A map heuristic which sums weightings for the number of compatibility
  * relationships between a variety of types of features, induced by the mapping.
+ *
+ * TODO: re-implement caching
  *
  * @version 0.2.0
  * @author Joseph Kendall-Morwick <jmorwick@indiana.edu>
@@ -41,7 +53,7 @@ public class WeightedMatchedFeatures extends MapHeuristic {
 
     private final double mappedEdgeValue;
     private Map<Class<? extends Feature>, Double> values =
-            new Map<Class<? extends Feature>, Double>();
+            Maps.newHashMap();
     private Graph g1C = null;
     private Graph g2C = null;
 
@@ -54,8 +66,8 @@ public class WeightedMatchedFeatures extends MapHeuristic {
         for (T2<? extends Class<? extends Feature>, Double> t : featureValues) {
             values.put(t.a1(), t.a2());
         }
-        matchFeatures.startCaching();
-        getMatchingClass.startCaching();
+        //startCaching(matchFeatures);
+        //startCaching(getMatchingClass);
         this.directed = directed;
     }
 
@@ -67,22 +79,25 @@ public class WeightedMatchedFeatures extends MapHeuristic {
         for (T2<? extends Class<? extends Feature>, Double> t : featureValues) {
             values.put(t.a1(), t.a2());
         }
-        matchFeatures.startCaching();
-        getMatchingClass.startCaching();
+        //matchFeatures.startCaching();
+        //getMatchingClass.startCaching();
         this.directed = directed;
     }
 
     @Override
-    public double getValue(Graph g1, Graph g2, Map<Node, Node> m) {
+    public Double apply(T3<Graph,Graph,SearchState> args) {
+    	Graph g1 = args.a1(); 
+    	Graph g2 = args.a2(); 
+    	Map<Node, Node> m = args.a3();
 
-        Map<Node,Node> rm = m.reverse();
+        Map<Node,Node> rm = Util.reverseMap(m);
 
         //clear the cache if we're looking at new graphs
         if (g1C == null || g2C == null
                 || (g1C != g1 && !g1C.equals(g1))
                 || g2C != g2 && !g2C.equals(g2)) {
-            matchFeatures.clearCache();
-            getMatchingClass.clearCache();
+            //matchFeatures.clearCache();
+            //getMatchingClass.clearCache();
             g1C = g1;
             g2C = g2;
         }
@@ -90,14 +105,14 @@ public class WeightedMatchedFeatures extends MapHeuristic {
         //calculate the maximum possible score
         double maxCount = 0;
         for (Feature f : g1.getFeatures()) {
-            Class<? extends Feature> c = getMatchingClass.f(f);
+            Class<? extends Feature> c = getMatchingClass.apply(f);
             if (c != null) {
                 maxCount += values.get(c);
             }
         }
         for (Edge e : g1.edgeSet()) {
             for (Feature f : e.getFeatures()) {
-                Class<? extends Feature> c = getMatchingClass.f(f);
+                Class<? extends Feature> c = getMatchingClass.apply(f);
                 if (c != null) {
                     maxCount += values.get(c);
                 }
@@ -105,14 +120,14 @@ public class WeightedMatchedFeatures extends MapHeuristic {
         }
         for (Node n : g1.vertexSet()) {
             for (Feature f : n.getFeatures()) {
-                Class<? extends Feature> c = getMatchingClass.f(f);
+                Class<? extends Feature> c = getMatchingClass.apply(f);
                 if (c != null) {
                     maxCount += values.get(c);
                 }
             }
         }
         
-        if(maxCount == 0) return 0;
+        if(maxCount == 0) return 0.0;
 
         //caclulate the score for this map
 
@@ -121,13 +136,13 @@ public class WeightedMatchedFeatures extends MapHeuristic {
                 g1.getFeatures(), g2.getFeatures());
 
         
-        MultiMap<T2<Node, Node>, Edge> available = new MultiMap<T2<Node, Node>, Edge>();
+        Multimap<T2<Node, Node>, Edge> available = HashMultimap.create();
         for (Edge e : g2.edgeSet()) {
-            available.add(Tuple.makeTuple(
+            available.put(Tuple.makeTuple(
                     g2.getEdgeSource(e),
                     g2.getEdgeTarget(e)), e);
             if(!directed)  //add the opposite direction too if the graph is not directed
-                available.add(Tuple.makeTuple(
+                available.put(Tuple.makeTuple(
                     g2.getEdgeTarget(e),
                     g2.getEdgeSource(e)), e);
         }
@@ -137,18 +152,18 @@ public class WeightedMatchedFeatures extends MapHeuristic {
             if (m.containsKey(n1) && m.containsKey(n2)) {  //if both nodes in the edge are mapped in the candidate map
                 T2<Node, Node> t = Tuple.makeTuple(m.get(n1), m.get(n2));
                 T2<Node, Node> tr = Tuple.makeTuple(m.get(n1), m.get(n2));
-                Function<Double, Edge> f = new Function<Double, Edge>() {
+                Function<Edge,Double> f = new Function<Edge,Double>() {
                     @Override
-                    public Double implementation(Edge e2) {
+                    public Double apply(Edge e2) {
                         return getMatchedValues(
                                 e.getFeatures(),
                                 e2.getFeatures());
                     }
                 };
                 if (available.get(t).size() > 0) {  //check to see if the edge is preserved
-                    Edge e2 = f.argmaxC(available.get(t));
+                    Edge e2 = Funcles.argmaxCollection(f,available.get(t));
                     available.remove(t, e2);
-                    count += f.f(e2);
+                    count += f.apply(e2);
                 }
             }
         }
@@ -161,20 +176,20 @@ public class WeightedMatchedFeatures extends MapHeuristic {
     }
 
     public double getMatchedValues(Set<Feature> s1, Set<Feature> s2) {
-        return matchFeatures.f(Tuple.makeTuple(s1, s2));
+        return matchFeatures.apply(Tuple.makeTuple(s1, s2));
     }
 
-    private Function<Double, T2<? extends Set<? extends Feature>, ? extends Set<? extends Feature>>> matchFeatures =
-            new Function<Double, T2<? extends Set<? extends Feature>, ? extends Set<? extends Feature>>>() {
+    private Function<T2<? extends Set<? extends Feature>, ? extends Set<? extends Feature>>,Double> matchFeatures =
+            new Function<T2<? extends Set<? extends Feature>, ? extends Set<? extends Feature>>,Double>() {
 
                 @Override
-                public Double implementation(T2<? extends Set<? extends Feature>, ? extends Set<? extends Feature>> args) {
+                public Double apply(T2<? extends Set<? extends Feature>, ? extends Set<? extends Feature>> args) {
                     Set<? extends Feature> fs1 = args.a1();
                     Set<? extends Feature> fs2 = args.a2();
                     double count = 0;
                     for (Feature f1 : fs1) {
-                        for (Feature f2 : fs2.copy()) {
-                            Class<? extends Feature> c = getMatchingClass.f(f2);
+                        for (Feature f2 : Sets.newHashSet(fs2)) {
+                            Class<? extends Feature> c = getMatchingClass.apply(f2);
                             if (f1.compatible(f2) && c != null) {
                                 count += values.get(c);
                                 break;
@@ -185,11 +200,11 @@ public class WeightedMatchedFeatures extends MapHeuristic {
                     return count;
                 }
             };
-    private Function<Class<? extends Feature>, Feature> getMatchingClass =
-            new Function<Class<? extends Feature>, Feature>() {
+    private Function<Feature, Class<? extends Feature>> getMatchingClass =
+            new Function<Feature, Class<? extends Feature>>() {
 
                 @Override
-                public Class<? extends Feature> implementation(Feature f) {
+                public Class<? extends Feature> apply(Feature f) {
                     for (Class<? extends Feature> c : values.keySet()) {
                         if (c.isInstance(f)) {
                             return c;

@@ -19,10 +19,20 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
 package sai.comparison.featuresetcomparators;
 
+import info.km.funcles.BinaryRelation;
+import info.km.funcles.T2;
+
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
+
 import sai.Feature;
-import sai.comparison.FeatureSetComparator;
 
 /**
  * This featureset comparator assumes that feature-mappings must be unique.
@@ -32,12 +42,15 @@ import sai.comparison.FeatureSetComparator;
  * @author jmorwick
  * @version 2.0.0
  */
-public class HopcraftKarp extends FeatureSetComparator {
+public class HopcraftKarp implements BinaryRelation<Set<? extends Feature>> {
 
-    @Override
-    public boolean compareFeatures(Set<? extends Feature> t1s, Set<? extends Feature> t2s) {
-        //Set<T2<Feature,Feature>> edges = new Set<T2<Feature,Feature>>();
-        Set<T2> edges = new Set<T2>();
+
+    public boolean apply(T2<Set<? extends Feature>,
+    		                Set<? extends Feature>> args) {
+        Set<? extends Feature> t1s = args.a1();
+        Set<? extends Feature> t2s = args.a2();
+        
+        Set<T2> edges = Sets.newHashSet();
         for(Feature f : t1s) {
             for (Feature f2 : t2s) {
                 if(f.compatible(f2))
@@ -54,11 +67,11 @@ public class HopcraftKarp extends FeatureSetComparator {
     public static <T extends T2> int HopcraftKarpMatch(
             Set g1, Set g2, Set<T> edges)
     {
-        Map<Object,Double> dist = new Map<Object,Double>();
-        Map pair = new Map();
-        MultiMap adj = new MultiMap();
+        Map<Object,Double> dist = Maps.newHashMap();
+        Map pair = Maps.newHashMap();
+        Multimap adj = HashMultimap.create();
         for(T e : edges) //initialize adjacency map
-            adj.add(e.a1(), e.a2());
+            adj.put(e.a1(), e.a2());
 
         int matching = 0;
         while(HKBFS(dist,pair,adj,g1,g2)) {
@@ -76,7 +89,7 @@ public class HopcraftKarp extends FeatureSetComparator {
     private static <T extends T2> boolean HKBFS(
             Map<Object,Double> dist,
             Map pair,
-            MultiMap adj,
+            Multimap adj,
             Set g1, Set g2)
     {
         Queue q = new LinkedList();
@@ -106,7 +119,7 @@ public class HopcraftKarp extends FeatureSetComparator {
     private static <T extends T2> boolean HKDFS(
             Map<Object,Double> dist,
             Map pair,
-            MultiMap adj,
+            Multimap adj,
             Set g1, Set g2,
             Object v)
     {

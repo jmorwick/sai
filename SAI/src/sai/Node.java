@@ -131,9 +131,8 @@ public class Node implements Comparable {
      * @param featureTypes
      * @return
      */
-    public boolean compatible(Node n2, Class<? extends Feature> ... featureTypes) {
-        return parent.getDB().FeatureSetsCompatible(getFeatures(), n2.getFeatures(),
-                featureTypes);
+    public boolean compatible(Node n2) {
+        return parent.getDB().featureSetsCompatible(getFeatures(), n2.getFeatures());
     }
 
     @Override

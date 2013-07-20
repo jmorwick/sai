@@ -17,10 +17,19 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
 
-package org.dataandsearch.sai.comparison.mapgenerators.search;
+package sai.comparison.mapgenerators.search;
 
 
 import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static info.km.funcles.Tuple.makeTuple;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
+
 import sai.Feature;
 import sai.Graph;
 import sai.Node;
@@ -76,14 +85,14 @@ public class OneNodeAtATimeQueue extends HeuristicPriorityQueue {
 
         if(System.currentTimeMillis() - startTime < bfsTime) {
             System.out.println("Breadth");
-            List<SearchState> ls = new List<SearchState>(this.getQueue());
+            List<SearchState> ls = Lists.newArrayList(this.getQueue());
             SearchState s = ls.get(0);
             for(SearchState ss : ls) {
                 if(ss.getMap().size() < s.getMap().size() ||
                    (
                      ss.getMap().size() == s.getMap().size()) &&
-                       getQueueHeuristic().getValue(getGraph1(), getGraph2(), ss) >
-                       getQueueHeuristic().getValue(getGraph1(), getGraph2(), s))
+                       getQueueHeuristic().apply(makeTuple(getGraph1(), getGraph2(), ss)) <
+                       getQueueHeuristic().apply(makeTuple(getGraph1(), getGraph2(), s)))
                     s = ss;
             }
             this.getQueue().remove(s);
@@ -112,12 +121,12 @@ public class OneNodeAtATimeQueue extends HeuristicPriorityQueue {
             //***************************  END DEBUG *************************/
 
     @Override
-    public void expand(SearchState state, MultiMap<Node, Node> possibilities) {
+    public void expand(SearchState state, Multimap<Node, Node> possibilities) {
             //***************************  DEBUG *************************
             System.out.println("expanding state " + state.hashCode());
             //***************************  END DEBUG *************************/
         Map<Node, Node> m = state.getMap();
-        Set<Integer> mapped = new Set<Integer>();
+        Set<Integer> mapped = Sets.newHashSet();
         for(Node n : m.keySet()) mapped.add(n.getID());
         
         if (m.keySet().size() == getGraph1().vertexSet().size()) {
@@ -198,7 +207,9 @@ public class OneNodeAtATimeQueue extends HeuristicPriorityQueue {
     /** determines whether or not the node is not connected to any unmapped nodes.  It is
         considered 'isolated' if it is not connected to an unmapped node.  */
     public static boolean isIsolated(Graph g, Map<Node,Node> m, Node n) {
-        return g.getLinkedFromNodes(n).union(g.getLinkedToNodes(n)).difference(m.keySet()).size() == 0;
+        return Sets.difference(
+        		 Sets.union(g.getLinkedFromNodes(n), g.getLinkedToNodes(n)), 
+        		 m.keySet()).size() == 0;
     }
 
 

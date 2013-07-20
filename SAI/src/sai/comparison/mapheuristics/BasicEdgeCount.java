@@ -52,7 +52,7 @@ public class BasicEdgeCount extends MapHeuristic {
 	public Double apply(T3<Graph, Graph, SearchState> args) {
     		Graph g1 = args.a1();
     		Graph g2 = args.a2();
-    		Map<Node, Node> m = args.a3().getMap();
+    		Map<Node, Node> m = args.a3();
             if(g1.edgeSet().size() == 0) return 0.0;
             int count = 0;
             Multiset<T2<Node,Node>> available = HashMultiset.create();

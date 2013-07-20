@@ -18,9 +18,17 @@
  */
 package sai;
 
+import info.km.funcles.Funcles;
+import info.km.funcles.T2;
+
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
+
+import com.google.common.collect.Maps;
+import static info.km.funcles.Tuple.makeTuple;
 import sai.comparison.MapGenerator;
 import sai.comparison.MapHeuristic;
 import sai.indexing.Index;
@@ -106,20 +114,20 @@ public class RetrievalInterface {
         final Set<Index> indices = db.findIndices(query);
         lastRetrievedIndexSetSize = indices.size();
         final Iterator<Graph> ir = r.retrieve(indices);
-        final Map<Graph, Double> utility = new Map<Graph,Double>();
-        final Map<Graph,Map<Node,Node>> maps = new Map<Graph,Map<Node,Node>>();
+        final Map<Graph, Double> utility = Maps.newHashMap();
+        final Map<Graph,Map<Node,Node>> maps = Maps.newHashMap();
         final PriorityQueue<Graph> retrievalQueue =
                 new PriorityQueue<Graph>(directComparisonRetrievalSize,
                 new Comparator<Graph>() {
 
             public int compare(Graph o1, Graph o2) {
                 if(!utility.containsKey(o1)) {
-                    maps.put(o1, gen.findBestSubgraphMapping(query, o1));
-                    utility.put(o1, h.getValue(query, o1, maps.get(o1)));
+                    maps.put(o1, Funcles.apply(gen, query, o1));
+                    utility.put(o1, h.apply(query, o1, maps.get(o1)));
                 }
                 if(!utility.containsKey(o2)) {
-                    maps.put(o2, gen.findBestSubgraphMapping(query, o2));
-                    utility.put(o2, h.getValue(query, o2, maps.get(o2)));
+                    maps.put(o2, Funcles.apply(gen, query, o2));
+                    utility.put(o2, h.apply(query, o2, maps.get(o2)));
                 }
                 return utility.get(o1) > utility.get(o2) ? -1 :
                     utility.get(o1) > utility.get(o2) ? 1 : 0;
@@ -140,11 +148,11 @@ public class RetrievalInterface {
 
                 Graph g = retrievalQueue.remove();
                 if(!maps.containsKey(g))
-                    maps.put(g, gen.findBestSubgraphMapping(query, g));
+                    maps.put(g, gen.apply(makeTuple(query, g)));
 
                 lastRetrievedGraphID = g.getID();
 
-                return Tuple.makeTuple(g,maps.get(g));
+                return makeTuple(g,maps.get(g));
             }
 
             public void remove() {

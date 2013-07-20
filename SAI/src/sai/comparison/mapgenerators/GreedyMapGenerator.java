@@ -24,6 +24,7 @@ import sai.comparison.MapHeuristic;
 import sai.comparison.mapgenerators.search.HeuristicPriorityQueue;
 import sai.comparison.mapgenerators.search.OneNodeAtATimeQueue;
 import sai.comparison.mapgenerators.search.SearchState;
+import com.google.common.collect.Multimap;
 
 /**
  * Performs a BFS search with no backtracking. 
@@ -40,7 +41,7 @@ public class GreedyMapGenerator extends SearchMapGenerator {
         //super(new HeuristicPriorityQueue(h, featureTypes) {
 
             @Override
-            public void expand(SearchState state, MultiMap<Node, Node> possibilities) {
+            public void expand(SearchState state, Multimap<Node, Node> possibilities) {
                 super.expand(state, possibilities);
 
                 //remove everything but the top-rated map

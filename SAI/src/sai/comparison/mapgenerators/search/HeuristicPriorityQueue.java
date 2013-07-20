@@ -20,7 +20,11 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 package sai.comparison.mapgenerators.search;
 
 import com.google.common.collect.MinMaxPriorityQueue;
+
+import info.km.funcles.Funcles;
+import static info.km.funcles.Tuple.makeTuple;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.Map.Entry;
 import sai.Feature;
 import sai.Graph;
@@ -125,7 +129,7 @@ public class HeuristicPriorityQueue extends SearchQueue {
     public MapHeuristic getJudgeHeuristic() { return judgeHueristic; }
 
     public void considerMap(Map<Node, Node> m) {
-        double score = judgeHueristic.getValue(getGraph1(), getGraph2(), m);
+        double score = judgeHueristic.apply(makeTuple(getGraph1(), getGraph2(), m));
         if (score > bestScore || (score == bestScore && m.size() > bestSize)) {
             //System.out.println("new best: " + score);
             bestScore = score;

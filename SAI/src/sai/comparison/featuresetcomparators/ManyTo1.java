@@ -19,7 +19,11 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 package sai.comparison.featuresetcomparators;
 
 import sai.Feature;
-import sai.comparison.FeatureSetComparator;
+import info.km.funcles.BinaryRelation;
+import info.km.funcles.T2;
+
+import java.util.Set;
+
 
 /**
  * A quadratic-worst-case feature-set comparison algorithm which allows one
@@ -28,7 +32,7 @@ import sai.comparison.FeatureSetComparator;
  * @author jmorwick
  * @version 2.0.0
  */
-public class ManyTo1 extends FeatureSetComparator {
+public class ManyTo1 implements BinaryRelation<Set<? extends Feature>> {
 
     /** returns true if each feature in t1s is subsumed by at least one
      * feature in t2s, allowing repeats.  
@@ -36,9 +40,10 @@ public class ManyTo1 extends FeatureSetComparator {
      * @param t2s
      * @return
      */
-    public boolean compareFeatures(
-            Set<? extends Feature> t1s,
-            Set<? extends Feature> t2s) {
+    public boolean apply(T2<Set<? extends Feature>,
+    		                Set<? extends Feature>> args) {
+        Set<? extends Feature> t1s = args.a1();
+        Set<? extends Feature> t2s = args.a2();
         for(Feature t1 : t1s) {
             boolean foundMatch = false;
             for(Feature t2 : t2s) {

@@ -19,6 +19,12 @@
 
 package sai.comparison.mapgenerators.search;
 
+import java.util.Map;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+
 import sai.Feature;
 import sai.Graph;
 import sai.Node;
@@ -31,15 +37,15 @@ import sai.comparison.Util;
  * @author Joseph Kendall-Morwick
  */
 public abstract class SearchQueue {
-    private MultiMap<Node, Node> possibilities = null;
+    private Multimap<Node, Node> possibilities = null;
     private Graph g1;
     private Graph g2;
     private Class<? extends Feature>[] types;
 
-    private Map<Node,Node> inleaves1 = new Map<Node,Node>();
-    private Map<Node,Node> outleaves1 = new Map<Node,Node>();
-    private Map<Node,Node> inleaves2 = new Map<Node,Node>();
-    private Map<Node,Node> outleaves2 = new Map<Node,Node>();
+    private Map<Node,Node> inleaves1 = Maps.newHashMap();
+    private Map<Node,Node> outleaves1 = Maps.newHashMap();
+    private Map<Node,Node> inleaves2 = Maps.newHashMap();
+    private Map<Node,Node> outleaves2 = Maps.newHashMap();
 
 
     public SearchQueue(Class<? extends Feature> ... types) {
@@ -64,28 +70,28 @@ public abstract class SearchQueue {
         //find leaves
         for(Node n : g1.vertexSet()) {
             if(g1.inDegreeOf(n) == 0 && g1.outDegreeOf(n) == 1) {
-                outleaves1.put(n,g1.getLinkedToNodes(n).getFirstElement());
+                outleaves1.put(n,g1.getLinkedToNodes(n).iterator().next());
             } else if(g1.inDegreeOf(n) == 1 && g1.outDegreeOf(n) == 0) {
-                inleaves1.put(n,g1.getLinkedFromNodes(n).getFirstElement());
+                inleaves1.put(n,g1.getLinkedFromNodes(n).iterator().next());
             }
         }
         for(Node n : g2.vertexSet()) {
             if(g2.inDegreeOf(n) == 0 && g2.outDegreeOf(n) == 1) {
-                outleaves2.put(n,g2.getLinkedToNodes(n).getFirstElement());
+                outleaves2.put(n,g2.getLinkedToNodes(n).iterator().next());
             } else if(g2.inDegreeOf(n) == 1 && g2.outDegreeOf(n) == 0) {
-                inleaves2.put(n,g2.getLinkedFromNodes(n).getFirstElement());
+                inleaves2.put(n,g2.getLinkedFromNodes(n).iterator().next());
             }
         }
 
-        Map<Node, Node> m = new Map<Node, Node>();
+        Map<Node, Node> m = Maps.newHashMap();
         possibilities = Util.nodeCompatibility(g1, g2, types);
         SearchState s = new SearchState(m, possibilities);
         limitPossibilities(s);
         queueState(s);
     }
 
-    public MultiMap<Node,Node> limitPossibilities(SearchState s) {
-        MultiMap<Node,Node> possibilities = this.possibilities.copy();
+    public Multimap<Node,Node> limitPossibilities(SearchState s) {
+        Multimap<Node,Node> possibilities = HashMultimap.create(possibilities);
         int newsize = -1;
         int oldsize = s.getMap().size();
         while(newsize != oldsize) {

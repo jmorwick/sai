@@ -21,9 +21,8 @@ package sai;
 import info.km.funcles.BinaryRelation;
 import info.km.funcles.Funcles;
 import info.km.funcles.T2;
-import info.km.funcles.Tuple;
-
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
@@ -38,9 +37,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.cache.Cache;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import sai.comparison.FeatureSetComparator;
 import sai.comparison.featuresetcomparators.ManyTo1;
 import sai.indexing.Index;
 import sai.indexing.IndexGenerator;
@@ -52,10 +52,24 @@ import sai.indexing.IndexRetriever;
  */
 public class DBInterface {
 
+	
+	private Map<Function,Cache> caches = Maps.newHashMap();
+	private void clearCache(Function f) {
+		if(caches.containsKey(f)) {
+			caches.get(f).invalidateAll();
+		}
+	}
+	private void clearCache(Function f, Object o) {
+		if(caches.containsKey(f)) {
+			caches.get(f).invalidate(o);
+		}
+	}
+	
+	
     //-------------------------  Basic Initialization --------------------------
     private static boolean driverLoaded = false;
     private DBInterface self = this; //used inside closures
-    private FeatureSetComparator fsc;
+    private BinaryRelation<Set<? extends Feature>> fsc; //feature-set comparator
     boolean directed = true;
 
     public DBInterface(String DBHost,
@@ -99,6 +113,8 @@ public class DBInterface {
         } catch (SQLException ex) {
             Logger.getLogger(DBInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        //TODO: set up caching
     }
     //----------------  SQL Database related methods ---------------------------
     private String DBHost;
@@ -249,38 +265,6 @@ public class DBInterface {
     }
     //---------------------  Caching methods and fields -----------------------
     private Set<Integer> ignoreIDs = new HashSet<Integer>();
-
-    /** instructs this DB interface to begin memoizing results from basic retrieval
-     * functions.  Since structures cannot be altered, cache consistency is not
-     * a concern.  When structures are deleted, they are also deleted from the
-     * cache.  The following method names can be supplied:
-     * <ul>
-     * <li>getFeatureName</li>
-     * <li>getFeatureID</li>
-     * <li>getFeatureInstances</li>
-     * <li>loadStructureFromDatabase</li>
-     * <li>loadFeature</li>
-     * </ul>
-     * @param method
-     * @param size
-     */
-    public void useCache(String method, int size) {
-        if (method.equals("getFeatureName")) {
-        	startCaching(getFeatureName, size);
-        }
-        if (method.equals("getFeatureID")) {
-        	startCaching(getFeatureID, size);
-        }
-        if (method.equals("getFeatureInstances")) {
-        	startCaching(getFeatureInstances, size);
-        }
-        if (method.equals("loadStructureFromDatabase")) {
-        	startCaching(loadStructureFromDatabase, size);
-        }
-        if (method.equals("loadFeature")) {
-        	startCaching(loadFeature, size);
-        }
-    }
 
     /** resets the cache of the method with the given name.
      * 
@@ -445,7 +429,7 @@ public class DBInterface {
     public void removeStructureFromDatabase(int id) {
         removeStructureFromDatabase(
                 loadStructureFromDatabase(id));
-        unCache(loadStructureFromDatabase, id);
+        clearCache(loadStructureFromDatabase, id);
     }
 
     /** removes the supplied structure from the database. */
@@ -694,15 +678,14 @@ public class DBInterface {
         return retVals;
     }
 
-    public void setFeatureSetComparator(FeatureSetComparator fsc) {
+    public void setFeatureSetComparator(BinaryRelation<Set<? extends Feature>> fsc) {
         this.fsc = fsc;
     }
 
-    public boolean FeatureSetsCompatible(
+    public boolean featureSetsCompatible(
             Set<? extends Feature> t1s,
-            Set<? extends Feature> t2s,
-            Class<? extends Feature>... featureTypes) {
-        return fsc.compatible(t1s, t2s, featureTypes);
+            Set<? extends Feature> t2s) {
+        return Funcles.apply(fsc, t1s, t2s);
     }
     //----------------------- Indexing -------------------------------------
     private Set<IndexGenerator> indexers = new HashSet<IndexGenerator>();
@@ -861,4 +844,16 @@ public class DBInterface {
     public void viewAsUndirectedGraphs() { directed = false; }
     public void viewAsDirectedGraphs() { directed = true; }
     public boolean directedGraphs() { return directed; }
+    
+    
+    
+
+    public static String slurpStream(InputStream in) throws IOException {
+      StringBuffer out = new StringBuffer();
+      byte[] b = new byte[4096];
+      for (int n; (n = in.read(b)) != -1;) {
+          out.append(new String(b, 0, n));
+      }
+      return out.toString();
+    }
 }

@@ -81,11 +81,10 @@ public class Edge implements Comparable {
      * @param featureTypes
      * @return
      */
-    public boolean subsumes(Edge e2, Class<? extends Feature> ... featureTypes) {
-        return parent.getDB().FeatureSetsCompatible(
-                Util.retainOnly(getFeatures(), featureTypes),
-                Util.retainOnly(e2.getFeatures(), featureTypes),
-                featureTypes);
+    public boolean subsumes(Edge e2) {
+        return parent.getDB().featureSetsCompatible(
+                Util.retainOnly(getFeatures()),
+                Util.retainOnly(e2.getFeatures()));
     }
 
 

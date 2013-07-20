@@ -19,6 +19,10 @@
 
 package sai.comparison.mapgenerators;
 
+import info.km.funcles.T2;
+
+import java.util.Map;
+
 import sai.Graph;
 import sai.Node;
 import sai.comparison.MapGenerator;
@@ -30,7 +34,7 @@ import sai.comparison.mapgenerators.search.SearchQueue;
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
-public class SearchMapGenerator extends MapGenerator {
+public class SearchMapGenerator implements MapGenerator {
 
     private SearchQueue searchQueue;
     private final long time;
@@ -47,7 +51,9 @@ public class SearchMapGenerator extends MapGenerator {
     public SearchQueue getQueue() { return searchQueue; }
 
 
-    public  Map<Node, Node> findBestSubgraphMapping(Graph a, Graph b) {
+    public  Map<Node, Node> apply(T2<Graph,Graph> args) {
+    	Graph a = args.a1();
+    	Graph b = args.a2();
         searchQueue.seed(a, b);
         long startTime = System.currentTimeMillis();
         while(!searchQueue.empty() && 

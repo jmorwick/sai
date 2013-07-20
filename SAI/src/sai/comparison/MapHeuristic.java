@@ -24,6 +24,7 @@ import java.util.Map;
 
 import info.km.funcles.T2;
 import info.km.funcles.T3;
+import info.km.funcles.Tuple;
 import sai.Graph;
 import sai.Node;
 import sai.comparison.mapgenerators.search.SearchState;
@@ -39,13 +40,18 @@ import com.google.common.collect.Sets;
  */
 public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchState>,Double>{
 
+	public Double apply(Graph g1, Graph g2, Map<Node,Node> m) {
+		return apply(Tuple.makeTuple(g1, g2, new SearchState(m)));
+	}
+	
+	
     public static final MapHeuristic AVOID_LOWER_DEGREE = new MapHeuristic() {
 
         @Override
         public Double apply(T3<Graph,Graph,SearchState> args) {
         	Graph g1 = args.a1();
         	Graph g2 = args.a2();
-        	Map<Node,Node> m = args.a3().getMap();
+        	Map<Node,Node> m = args.a3();
         	
             double tot = 0.0;
             if(m.size() == 0) return 0.0;
@@ -69,7 +75,7 @@ public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchStat
         public Double apply(T3<Graph,Graph,SearchState> args) {
         	Graph g1 = args.a1();
         	Graph g2 = args.a2();
-        	Map<Node,Node> m = args.a3().getMap();
+        	Map<Node,Node> m = args.a3();
         	
             double tot = 0.0;
             if(m.size() == 0) return 0.0;
@@ -93,7 +99,7 @@ public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchStat
         public Double apply(T3<Graph,Graph,SearchState> args) {
         	Graph g1 = args.a1();
         	Graph g2 = args.a2();
-        	Map<Node,Node> m = args.a3().getMap();
+        	Map<Node,Node> m = args.a3();
         	
             double tot = 0.0;
             if(m.size() == 0) return 0.0;
@@ -116,7 +122,7 @@ public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchStat
         public Double apply(T3<Graph,Graph,SearchState> args) {
         	Graph g1 = args.a1();
         	Graph g2 = args.a2();
-        	Map<Node,Node> m = args.a3().getMap();
+        	Map<Node,Node> m = args.a3();
         	
             double tot = 0.0;
             if(m.size() == 0) return 0.0;
@@ -141,7 +147,7 @@ public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchStat
         public Double apply(T3<Graph,Graph,SearchState> args) {
         	Graph g1 = args.a1();
         	Graph g2 = args.a2();
-        	Map<Node,Node> m = args.a3().getMap();
+        	Map<Node,Node> m = args.a3();
         	
             double tot = 0.0;
             if(m.size() == 0) return 0.0;
@@ -165,7 +171,7 @@ public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchStat
         public Double apply(T3<Graph,Graph,SearchState> args) {
         	Graph g1 = args.a1();
         	Graph g2 = args.a2();
-        	Map<Node,Node> m = args.a3().getMap();
+        	Map<Node,Node> m = args.a3();
         	
             double tot = 0.0;
             if(m.size() == 0) return 0.0;
@@ -195,7 +201,7 @@ public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchStat
         public Double apply(T3<Graph,Graph,SearchState> args) {
         	Graph g1 = args.a1();
         	Graph g2 = args.a2();
-        	Map<Node,Node> m = args.a3().getMap();
+        	Map<Node,Node> m = args.a3();
         	
             if(this.g1 != g1 || this.g2 != g2) {
                 this.g1 = g1;
@@ -226,4 +232,6 @@ public abstract class MapHeuristic implements Function<T3<Graph,Graph,SearchStat
             if(worstTotal == 0) return 1.0;
             return 1 - mistakeTotal/worstTotal;
     }};
+
+
 }
