@@ -16,14 +16,17 @@
     along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-package org.dataandsearch.sai.graphviz;
+package sai.graphviz;
 
-import info.kendallmorwick.util.Map;
 import java.io.IOException;
-import org.dataandsearch.sai.DBInterface;
-import org.dataandsearch.sai.DBInterfaceTest;
-import org.dataandsearch.sai.Graph;
-import org.dataandsearch.sai.Node;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
+import sai.DBInterface;
+import sai.DBInterfaceTest;
+import sai.Graph;
+import sai.Node;
 
 /**
  *
@@ -35,7 +38,7 @@ public class TestGraphviz {
         DBInterface db = DBInterfaceTest.getTestDBInterface();
         Graph g = DBInterfaceTest.getSmallGraph1(db);
         Graph g2 = DBInterfaceTest.getSmallGraph1(db);
-        Map<Node,Node> m = new Map<Node,Node>();
+        Map<Node,Node> m = Maps.newHashMap();
         for(Node n : g.vertexSet()) {
             m.put(n, g2.getNode(n.getID()));
         }

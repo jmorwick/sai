@@ -16,26 +16,22 @@ You should have received a copy of the Lesser GNU General Public License
 along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-package org.dataandsearch.sai.comparison.subgraphcomparators;
-
-import info.kendallmorwick.util.function.Function;
-import info.kendallmorwick.util.tuple.T2;
+package sai.comparison.subgraphcomparators;
+\
 import java.util.Iterator;
-import org.dataandsearch.sai.*;
-import org.dataandsearch.sai.comparison.SubgraphComparator;
-import org.dataandsearch.sai.maintenance.IndexCompatibilityChecker;
+import sai.*;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.dataandsearch.sai.comparison.Util;
-import org.dataandsearch.sai.indexing.Index;
-import org.dataandsearch.sai.indexing.retrievers.Path1Retriever;
-import org.dataandsearch.sai.maintenance.IndexConsolidator;
+import sai.comparison.Util;
+import sai.indexing.Index;
+import sai.indexing.retrievers.path.Path1Retriever;
+import sai.maintenance.IndexConsolidator;
 import static org.junit.Assert.*;
 
-import static org.dataandsearch.sai.DBInterfaceTest.getTestDBInterface;
+import static sai.DBInterfaceTest.getTestDBInterface;
 
 /**
  *

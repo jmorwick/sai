@@ -17,21 +17,24 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
 
-package sai.indexing.retrievers;
+package sai.indexing.retrievers.path;
+
+import java.util.Set;
 
 import sai.DBInterface;
 import sai.DBInterfaceTest;
 import sai.Graph;
-import sai.comparison.SubgraphComparator;
 import sai.comparison.subgraphcomparators.CompleteSubgraphComparator;
 import sai.indexing.Index;
-import sai.maintenance.IndexCompatibilityChecker;
 import sai.maintenance.IndexConsolidator;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.google.common.collect.Sets;
+
 import static sai.DBInterfaceTest.*;
 import sai.GenericFeature;
 import static sai.comparison.subgraphcomparators.CompleteSubgraphComparatorTest.*;
@@ -92,7 +95,7 @@ public class Path1IndexRetrievalTest {
         Set<Index> s2 = db.getIndices(g2);
         assertEquals(4, s1.size());
         assertEquals(4, s2.size());
-        assertEquals(8, s1.union(s2).size());  //the indices should be distinct
+        assertEquals(8, Sets.union(s1, s2).size());  //the indices should be distinct
 
 
         final DBInterface db2 = getTestDBInterface();
@@ -121,7 +124,7 @@ public class Path1IndexRetrievalTest {
         s2 = db2.getIndices(g2);
         assertEquals(4, s1.size());
         assertEquals(4, s2.size());
-        assertEquals(4, s1.union(s2).size());
+        assertEquals(4, Sets.union(s1, s2).size());
 
         db2.initializeDatabase();
     }

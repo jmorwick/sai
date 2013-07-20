@@ -17,17 +17,21 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
 
-package org.dataandsearch.sai.comparison;
+package sai.comparison;
 
-import info.kendallmorwick.util.Map;
-import info.kendallmorwick.util.MultiMap;
-import info.kendallmorwick.util.Set;
-import org.dataandsearch.sai.*;
+import java.util.Map;
+
+import sai.*;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
+
 import static org.junit.Assert.*;
 
 /**
@@ -66,15 +70,14 @@ public class UtilTest {
         Node n1 = new Node(g, new GenericFeature("a", db));
         Node n2 = new Node(g, new GenericFeature("b", db));
         Node n3 = new Node(g, new GenericFeature("b", db));
-        assertFalse(db.FeatureSetsCompatible(
-                Set.makeSet(new GenericFeature("a",db)),
-                Set.makeSet(new GenericFeature("b",db)),
-                GenericFeature.class));
+        assertFalse(db.featureSetsCompatible(
+                Sets.newHashSet(new GenericFeature("a",db)),
+                Sets.newHashSet(new GenericFeature("b",db))));
         assertTrue(n1.compatible(n2));
-        assertFalse(n1.compatible(n2, GenericFeature.class));
-        assertFalse(n1.compatible(n2, GenericFeature.class));
-        assertTrue(n1.compatible(n1, GenericFeature.class));
-        assertTrue(n2.compatible(n3, GenericFeature.class));
+        assertFalse(n1.compatible(n2));
+        assertFalse(n1.compatible(n2));
+        assertTrue(n1.compatible(n1));
+        assertTrue(n2.compatible(n3));
     }
 
 
@@ -93,22 +96,22 @@ public class UtilTest {
         Node n23 = g2.getNode(3);
         Node n14 = g1.getNode(4);
         Node n24 = g2.getNode(4);
-        MultiMap<Node,Node> m = Util.nodeCompatibility(g1, g2, GenericFeature.class);
-        assertTrue(m.isMapped(n11, n21));
-        assertTrue(m.isMapped(n11, n23));
-        assertTrue(m.isMapped(n12, n22));
-        assertTrue(m.isMapped(n13, n23));
-        assertTrue(m.isMapped(n13, n21));
-        assertTrue(m.isMapped(n14, n24));
-        assertFalse(m.isMapped(n11, n24));
-        assertFalse(m.isMapped(n11, n22));
-        assertFalse(m.isMapped(n12, n21));
-        assertFalse(m.isMapped(n12, n23));
-        assertFalse(m.isMapped(n13, n22));
-        assertFalse(m.isMapped(n13, n24));
-        assertFalse(m.isMapped(n14, n21));
-        assertFalse(m.isMapped(n14, n22));
-        assertFalse(m.isMapped(n14, n23));
+        Multimap<Node,Node> m = Util.nodeCompatibility(g1, g2);
+        assertTrue(m.containsEntry(n11, n21));
+        assertTrue(m.containsEntry(n11, n23));
+        assertTrue(m.containsEntry(n12, n22));
+        assertTrue(m.containsEntry(n13, n23));
+        assertTrue(m.containsEntry(n13, n21));
+        assertTrue(m.containsEntry(n14, n24));
+        assertFalse(m.containsEntry(n11, n24));
+        assertFalse(m.containsEntry(n11, n22));
+        assertFalse(m.containsEntry(n12, n21));
+        assertFalse(m.containsEntry(n12, n23));
+        assertFalse(m.containsEntry(n13, n22));
+        assertFalse(m.containsEntry(n13, n24));
+        assertFalse(m.containsEntry(n14, n21));
+        assertFalse(m.containsEntry(n14, n22));
+        assertFalse(m.containsEntry(n14, n23));
     }
 
     /**
@@ -126,32 +129,22 @@ public class UtilTest {
         Node n23 = g2.getNode(3);
         Node n14 = g1.getNode(4);
         Node n24 = g2.getNode(4);
-        Map<Node,Node> m = new Map<Node,Node>();
+        Map<Node,Node> m = Maps.newHashMap();
         m.put(n12, n22);
         m.put(n11, n21);
-        assertEquals(3, Util.matchedEdges(g1, g2, n11, m, Util.completeEdgeMatchCounter,
-                GenericFeature.class));
-        assertEquals(3, Util.matchedEdges(g1, g2, n12, m, Util.completeEdgeMatchCounter,
-                GenericFeature.class));
-        assertEquals(0, Util.matchedEdges(g1, g2, n13, m, Util.completeEdgeMatchCounter,
-                GenericFeature.class));
-        assertEquals(0, Util.matchedEdges(g1, g2, n14, m, Util.completeEdgeMatchCounter,
-                GenericFeature.class));
-        assertEquals(3, Util.matchedEdges(g1, g2, m, Util.completeEdgeMatchCounter,
-                GenericFeature.class));
+        assertEquals(3, Util.matchedEdges(g1, g2, n11, m, Util.completeEdgeMatchCounter));
+        assertEquals(3, Util.matchedEdges(g1, g2, n12, m, Util.completeEdgeMatchCounter));
+        assertEquals(0, Util.matchedEdges(g1, g2, n13, m, Util.completeEdgeMatchCounter));
+        assertEquals(0, Util.matchedEdges(g1, g2, n14, m, Util.completeEdgeMatchCounter));
+        assertEquals(3, Util.matchedEdges(g1, g2, m, Util.completeEdgeMatchCounter));
 
         m.put(n14, n24);
         m.put(n13, n23);
-        assertEquals(4, Util.matchedEdges(g1, g2, n11, m, Util.completeEdgeMatchCounter,
-                GenericFeature.class));
-        assertEquals(5, Util.matchedEdges(g1, g2, n12, m, Util.completeEdgeMatchCounter,
-                GenericFeature.class));
-        assertEquals(1, Util.matchedEdges(g1, g2, n13, m, Util.completeEdgeMatchCounter,
-                GenericFeature.class));
-        assertEquals(2, Util.matchedEdges(g1, g2, n14, m, Util.completeEdgeMatchCounter,
-                GenericFeature.class));
-        assertEquals(6, Util.matchedEdges(g1, g2, m, Util.completeEdgeMatchCounter,
-                GenericFeature.class));
+        assertEquals(4, Util.matchedEdges(g1, g2, n11, m, Util.completeEdgeMatchCounter));
+        assertEquals(5, Util.matchedEdges(g1, g2, n12, m, Util.completeEdgeMatchCounter));
+        assertEquals(1, Util.matchedEdges(g1, g2, n13, m, Util.completeEdgeMatchCounter));
+        assertEquals(2, Util.matchedEdges(g1, g2, n14, m, Util.completeEdgeMatchCounter));
+        assertEquals(6, Util.matchedEdges(g1, g2, m, Util.completeEdgeMatchCounter));
     }
 
 

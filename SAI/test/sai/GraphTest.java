@@ -16,11 +16,8 @@ You should have received a copy of the Lesser GNU General Public License
 along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-package org.dataandsearch.sai;
+package sai;
 
-import info.kendallmorwick.util.Map;
-import info.kendallmorwick.util.Set;
-import info.kendallmorwick.util.function.Function;
 import org.junit.*;
 import static org.junit.Assert.*;
 

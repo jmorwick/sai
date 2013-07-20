@@ -17,12 +17,12 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
 
-package org.dataandsearch.sai;
+package sai;
 
 import java.util.Iterator;
-import org.dataandsearch.sai.indexing.Index;
-import org.dataandsearch.sai.indexing.generators.path.Path1;
-import org.dataandsearch.sai.indexing.generators.path.Path1Lookup;
+import sai.indexing.Index;
+import sai.indexing.generators.path.Path1;
+import sai.indexing.generators.path.Path1Lookup;
 import static org.junit.Assert.*;
 import org.junit.*;
 
@@ -292,7 +292,7 @@ public class DBInterfaceTest {
             assertEquals(id, ii.getID());
             if(id == 1) assertEquals(0, ii.vertexSet().size());
             assertEquals(1, ii.getFeatures().size());
-            assertEquals(new GenericFeature("a",db), ii.getFeatures().getFirstElement());
+            assertEquals(new GenericFeature("a",db), ii.getFeatures().iterator().next());
             if(id == 2) assertEquals(1, ii.vertexSet().size());
             if(id > 2) assertEquals(2, ii.vertexSet().size());
             if(id < 4) assertEquals(0, ii.edgeSet().size());
