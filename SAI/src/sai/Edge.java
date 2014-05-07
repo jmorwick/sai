@@ -19,6 +19,8 @@
 
 package sai;
 
+import java.util.Set;
+
 import sai.comparison.Util;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newHashSet;
@@ -30,7 +32,7 @@ import static com.google.common.base.Predicates.equalTo;
  */
 public class Edge implements Comparable {
     private int id = -1;
-    private Set<Feature> features = new HashSet<Feature>();
+    private Set<Feature> features = newHashSet();
     private Graph parent;
 
     public Edge(Graph parent, Feature ... tags) {

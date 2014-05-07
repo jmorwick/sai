@@ -19,6 +19,8 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 package sai;
 
 import info.kendall_morwick.funcles.BinaryRelation;
+import info.kendall_morwick.funcles.Funcles;
+import info.kendall_morwick.funcles.Pair;
 import info.kendall_morwick.funcles.T2;
 
 import java.io.IOException;
@@ -534,7 +536,7 @@ public class DBInterface {
     private BinaryRelation<Feature> isa = new BinaryRelation<Feature>() {
 
         @Override
-        public boolean apply(T2<Feature,Feature> p) {
+        public boolean apply(Pair<Feature> p) {
             return self.getQueryResults("SELECT * FROM feature_isa_relationships WHERE parent_id = "
                     + p.a1().getID() + " AND feature_id = " + p.a2().getID()).size() > 0;
         }
