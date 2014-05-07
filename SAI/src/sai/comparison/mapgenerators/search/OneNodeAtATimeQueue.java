@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static info.km.funcles.Tuple.makeTuple;
+import static info.kendall_morwick.funcles.Tuple.makeTuple;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;

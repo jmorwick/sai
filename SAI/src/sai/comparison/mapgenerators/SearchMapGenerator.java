@@ -19,7 +19,7 @@
 
 package sai.comparison.mapgenerators;
 
-import info.km.funcles.T2;
+import info.kendall_morwick.funcles.T2;
 
 import java.util.Map;
 

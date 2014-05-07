@@ -21,8 +21,8 @@ package sai.indexing.generators.path;
 
 import java.util.Set;
 
-import info.km.funcles.BinaryRelation;
-import info.km.funcles.T2;
+import info.kendall_morwick.funcles.BinaryRelation;
+import info.kendall_morwick.funcles.T2;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 

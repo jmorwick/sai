@@ -19,8 +19,8 @@
 
 package sai.indexing.retrievers.path;
 
-import info.km.funcles.T2;
-import info.km.funcles.Tuple;
+import info.kendall_morwick.funcles.T2;
+import info.kendall_morwick.funcles.Tuple;
 
 import java.util.HashMap;
 import java.util.HashSet;

@@ -19,7 +19,7 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
 package sai.indexing.retrievers.path;
 
-import info.km.funcles.T2;
+import info.kendall_morwick.funcles.T2;
 
 import java.util.List;
 import java.util.Set;

@@ -18,10 +18,10 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sai.comparison.mapheuristics;
 
-import info.km.funcles.Funcles;
-import info.km.funcles.T2;
-import info.km.funcles.T3;
-import info.km.funcles.Tuple;
+import info.kendall_morwick.funcles.Funcles;
+import info.kendall_morwick.funcles.T2;
+import info.kendall_morwick.funcles.T3;
+import info.kendall_morwick.funcles.Tuple;
 
 import java.util.Map;
 import java.util.Set;

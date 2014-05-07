@@ -18,8 +18,8 @@
  */
 package sai;
 
-import info.km.funcles.Funcles;
-import info.km.funcles.T2;
+import info.kendall_morwick.funcles.Funcles;
+import info.kendall_morwick.funcles.T2;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -28,7 +28,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 
 import com.google.common.collect.Maps;
-import static info.km.funcles.Tuple.makeTuple;
+import static info.kendall_morwick.funcles.Tuple.makeTuple;
 import sai.comparison.MapGenerator;
 import sai.comparison.MapHeuristic;
 import sai.indexing.Index;

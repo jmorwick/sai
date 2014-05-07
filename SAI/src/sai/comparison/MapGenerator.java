@@ -21,7 +21,7 @@ package sai.comparison;
 
 import java.util.Map;
 
-import info.km.funcles.T2;
+import info.kendall_morwick.funcles.T2;
 import sai.Graph;
 import sai.Node;
 import com.google.common.base.Function;

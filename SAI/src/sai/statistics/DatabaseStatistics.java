@@ -23,8 +23,8 @@ import sai.Edge;
 import sai.Feature;
 import sai.Graph;
 import sai.comparison.Util;
-import info.km.funcles.T3;
-import info.km.funcles.Tuple;
+import info.kendall_morwick.funcles.T3;
+import info.kendall_morwick.funcles.Tuple;
 
 import java.util.Iterator;
 import java.util.Set;

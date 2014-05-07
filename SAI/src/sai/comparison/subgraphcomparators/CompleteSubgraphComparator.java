@@ -19,10 +19,10 @@
 
 package sai.comparison.subgraphcomparators;
 
-import info.km.funcles.BinaryRelation;
-import info.km.funcles.Funcles;
-import info.km.funcles.ProcessingThread;
-import info.km.funcles.T2;
+import info.kendall_morwick.funcles.BinaryRelation;
+import info.kendall_morwick.funcles.Funcles;
+import info.kendall_morwick.funcles.ProcessingThread;
+import info.kendall_morwick.funcles.T2;
 
 import java.math.BigInteger;
 import java.util.HashSet;

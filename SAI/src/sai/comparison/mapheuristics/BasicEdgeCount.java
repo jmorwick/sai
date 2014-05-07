@@ -19,9 +19,9 @@
 
 package sai.comparison.mapheuristics;
 
-import info.km.funcles.T3;
-import info.km.funcles.Tuple;
-import info.km.funcles.T2;
+import info.kendall_morwick.funcles.T3;
+import info.kendall_morwick.funcles.Tuple;
+import info.kendall_morwick.funcles.T2;
 
 import java.util.Map;
 

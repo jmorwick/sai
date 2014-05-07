@@ -19,11 +19,7 @@
 
 package sai;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import sai.comparison.Util;
-
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.base.Predicates.equalTo;

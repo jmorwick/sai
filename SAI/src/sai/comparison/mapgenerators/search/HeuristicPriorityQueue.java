@@ -21,8 +21,8 @@ package sai.comparison.mapgenerators.search;
 
 import com.google.common.collect.MinMaxPriorityQueue;
 
-import info.km.funcles.Funcles;
-import static info.km.funcles.Tuple.makeTuple;
+import info.kendall_morwick.funcles.Funcles;
+import static info.kendall_morwick.funcles.Tuple.makeTuple;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Map.Entry;

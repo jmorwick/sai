@@ -18,8 +18,8 @@
  */
 package sai;
 
-import info.km.funcles.Funcles;
-import info.km.funcles.T2;
+import info.kendall_morwick.funcles.Funcles;
+import info.kendall_morwick.funcles.T2;
 
 import java.util.HashMap;
 import java.util.HashSet;
