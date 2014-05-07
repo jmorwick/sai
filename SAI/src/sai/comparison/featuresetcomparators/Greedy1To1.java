@@ -19,6 +19,7 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 package sai.comparison.featuresetcomparators;
 
 import info.kendall_morwick.funcles.BinaryRelation;
+import info.kendall_morwick.funcles.Pair;
 import info.kendall_morwick.funcles.T2;
 
 import java.util.Set;
@@ -28,7 +29,7 @@ import com.google.common.collect.Sets;
 import sai.Feature;
 
 /**
- * A quadratic-worse-case comparison algorithm which does not exaustively check
+ * A quadratic-worse-case comparison algorithm which does not exhaustively check
  * every possibility for compatibility, but rather consumes the first matching it
  * comes across.  This algorithm may produce false-negatives when compatibility of
  * a fixed feature isn't commutative.
@@ -44,8 +45,7 @@ public class Greedy1To1 implements BinaryRelation<Set<? extends Feature>> {
      * @param t2s
      * @return
      */
-    public boolean apply(T2<Set<? extends Feature>,
-            Set<? extends Feature>> args) {
+    public boolean apply(Pair<Set<? extends Feature>> args) {
     	Set<? extends Feature> t1s = args.a1();
     	Set<? extends Feature> t2s = args.a2();
         t2s = Sets.newHashSet(t2s);

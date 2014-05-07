@@ -22,6 +22,7 @@ package sai.comparison.subgraphcomparators;
 import info.kendall_morwick.funcles.BinaryRelation;
 import info.kendall_morwick.funcles.Funcles;
 import info.kendall_morwick.funcles.ProcessingThread;
+import info.kendall_morwick.funcles.Pair;
 import info.kendall_morwick.funcles.T2;
 
 import java.math.BigInteger;
@@ -52,7 +53,7 @@ public class CompleteSubgraphComparator implements BinaryRelation<Graph> {
         return Funcles.apply(csc, g1, g2);
     }
     
-    public static ProcessingThread<T2<Graph,Graph>,Boolean> compareInBackground(DBInterface db, Graph g1, Graph g2, 
+    public static ProcessingThread<Pair<Graph>,Boolean> compareInBackground(DBInterface db, Graph g1, Graph g2, 
             Class<? extends Feature> ... features) {
         CompleteSubgraphComparator csc = new CompleteSubgraphComparator(db, features);
         return Funcles.applyInBackground(csc, g1, g2);
