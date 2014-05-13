@@ -29,6 +29,7 @@ import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import com.google.common.collect.Multimap;
 
@@ -53,7 +54,7 @@ public class CompleteSubgraphComparator implements BinaryRelation<Graph> {
         return Funcles.apply(csc, g1, g2);
     }
     
-    public static ProcessingThread<Pair<Graph>,Boolean> compareInBackground(DBInterface db, Graph g1, Graph g2, 
+    public static Future<Boolean> compareInBackground(DBInterface db, Graph g1, Graph g2, 
             Class<? extends Feature> ... features) {
         CompleteSubgraphComparator csc = new CompleteSubgraphComparator(db, features);
         return Funcles.applyInBackground(csc, g1, g2);

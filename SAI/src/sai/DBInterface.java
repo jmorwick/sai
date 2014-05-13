@@ -23,6 +23,7 @@ import info.kendall_morwick.funcles.Funcles;
 import info.kendall_morwick.funcles.Pair;
 import info.kendall_morwick.funcles.T2;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -235,7 +236,11 @@ public class DBInterface {
     public void initializeDatabase() {
         try {
             String schemaSQL;
-            schemaSQL = slurpStream(DBInterface.class.getResourceAsStream("/resources/sai-base.sql"));
+            InputStream schemaIn = DBInterface.class.getResourceAsStream("resources/sai-base.sql");
+            if(schemaIn == null) 
+            	schemaIn = new FileInputStream("resources/sai-base.sql");
+            
+            schemaSQL = slurpStream(schemaIn);
             for (String statement : schemaSQL.split(";")) {
                 if (!statement.trim().equals("")) {
                     updateDB(statement + ";");

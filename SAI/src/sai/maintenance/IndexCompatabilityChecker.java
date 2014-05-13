@@ -21,21 +21,23 @@ package sai.maintenance;
 
 import info.kendall_morwick.funcles.BinaryRelation;
 import info.kendall_morwick.funcles.Funcles;
-import info.kendall_morwick.funcles.ProcessingThread;
+import info.kendall_morwick.funcles.Pair;
 import info.kendall_morwick.funcles.T2;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListenableFutureTask;
 
 import sai.DBInterface;
 import sai.Graph;
 import sai.indexing.Index;
-
-import static info.km.funcles.Tuple.makeTuple;
+import static info.kendall_morwick.funcles.Tuple.makeTuple;
 
 /**
  * Updates compatibility relationships between indices to assist in hierarchical 
@@ -51,7 +53,7 @@ implements Supplier<List<T2<Integer,Integer>>> {
 	private DBInterface db;
 	private int numThreads;
 	private final long maxTime;
-	private List<ProcessingThread<T2<Graph,Graph>,Boolean>>
+	private List<ListenableFuture<Boolean>>
 	activeComparisons = Lists.newArrayList();
 	private final Object LOCK = new Object();
 
@@ -85,8 +87,8 @@ implements Supplier<List<T2<Integer,Integer>>> {
 
 					//start new thread
 					synchronized(LOCK) { //prevent thread from finishing and signaling before we wait
-						ProcessingThread<T2<Graph,Graph>,Boolean> pt = 
-								Funcles.applyInBackground(r, i1, i2);
+						ListenableFuture<Boolean> pt = 
+								applyInBackground(r, i1, i2);
 						pt.suggestProcessingTime(maxTime);
 						pt.wakeUpWhenDone(LOCK);
 						activeComparisons.add(pt);
@@ -100,10 +102,10 @@ implements Supplier<List<T2<Integer,Integer>>> {
 							}
 					}
 					//process completed threads
-					Iterator<ProcessingThread<T2<Graph,Graph>,Boolean>> i = activeComparisons.iterator();
+					Iterator<ListenableFuture<Boolean>> i = activeComparisons.iterator();
 					List<T2<Index,Index>> haltAll = Lists.newArrayList();
 					while(i.hasNext()) {
-						ProcessingThread<T2<Graph,Graph>,Boolean> pt = i.next();
+						ListenableFuture<Boolean> pt = i.next();
 						if(!pt.isAlive()) {
 							if(pt.getResult() != null) {
 								i.remove();
@@ -123,7 +125,7 @@ implements Supplier<List<T2<Integer,Integer>>> {
 								pt.kill();
 						}
 					}
-					for(ProcessingThread<T2<Graph,Graph>,Boolean> pt : activeComparisons) {
+					for(ListenableFuture<Boolean> pt : activeComparisons) {
 						if(haltAll.contains(pt.getInput()))
 							pt.kill();
 					}
@@ -132,5 +134,17 @@ implements Supplier<List<T2<Integer,Integer>>> {
 		}
 
 		return results;
+	}
+
+	private ListenableFuture<Boolean> applyInBackground(
+			final BinaryRelation<Graph> r, final Index i1, final Index i2) {
+		return ListenableFutureTask.create(new Callable<Boolean>() {
+
+			@Override
+			public Boolean call() throws Exception {
+				return r.apply(Pair.makePair((Graph)i1, (Graph)i2));
+			}
+			
+		});
 	}
 }

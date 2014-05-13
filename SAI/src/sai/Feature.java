@@ -135,7 +135,7 @@ public abstract class Feature {
     }
 
     /** determines the degree of relatedness between this feature and
-     * f2, where 0 indactes no relationship, and 1 indicates this feature
+     * f2, where 0 indicates no relationship, and 1 indicates this feature
      * 'is-a' f2.  This function is not necessarily symmetric.  
      * @param f2
      * @return

@@ -41,9 +41,9 @@ public class DBInterfaceTest {
     public static DBInterface getTestDBInterface() {
         return new DBInterface(
             "localhost",
-            "sai_junit",
-            "root",
-            "mindinabpb");
+            "sai_test_junit",
+            "sai_test_user",
+            "sai_test_pw");
         
     }
 
