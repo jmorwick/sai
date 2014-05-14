@@ -25,7 +25,7 @@ import java.util.Set;
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
-public abstract class Feature {
+public class Feature {
     private int id = -1;
     private String value;
     private DBInterface db;
@@ -36,7 +36,7 @@ public abstract class Feature {
  * @param value
  * @param db
  */
-    protected Feature(String value, DBInterface db) {
+    public Feature(String value, DBInterface db) {
         this.db = db;
         db.registerFeatureClass(this);
         this.value =  value;

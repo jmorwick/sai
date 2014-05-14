@@ -26,11 +26,13 @@ import java.util.Set;
 
 import sai.DBInterface;
 import sai.DBInterfaceTest;
+import sai.Feature;
 import sai.Graph;
 import sai.comparison.subgraphcomparators.CompleteSubgraphComparator;
 import sai.indexing.Index;
 import sai.maintenance.IndexCompatabilityChecker;
 import sai.maintenance.IndexConsolidator;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -40,7 +42,6 @@ import org.junit.Test;
 import com.google.common.collect.Sets;
 
 import static sai.DBInterfaceTest.*;
-import sai.GenericFeature;
 import static sai.comparison.subgraphcomparators.CompleteSubgraphComparatorTest.*;
 import static org.junit.Assert.*;
 
@@ -80,7 +81,7 @@ public class Path1IndexRetrievalTest {
         db.initializeDatabase();
         DBInterfaceTest.loadBasicDiverseDB(db);
 
-    db.addRetriever(new Path1Retriever(db, GenericFeature.class));
+    db.addRetriever(new Path1Retriever(db, Feature.class));
 
         Graph g1 = db.loadStructureFromDatabase(1);
         Graph g2 = db.loadStructureFromDatabase(2);
@@ -105,7 +106,7 @@ public class Path1IndexRetrievalTest {
         // now load a DB with two copies of the same graph and check to see that
         // the indices loaded are not distinct
 
-    db2.addRetriever(new Path1Retriever(db2, GenericFeature.class));
+    db2.addRetriever(new Path1Retriever(db2, Feature.class));
 
 
         g1 = db2.loadStructureFromDatabase(1);

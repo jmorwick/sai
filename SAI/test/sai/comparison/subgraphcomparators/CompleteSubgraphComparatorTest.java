@@ -79,53 +79,53 @@ public class CompleteSubgraphComparatorTest {
     public void testSmallComparison() {
         DBInterface db = getTestDBInterface();
         Graph g1 = new Graph(db);
-        Node n11 = new Node(g1,db, new GenericFeature("a",db));
-        Node n12 = new Node(g1,db,new GenericFeature("b",db));
+        Node n11 = new Node(g1,db, new Feature("a",db));
+        Node n12 = new Node(g1,db,new Feature("b",db));
         Graph g2 = new Graph(db);
-        assertTrue(!CompleteSubgraphComparator.compare(db, g1, g2, GenericFeature.class));
-        assertTrue(CompleteSubgraphComparator.compare(db, g2, g1, GenericFeature.class));
-        Node n21 = new Node(g2,db, new GenericFeature("a",db));
-        assertTrue(!CompleteSubgraphComparator.compare(db, g1, g2, GenericFeature.class));
-        assertTrue(CompleteSubgraphComparator.compare(db, g2, g1, GenericFeature.class));
-        Node n22 = new Node(g2,db,new GenericFeature("b",db));
-        assertTrue(CompleteSubgraphComparator.compare(db, g1, g2, GenericFeature.class));
-        assertTrue(CompleteSubgraphComparator.compare(db, g2, g1, GenericFeature.class));
+        assertTrue(!CompleteSubgraphComparator.compare(db, g1, g2, Feature.class));
+        assertTrue(CompleteSubgraphComparator.compare(db, g2, g1, Feature.class));
+        Node n21 = new Node(g2,db, new Feature("a",db));
+        assertTrue(!CompleteSubgraphComparator.compare(db, g1, g2, Feature.class));
+        assertTrue(CompleteSubgraphComparator.compare(db, g2, g1, Feature.class));
+        Node n22 = new Node(g2,db,new Feature("b",db));
+        assertTrue(CompleteSubgraphComparator.compare(db, g1, g2, Feature.class));
+        assertTrue(CompleteSubgraphComparator.compare(db, g2, g1, Feature.class));
         g1.addEdge(n11, n12);
-        assertTrue(!CompleteSubgraphComparator.compare(db, g1, g2, GenericFeature.class));
-        assertTrue(CompleteSubgraphComparator.compare(db, g2, g1, GenericFeature.class));
+        assertTrue(!CompleteSubgraphComparator.compare(db, g1, g2, Feature.class));
+        assertTrue(CompleteSubgraphComparator.compare(db, g2, g1, Feature.class));
         g2.addEdge(n21, n22);
-        assertTrue(CompleteSubgraphComparator.compare(db, g1, g2, GenericFeature.class));
-        assertTrue(CompleteSubgraphComparator.compare(db, g2, g1, GenericFeature.class));
+        assertTrue(CompleteSubgraphComparator.compare(db, g1, g2, Feature.class));
+        assertTrue(CompleteSubgraphComparator.compare(db, g2, g1, Feature.class));
         g1.addEdge(n11, n12);
-        assertTrue(!CompleteSubgraphComparator.compare(db, g1, g2, GenericFeature.class));
-        assertTrue(CompleteSubgraphComparator.compare(db, g2, g1, GenericFeature.class));
+        assertTrue(!CompleteSubgraphComparator.compare(db, g1, g2, Feature.class));
+        assertTrue(CompleteSubgraphComparator.compare(db, g2, g1, Feature.class));
         g2.addEdge(n21, n22);
-        assertTrue(CompleteSubgraphComparator.compare(db, g1, g2, GenericFeature.class));
-        assertTrue(CompleteSubgraphComparator.compare(db, g2, g1, GenericFeature.class));
+        assertTrue(CompleteSubgraphComparator.compare(db, g1, g2, Feature.class));
+        assertTrue(CompleteSubgraphComparator.compare(db, g2, g1, Feature.class));
  
         Graph g3 = new Graph(db);
         Node n31 = new Node(g3,db);
         Node n32 = new Node(g3,db);
 
-        assertTrue(CompleteSubgraphComparator.compare(db, g3, g2, GenericFeature.class));
-        assertTrue(!CompleteSubgraphComparator.compare(db, g2, g3, GenericFeature.class));
+        assertTrue(CompleteSubgraphComparator.compare(db, g3, g2, Feature.class));
+        assertTrue(!CompleteSubgraphComparator.compare(db, g2, g3, Feature.class));
         g3.addEdge(n31, n32);
-        assertTrue(CompleteSubgraphComparator.compare(db, g3, g2, GenericFeature.class));
-        assertTrue(!CompleteSubgraphComparator.compare(db, g2, g3, GenericFeature.class));
-        n31.addFeature(new GenericFeature("c",db));
-        assertTrue(!CompleteSubgraphComparator.compare(db, g3, g2, GenericFeature.class));
-        assertTrue(!CompleteSubgraphComparator.compare(db, g2, g3, GenericFeature.class));
+        assertTrue(CompleteSubgraphComparator.compare(db, g3, g2, Feature.class));
+        assertTrue(!CompleteSubgraphComparator.compare(db, g2, g3, Feature.class));
+        n31.addFeature(new Feature("c",db));
+        assertTrue(!CompleteSubgraphComparator.compare(db, g3, g2, Feature.class));
+        assertTrue(!CompleteSubgraphComparator.compare(db, g2, g3, Feature.class));
 
 
         assertTrue(CompleteSubgraphComparator.compare(db,
                 DBInterfaceTest.getSmallGraph1(db),
-                DBInterfaceTest.getSmallGraph1(db), GenericFeature.class));
+                DBInterfaceTest.getSmallGraph1(db), Feature.class));
         Graph g = DBInterfaceTest.getSmallGraph1(db);
         Node n1 = new Node(g,db);
         assertTrue(CompleteSubgraphComparator.compare(db,
-                DBInterfaceTest.getSmallGraph1(db), g, GenericFeature.class));
+                DBInterfaceTest.getSmallGraph1(db), g, Feature.class));
         assertTrue(CompleteSubgraphComparator.compare(db, g,
-                DBInterfaceTest.getSmallGraph1(db), GenericFeature.class));
+                DBInterfaceTest.getSmallGraph1(db), Feature.class));
     }
     
     @Test
@@ -139,7 +139,7 @@ public class CompleteSubgraphComparatorTest {
 
     DBInterfaceTest.loadBasicDB(db);
 
-    db.addRetriever(new Path1Retriever(db, GenericFeature.class));
+    db.addRetriever(new Path1Retriever(db, Feature.class));
 
     IndexCompatabilityChecker checker = getCompleteChecker(db, 10000, 1000);
       assertEquals(2, db.getDatabaseSize());
@@ -161,8 +161,8 @@ public class CompleteSubgraphComparatorTest {
             assertTrue(!i.checkedForSubgraphRelationships());
             assertEquals(1, i.getIndexedGraphIDs().size());
             assertEquals(0, i.getSuperIndexIDs().size());
-            assertTrue(CompleteSubgraphComparator.compare(db, i, i, GenericFeature.class));
-            assertTrue(CompleteSubgraphComparator.compare(db, i, lastGraph, GenericFeature.class));
+            assertTrue(CompleteSubgraphComparator.compare(db, i, i, Feature.class));
+            assertTrue(CompleteSubgraphComparator.compare(db, i, lastGraph, Feature.class));
         }
 
         checker = getCompleteChecker(db, 10000, 1000);

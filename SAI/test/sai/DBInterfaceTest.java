@@ -50,49 +50,49 @@ public class DBInterfaceTest {
 
     public static Graph getSmallGraph1(DBInterface db) {
       Graph g1 = new Graph(db);
-      Node n1 = new Node(g1, db, new GenericFeature("a",db));
-      Node n2 = new Node(g1, db, new GenericFeature("b",db));
-      Node n3 = new Node(g1, db, new GenericFeature("c",db));
-      Node n4 = new Node(g1, db, new GenericFeature("d",db));
-      g1.addEdge(n1, n2, new GenericFeature("a", db));
-      g1.addEdge(n2, n3, new GenericFeature("a", db));
-      g1.addEdge(n1, n4, new GenericFeature("a", db));
-      g1.addEdge(n2, n4, new GenericFeature("a", db));
+      Node n1 = new Node(g1, db, new Feature("a",db));
+      Node n2 = new Node(g1, db, new Feature("b",db));
+      Node n3 = new Node(g1, db, new Feature("c",db));
+      Node n4 = new Node(g1, db, new Feature("d",db));
+      g1.addEdge(n1, n2, new Feature("a", db));
+      g1.addEdge(n2, n3, new Feature("a", db));
+      g1.addEdge(n1, n4, new Feature("a", db));
+      g1.addEdge(n2, n4, new Feature("a", db));
       return g1;
     }
 
     public static Graph getSmallGraph2(DBInterface db) {
       Graph g1 = new Graph(db);
-      Node n1 = new Node(g1, db, new GenericFeature("e",db));
-      Node n2 = new Node(g1, db, new GenericFeature("f",db));
-      Node n3 = new Node(g1, db, new GenericFeature("g",db));
-      Node n4 = new Node(g1, db, new GenericFeature("d",db));
-      g1.addEdge(n1, n2, new GenericFeature("a", db));
-      g1.addEdge(n2, n3, new GenericFeature("a", db));
-      g1.addEdge(n1, n4, new GenericFeature("a", db));
-      g1.addEdge(n2, n4, new GenericFeature("a", db));
+      Node n1 = new Node(g1, db, new Feature("e",db));
+      Node n2 = new Node(g1, db, new Feature("f",db));
+      Node n3 = new Node(g1, db, new Feature("g",db));
+      Node n4 = new Node(g1, db, new Feature("d",db));
+      g1.addEdge(n1, n2, new Feature("a", db));
+      g1.addEdge(n2, n3, new Feature("a", db));
+      g1.addEdge(n1, n4, new Feature("a", db));
+      g1.addEdge(n2, n4, new Feature("a", db));
       return g1;
     }
 
 
     public static Graph getSmallGraphMultiEdge(DBInterface db) {
       Graph g1 = new Graph(db);
-      Node n1 = new Node(g1, db, new GenericFeature("a",db));
-      Node n2 = new Node(g1, db, new GenericFeature("b",db));
-      Node n3 = new Node(g1, db, new GenericFeature("a",db));
-      Node n4 = new Node(g1, db, new GenericFeature("c",db));
-      g1.addEdge(n1, n2, new GenericFeature("a", db));
-      g1.addEdge(n1, n2, new GenericFeature("a", db));
-      g1.addEdge(n1, n2, new GenericFeature("b", db));
-      g1.addEdge(n2, n3, new GenericFeature("a", db));
-      g1.addEdge(n1, n4, new GenericFeature("a", db));
-      g1.addEdge(n2, n4, new GenericFeature("a", db));
+      Node n1 = new Node(g1, db, new Feature("a",db));
+      Node n2 = new Node(g1, db, new Feature("b",db));
+      Node n3 = new Node(g1, db, new Feature("a",db));
+      Node n4 = new Node(g1, db, new Feature("c",db));
+      g1.addEdge(n1, n2, new Feature("a", db));
+      g1.addEdge(n1, n2, new Feature("a", db));
+      g1.addEdge(n1, n2, new Feature("b", db));
+      g1.addEdge(n2, n3, new Feature("a", db));
+      g1.addEdge(n1, n4, new Feature("a", db));
+      g1.addEdge(n2, n4, new Feature("a", db));
       return g1;
     }
 
 
   public static void loadBasicDB(DBInterface db) {
-      db.addIndexer(new Path1(db, GenericFeature.class));
+      db.addIndexer(new Path1(db, Feature.class));
       db.initializeDatabase();
 
       Graph g1 = getSmallGraph1(db);
@@ -101,7 +101,7 @@ public class DBInterfaceTest {
       g1.saveToDatabase();
   }
   public static void loadBasicDiverseDB(DBInterface db) {
-      db.addIndexer(new Path1(db, GenericFeature.class));
+      db.addIndexer(new Path1(db, Feature.class));
       db.initializeDatabase();
 
       Graph g1 = getSmallGraph1(db);
@@ -111,7 +111,7 @@ public class DBInterfaceTest {
   }
   
   public static void loadBasicDB2(final DBInterface db) {
-      db.addIndexer(new Path1Lookup(db,GenericFeature.class));
+      db.addIndexer(new Path1Lookup(db,Feature.class));
 
       Graph g1 = getSmallGraph1(db);
       g1.saveToDatabase();
@@ -274,15 +274,15 @@ public class DBInterfaceTest {
     public void testGetIndexIterator() {
         db.initializeDatabase();
         Index i = new Index(db);
-        i.addFeature(new GenericFeature("a", db));
+        i.addFeature(new Feature("a", db));
         i.saveToDatabase();
         Node n1 = new Node(i,db);
-        n1.addFeature(new GenericFeature("b",db));
+        n1.addFeature(new Feature("b",db));
         i.saveToDatabase();
         Node n2 = new Node(i,db);
-        n2.addFeature(new GenericFeature("c",db));
+        n2.addFeature(new Feature("c",db));
         i.saveToDatabase();
-        i.addEdge(n1, n2, new Edge(i,new GenericFeature("c",db)));
+        i.addEdge(n1, n2, new Edge(i,new Feature("c",db)));
         i.saveToDatabase();
         Iterator<Index> it = db.getIndexIterator();
         int id = 1;
@@ -292,7 +292,7 @@ public class DBInterfaceTest {
             assertEquals(id, ii.getID());
             if(id == 1) assertEquals(0, ii.vertexSet().size());
             assertEquals(1, ii.getFeatures().size());
-            assertEquals(new GenericFeature("a",db), ii.getFeatures().iterator().next());
+            assertEquals(new Feature("a",db), ii.getFeatures().iterator().next());
             if(id == 2) assertEquals(1, ii.vertexSet().size());
             if(id > 2) assertEquals(2, ii.vertexSet().size());
             if(id < 4) assertEquals(0, ii.edgeSet().size());

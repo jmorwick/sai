@@ -67,12 +67,12 @@ public class UtilTest {
     @Test
     public void testCompareFeatures() {
         Graph g = new Graph(db);
-        Node n1 = new Node(g, new GenericFeature("a", db));
-        Node n2 = new Node(g, new GenericFeature("b", db));
-        Node n3 = new Node(g, new GenericFeature("b", db));
+        Node n1 = new Node(g, new Feature("a", db));
+        Node n2 = new Node(g, new Feature("b", db));
+        Node n3 = new Node(g, new Feature("b", db));
         assertFalse(db.featureSetsCompatible(
-                Sets.newHashSet(new GenericFeature("a",db)),
-                Sets.newHashSet(new GenericFeature("b",db))));
+                Sets.newHashSet(new Feature("a",db)),
+                Sets.newHashSet(new Feature("b",db))));
         assertTrue(n1.compatible(n2));
         assertFalse(n1.compatible(n2));
         assertFalse(n1.compatible(n2));
