@@ -21,6 +21,7 @@ package sai;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.base.Predicates.equalTo;
@@ -30,6 +31,7 @@ import static com.google.common.base.Predicates.equalTo;
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
+@Deprecated
 public class Node implements Comparable {
     private int id;
     private Set<Feature> features = new HashSet<Feature>();

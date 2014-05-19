@@ -32,6 +32,7 @@ import sai.Graph;
  * @version 0.2.0
  * @author Joseph Kendall-Morwick
  */
+@Deprecated
 public class Index extends Graph {
 
     private DBInterface db;

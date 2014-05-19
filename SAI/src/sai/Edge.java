@@ -30,6 +30,7 @@ import static com.google.common.base.Predicates.equalTo;
  * @version 2.0s.0
  * @author Joseph Kendall-Morwick
  */
+@Deprecated
 public class Edge implements Comparable {
     private int id = -1;
     private Set<Feature> features = newHashSet();

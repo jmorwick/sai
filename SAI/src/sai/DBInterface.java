@@ -53,6 +53,7 @@ import sai.indexing.IndexRetriever;
  * @version 2.0
  * @author Joseph Kendall-Morwick
  */
+@Deprecated
 public class DBInterface {
 
 	

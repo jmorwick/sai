@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import sai.indexing.Index;
+
 import org.jgrapht.graph.DirectedMultigraph;
 
 import com.google.common.base.Function;
@@ -41,6 +42,7 @@ import com.google.common.collect.Sets;
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
+@Deprecated
 public class Graph
         extends DirectedMultigraph<Node, Edge> {
 
