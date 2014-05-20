@@ -18,12 +18,13 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sai.comparison.mapgenerators;
 
-import sai.Feature;
-import sai.Node;
 import sai.comparison.MapHeuristic;
 import sai.comparison.mapgenerators.search.HeuristicPriorityQueue;
 import sai.comparison.mapgenerators.search.OneNodeAtATimeQueue;
 import sai.comparison.mapgenerators.search.GraphMapping;
+import sai.graph.jgrapht.Feature;
+import sai.graph.jgrapht.Node;
+
 import com.google.common.collect.Multimap;
 
 /**

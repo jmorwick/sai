@@ -28,9 +28,12 @@ import java.util.PriorityQueue;
 import java.util.Set;
 
 import com.google.common.collect.Maps;
+
 import static info.kendall_morwick.funcles.Tuple.makeTuple;
 import sai.comparison.MapGenerator;
 import sai.comparison.MapHeuristic;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
 import sai.indexing.Index;
 import sai.retrieval.GraphRetriever;
 

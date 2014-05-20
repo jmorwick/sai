@@ -25,9 +25,11 @@ import java.util.Set;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
-import sai.DBInterface;
-import sai.Graph;
-import sai.indexing.Index;
+
+import sai.db.DBInterface;
+import sai.graph.Graph;
+import sai.graph.GraphFactory;
+import sai.graph.Index;
 import sai.retrieval.GraphRetriever;
 
 /**
@@ -37,19 +39,22 @@ import sai.retrieval.GraphRetriever;
  * @version 0.2.0
  * @author Joseph Kendall-Morwick
  */
-public class SimpleCountRetriever extends GraphRetriever {
+public class SimpleCountRetriever<G extends Graph> implements GraphRetriever<G> {
 
     private Set<Integer> lastConsideredGraphIDs = new HashSet<Integer>();
     private Set<Integer> retrievedGraphIDs = new HashSet<Integer>();
+	private DBInterface db;
+	private GraphFactory<G> gf;
 
-    public SimpleCountRetriever(DBInterface db) {
-        super(db);
+    public SimpleCountRetriever(DBInterface db, GraphFactory<G> gf) {
+        this.db = db;
+        this.gf = gf;
     }
 
-    public Iterator<Graph> retrieve(Set<Index> indices) {
+    public Iterator<G> retrieve(Set<Index> indices) {
         final Multiset<Integer> ranks = HashMultiset.create();
         for (Index i : indices) {
-            for (Integer gid : i.getIndexedGraphIDs()) {
+            for (Integer gid : db.retrieveIndexedGraphs(i.getID())) {
                 ranks.add(gid);
             }
         }
@@ -57,27 +62,33 @@ public class SimpleCountRetriever extends GraphRetriever {
         retrievedGraphIDs = new HashSet<Integer>();
         lastConsideredGraphIDs = ranks.elementSet();
 
-        for (Integer id : getDB().getIgnoredIDs()) {
+        for (Integer id : getDB().getHiddenGraphs()) {
             ranks.remove(id);
         }
 
-        return new Iterator<Graph>() {
+        return new Iterator<G>() {
 
             public boolean hasNext() {
                 return ranks.size() > 0;
             }
 
-            public Graph next() {
+            public G next() {
                 if(!hasNext()) throw new IllegalStateException("Cannot retrieve next id -- there aren't any left");
                 int gid = Multisets.copyHighestCountFirst(ranks).iterator().next();
                 ranks.remove(gid);
                 retrievedGraphIDs.add(gid);
-                return getDB().loadStructureFromDatabase(gid);
+                return getDB().retrieveGraph(gid, gf);
             }
 
             public void remove() {
             }
         };
     }
+
+	@Override
+	public sai.db.DBInterface getDB() {
+		return db;
+	}
+
     
 }

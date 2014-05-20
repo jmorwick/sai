@@ -22,7 +22,7 @@ package sai.indexing;
 import java.util.Set;
 
 import sai.DBInterface;
-import sai.Graph;
+import sai.graph.jgrapht.Graph;
 
 /**
  * Implementations of this class are intended to locate potential indices for 

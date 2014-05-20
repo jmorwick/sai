@@ -18,7 +18,7 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sai.comparison.featuresetcomparators;
 
-import sai.Feature;
+import sai.graph.jgrapht.Feature;
 import info.kendall_morwick.funcles.BinaryRelation;
 import info.kendall_morwick.funcles.Pair;
 import info.kendall_morwick.funcles.T2;

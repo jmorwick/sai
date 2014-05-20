@@ -35,7 +35,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListenableFutureTask;
 
 import sai.DBInterface;
-import sai.Graph;
+import sai.graph.jgrapht.Graph;
 import sai.indexing.Index;
 import static info.kendall_morwick.funcles.Tuple.makeTuple;
 

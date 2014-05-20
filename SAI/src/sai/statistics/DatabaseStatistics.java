@@ -19,10 +19,10 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 package sai.statistics;
 
 import sai.DBInterface;
-import sai.Edge;
-import sai.Feature;
-import sai.Graph;
 import sai.comparison.Util;
+import sai.graph.jgrapht.Edge;
+import sai.graph.jgrapht.Feature;
+import sai.graph.jgrapht.Graph;
 import info.kendall_morwick.funcles.T3;
 import info.kendall_morwick.funcles.Tuple;
 

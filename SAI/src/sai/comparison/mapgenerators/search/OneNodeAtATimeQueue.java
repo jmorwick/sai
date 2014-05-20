@@ -26,16 +26,17 @@ import java.util.Map;
 import java.util.Set;
 
 import static info.kendall_morwick.funcles.Tuple.makeTuple;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import sai.Feature;
-import sai.Graph;
-import sai.Node;
 import sai.comparison.MapHeuristic;
 import sai.comparison.mapgenerators.search.HeuristicPriorityQueue;
 import sai.comparison.mapgenerators.search.GraphMapping;
+import sai.graph.jgrapht.Feature;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
 
 /**
  * A search queue with a 2-phase expansion: 1 for selecting which node to

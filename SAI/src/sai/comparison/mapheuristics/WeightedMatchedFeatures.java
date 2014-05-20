@@ -32,13 +32,13 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import sai.Edge;
-import sai.Feature;
-import sai.Graph;
-import sai.Node;
 import sai.comparison.MapHeuristic;
 import sai.comparison.Util;
 import sai.comparison.mapgenerators.search.GraphMapping;
+import sai.graph.jgrapht.Edge;
+import sai.graph.jgrapht.Feature;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
 
 /**
  * A map heuristic which sums weightings for the number of compatibility

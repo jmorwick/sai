@@ -16,10 +16,12 @@
     along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-package sai;
+package sai.graph.jgrapht;
 
 import java.util.Collection;
 import java.util.Set;
+
+import sai.DBInterface;
 
 /**
  * @version 2.0.0

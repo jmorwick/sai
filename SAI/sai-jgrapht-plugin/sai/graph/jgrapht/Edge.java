@@ -17,10 +17,11 @@
 
  */
 
-package sai;
+package sai.graph.jgrapht;
 
 import java.util.Set;
 
+import sai.DBInterface;
 import sai.comparison.Util;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newHashSet;

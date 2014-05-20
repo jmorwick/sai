@@ -36,10 +36,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import sai.Edge;
-import sai.Node;
-import sai.Graph;
-import sai.Feature;
+import sai.graph.jgrapht.Edge;
+import sai.graph.jgrapht.Feature;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
 
 /**
  * @version 0.2.0

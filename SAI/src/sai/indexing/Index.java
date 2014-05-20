@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import sai.DBInterface;
-import sai.Graph;
+import sai.graph.jgrapht.Graph;
 
 /**
  * A graph index

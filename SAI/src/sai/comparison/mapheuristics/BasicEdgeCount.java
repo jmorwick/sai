@@ -28,11 +28,11 @@ import java.util.Map;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
-import sai.Edge;
-import sai.Graph;
-import sai.Node;
 import sai.comparison.MapHeuristic;
 import sai.comparison.mapgenerators.search.GraphMapping;
+import sai.graph.jgrapht.Edge;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
 
 
 /**

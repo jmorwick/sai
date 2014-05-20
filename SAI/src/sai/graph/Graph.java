@@ -2,7 +2,7 @@ package sai.graph;
 
 import java.util.Set;
 
-import db.DBInterface;
+import sai.db.DBInterface;
 
 
 public interface Graph {

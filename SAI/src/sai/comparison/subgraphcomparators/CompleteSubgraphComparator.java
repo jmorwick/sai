@@ -34,11 +34,11 @@ import java.util.concurrent.Future;
 import com.google.common.collect.Multimap;
 
 import sai.DBInterface;
-import sai.Feature;
-import sai.Graph;
-import sai.Node;
 import sai.comparison.ResultUnavailableException;
 import sai.comparison.Util;
+import sai.graph.jgrapht.Feature;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
 
 /**
  * This class may not be included in 1.0; I'm still considering its inclusion

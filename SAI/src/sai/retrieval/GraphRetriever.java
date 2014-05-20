@@ -22,9 +22,9 @@ package sai.retrieval;
 import java.util.Iterator;
 import java.util.Set;
 
-import sai.DBInterface;
-import sai.Graph;
-import sai.indexing.Index;
+import sai.db.DBInterface;
+import sai.graph.Graph;
+import sai.graph.Index;
 
 /** This class is used to provide custom algorithms for ordering and retrieving
  * graphs from the database in accordance with a set of Indices.  The algorithm
@@ -33,14 +33,9 @@ import sai.indexing.Index;
  * @version 0.2.0
  * @author Joseph Kendall-Morwick
  */
-public abstract class GraphRetriever {
-    private final DBInterface db;
+public abstract interface GraphRetriever<G extends Graph> {
 
-    public GraphRetriever(DBInterface db) {
-        this.db = db;
-    }
+    public DBInterface getDB();
 
-    public DBInterface getDB() { return db; }
-
-    public abstract Iterator<Graph> retrieve(Set<Index> indices);
+    public abstract Iterator<G> retrieve(Set<Index> indices);
 }

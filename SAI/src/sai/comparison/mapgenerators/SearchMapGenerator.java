@@ -23,10 +23,10 @@ import info.kendall_morwick.funcles.T2;
 
 import java.util.Map;
 
-import sai.Graph;
-import sai.Node;
 import sai.comparison.MapGenerator;
 import sai.comparison.mapgenerators.search.SearchQueue;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
 
 /**
  * Generates a mapping between two graphs by BFS in a map-space. 

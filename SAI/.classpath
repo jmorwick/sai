@@ -2,6 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path="sai-jgrapht-plugin"/>
+	<classpathentry kind="src" path="sai-jung-plugin"/>
+	<classpathentry kind="src" path="sai-mysql-plugin"/>
+	<classpathentry kind="src" path="sai-sqlite-plugin"/>
+	<classpathentry kind="src" path="sai-graphviz-plugin"/>
 	<classpathentry kind="lib" path="lib/guava.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>

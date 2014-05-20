@@ -19,6 +19,9 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 package sai;
 
 import org.junit.*;
+
+import sai.graph.jgrapht.Edge;
+import sai.graph.jgrapht.Graph;
 import static org.junit.Assert.*;
 
 /**

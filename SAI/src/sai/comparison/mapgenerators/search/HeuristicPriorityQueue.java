@@ -23,13 +23,15 @@ import com.google.common.collect.MinMaxPriorityQueue;
 
 import info.kendall_morwick.funcles.Funcles;
 import static info.kendall_morwick.funcles.Tuple.makeTuple;
+
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Map.Entry;
-import sai.Feature;
-import sai.Graph;
-import sai.Node;
+
 import sai.comparison.MapHeuristic;
+import sai.graph.jgrapht.Feature;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
 
 /**
  * A search priority queue which caches map heuristic computations

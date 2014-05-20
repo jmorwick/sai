@@ -26,7 +26,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import sai.Feature;
+import sai.graph.jgrapht.Feature;
 
 /**
  * A quadratic-worse-case comparison algorithm which does not exhaustively check

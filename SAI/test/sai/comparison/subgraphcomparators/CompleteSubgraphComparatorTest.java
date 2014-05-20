@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import sai.*;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -34,12 +35,14 @@ import org.junit.Test;
 import com.google.common.base.Function;
 
 import sai.comparison.Util;
+import sai.graph.jgrapht.Feature;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
 import sai.indexing.Index;
 import sai.indexing.retrievers.path.Path1Retriever;
 import sai.maintenance.IndexCompatabilityChecker;
 import sai.maintenance.IndexConsolidator;
 import static org.junit.Assert.*;
-
 import static sai.DBInterfaceTest.getTestDBInterface;
 
 /**

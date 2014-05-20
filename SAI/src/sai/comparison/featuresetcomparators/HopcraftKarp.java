@@ -33,7 +33,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import sai.Feature;
+import sai.graph.jgrapht.Feature;
 
 /**
  * This featureset comparator assumes that feature-mappings must be unique.

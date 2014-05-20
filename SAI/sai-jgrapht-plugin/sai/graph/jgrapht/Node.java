@@ -17,11 +17,12 @@
 
  */
 
-package sai;
+package sai.graph.jgrapht;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import sai.DBInterface;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.base.Predicates.equalTo;

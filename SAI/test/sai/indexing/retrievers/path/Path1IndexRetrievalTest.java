@@ -26,9 +26,9 @@ import java.util.Set;
 
 import sai.DBInterface;
 import sai.DBInterfaceTest;
-import sai.Feature;
-import sai.Graph;
 import sai.comparison.subgraphcomparators.CompleteSubgraphComparator;
+import sai.graph.jgrapht.Feature;
+import sai.graph.jgrapht.Graph;
 import sai.indexing.Index;
 import sai.maintenance.IndexCompatabilityChecker;
 import sai.maintenance.IndexConsolidator;

@@ -33,10 +33,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import sai.DBInterface;
-import sai.Edge;
-import sai.Feature;
-import sai.Graph;
-import sai.Node;
+import sai.graph.jgrapht.Edge;
+import sai.graph.jgrapht.Feature;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
 
 /**
  * Produces textual and png image visualizations of graphs using the 

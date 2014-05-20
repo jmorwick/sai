@@ -16,7 +16,7 @@
     along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-package sai;
+package sai.graph.jgrapht;
 
 import info.kendall_morwick.funcles.Funcles;
 import info.kendall_morwick.funcles.T2;
@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import sai.DBInterface;
 import sai.indexing.Index;
 
 import org.jgrapht.graph.DirectedMultigraph;

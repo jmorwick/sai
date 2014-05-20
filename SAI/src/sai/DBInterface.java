@@ -45,6 +45,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import sai.comparison.featuresetcomparators.ManyTo1;
+import sai.graph.jgrapht.Edge;
+import sai.graph.jgrapht.Feature;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
 import sai.indexing.Index;
 import sai.indexing.IndexGenerator;
 import sai.indexing.IndexRetriever;

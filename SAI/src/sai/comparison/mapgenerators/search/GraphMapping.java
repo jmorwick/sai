@@ -24,7 +24,7 @@ import java.util.Map;
 
 import com.google.common.collect.Multimap;
 
-import sai.Node;
+import sai.graph.jgrapht.Node;
 
 /**
  *A mapping between the components of two graphs.  This may be a 

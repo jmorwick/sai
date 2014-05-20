@@ -25,8 +25,8 @@ import com.google.common.collect.Maps;
 
 import sai.DBInterface;
 import sai.DBInterfaceTest;
-import sai.Graph;
-import sai.Node;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
 
 /**
  *

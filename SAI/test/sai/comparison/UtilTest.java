@@ -22,6 +22,10 @@ package sai.comparison;
 import java.util.Map;
 
 import sai.*;
+import sai.graph.jgrapht.Feature;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

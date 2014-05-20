@@ -23,7 +23,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import sai.DBInterface;
-import sai.Feature;
+import sai.graph.jgrapht.Feature;
 
 /**
  * A feature which signals the graphviz encoder to use special formatting --

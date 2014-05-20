@@ -19,8 +19,8 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
 package sai.comparison.mapgenerators.search;
 
-import sai.Node;
 import sai.comparison.mapgenerators.search.GraphMapping;
+import sai.graph.jgrapht.Node;
 
 /**
  * An intermediate search state in which a single node to be mapped is chosen,

@@ -1,6 +1,6 @@
 package sai.graph;
 
-import db.DBInterface;
+import sai.db.DBInterface;
 
 public interface GraphFactory<G extends Graph> {
 	

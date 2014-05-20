@@ -25,10 +25,10 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-import sai.Feature;
-import sai.Graph;
-import sai.Node;
 import sai.comparison.Util;
+import sai.graph.jgrapht.Feature;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
 
 /**
  * An abstract class for implementing BFS expansion and ranking algorithms

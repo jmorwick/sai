@@ -23,11 +23,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import sai.DBInterface;
-import sai.Edge;
-import sai.Feature;
-import sai.Graph;
-import sai.Node;
 import sai.comparison.Util;
+import sai.graph.jgrapht.Edge;
+import sai.graph.jgrapht.Feature;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
 import sai.indexing.Index;
 import sai.indexing.IndexGenerator;
 

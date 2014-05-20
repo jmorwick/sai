@@ -31,10 +31,10 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import sai.DBInterface;
-import sai.Edge;
-import sai.Feature;
-import sai.Graph;
-import sai.Node;
+import sai.graph.jgrapht.Edge;
+import sai.graph.jgrapht.Feature;
+import sai.graph.jgrapht.Graph;
+import sai.graph.jgrapht.Node;
 import sai.indexing.Index;
 import sai.indexing.IndexRetriever;
 import sai.indexing.generators.path.Path1;

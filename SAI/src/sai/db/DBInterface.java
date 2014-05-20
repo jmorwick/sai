@@ -1,4 +1,4 @@
-package db;
+package sai.db;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -15,12 +15,14 @@ public interface DBInterface {
 	
 	public <G extends Graph> G retrieveGraph(int graphID, GraphFactory<G> f);
     public Iterator<Graph> getGraphIterator();
+    public Set<Integer> getHiddenGraphs();
     public void hideGraph(int graphID);
     public void unhideGraph(int graphID);
     public void deleteGraph(int graphID);
 	
 	public void addIndex(Graph g, Index i); 
 	public Set<Integer> retrieveIndices(int graphID);
+	public Set<Integer> retrieveIndexedGraphs(int indexID);
     public Iterator<Index> getIndexIterator();
     
 	public Feature getFeature(String featureClass, int featureID);
