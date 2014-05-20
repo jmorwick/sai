@@ -22,12 +22,12 @@ package sai.comparison;
 
 import java.util.Map;
 
+import sai.comparison.mapgenerators.search.GraphMapping;
+import sai.graph.Graph;
+import sai.graph.Node;
 import info.kendall_morwick.funcles.T2;
 import info.kendall_morwick.funcles.T3;
 import info.kendall_morwick.funcles.Tuple;
-import sai.comparison.mapgenerators.search.GraphMapping;
-import sai.graph.jgrapht.Graph;
-import sai.graph.jgrapht.Node;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
@@ -39,12 +39,8 @@ import com.google.common.collect.Sets;
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
-public abstract class MapHeuristic implements Function<T3<Graph,Graph,GraphMapping>,Double>{
+public interface MapHeuristic extends Function<T3<Graph,Graph,GraphMapping>,Double>{
 
-	public Double apply(Graph g1, Graph g2, Map<Node,Node> m) {
-		return apply(Tuple.makeTuple(g1, g2, new GraphMapping(m)));
-	}
-	
 	
     public static final MapHeuristic AVOID_LOWER_DEGREE = new MapHeuristic() {
 

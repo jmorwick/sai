@@ -29,17 +29,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import sai.graph.Edge;
+import sai.graph.Feature;
+import sai.graph.Graph;
+import sai.graph.Node;
+
 import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-
-import sai.graph.jgrapht.Edge;
-import sai.graph.jgrapht.Feature;
-import sai.graph.jgrapht.Graph;
-import sai.graph.jgrapht.Node;
 
 /**
  * @version 0.2.0
@@ -122,8 +122,8 @@ public class Util {
             return 0;
         }
 
-        for (Edge e1 : s1.edgeSet()) {
-            for (Edge e2 : s2.edgeSet()) {
+        for (Edge e1 : s1.getEdges()) {
+            for (Edge e2 : s2.getEdges()) {
                 if (!e1.subsumes(e2)) {
                     continue;
                 }

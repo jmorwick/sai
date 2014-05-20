@@ -22,9 +22,9 @@ package sai.comparison.mapgenerators.search;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.collect.Multimap;
+import sai.graph.Node;
 
-import sai.graph.jgrapht.Node;
+import com.google.common.collect.Multimap;
 
 /**
  *A mapping between the components of two graphs.  This may be a 
@@ -35,11 +35,12 @@ import sai.graph.jgrapht.Node;
  * @version 2.0.0
  */
 
+//TODO: rethink the necesity of this class and consider replacing with an interface
 //TODO: 1) remove this class, 2) extend beyond node map, 3) never map edges/etc?
 //TODO: redo to base off of jgrapht's graph mapping
 //TODO: look up comparison algorithms used with jgrapht- do best to make these compatible
 
-@Deprecated public class GraphMapping extends HashMap<Node,Node> {
+public class GraphMapping extends HashMap<Node,Node> {
     private Multimap<Node,Node> possibilities;
 
     public GraphMapping() {

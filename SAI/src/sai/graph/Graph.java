@@ -16,4 +16,6 @@ public interface Graph {
 	public Set<Edge> getEdges();
 	public Set<Node> getNodes();
 	public Set<Feature> getFeatures();
+	public Node getEdgeSource(Edge e);
+	public Node getEdgeTarget(Edge e);
 }

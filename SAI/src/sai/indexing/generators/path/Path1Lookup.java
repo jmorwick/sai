@@ -44,17 +44,15 @@ import sai.indexing.retrievers.path.Path1Retriever;
  * @version 0.2.0
  * @author Joseph Kendall-Morwick
  */
-public class Path1Lookup extends IndexGenerator {
+public class Path1Lookup implements IndexGenerator {
     private IndexRetriever retriever;
     private Function<T2<Graph, Graph>,BinaryRelation<Graph>> compFactory;
     private final Path1 gen;
 
 
-    public Path1Lookup(DBInterface db,
-            Class<? extends Feature> ... featureTypes
+    public Path1Lookup(String ... featureTypes
             ) {
-        super(db);
-        gen = new Path1(db, featureTypes);
+        gen = new Path1(featureTypes);
         retriever = new Path1Retriever(db, featureTypes);
     }
     

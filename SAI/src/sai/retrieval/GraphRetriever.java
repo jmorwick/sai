@@ -24,6 +24,7 @@ import java.util.Set;
 
 import sai.db.DBInterface;
 import sai.graph.Graph;
+import sai.graph.GraphFactory;
 import sai.graph.Index;
 
 /** This class is used to provide custom algorithms for ordering and retrieving
@@ -35,7 +36,6 @@ import sai.graph.Index;
  */
 public abstract interface GraphRetriever<G extends Graph> {
 
-    public DBInterface getDB();
-
-    public abstract Iterator<G> retrieve(Set<Index> indices);
+    public abstract Iterator<G> retrieve(DBInterface db, 
+    		GraphFactory<G> gf, Set<Index> indices);
 }

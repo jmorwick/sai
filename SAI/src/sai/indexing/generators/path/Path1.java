@@ -22,13 +22,13 @@ package sai.indexing.generators.path;
 import java.util.HashSet;
 import java.util.Set;
 
-import sai.DBInterface;
 import sai.comparison.Util;
-import sai.graph.jgrapht.Edge;
-import sai.graph.jgrapht.Feature;
-import sai.graph.jgrapht.Graph;
-import sai.graph.jgrapht.Node;
-import sai.indexing.Index;
+import sai.db.DBInterface;
+import sai.graph.Edge;
+import sai.graph.Feature;
+import sai.graph.Graph;
+import sai.graph.GraphFactory;
+import sai.graph.Index;
 import sai.indexing.IndexGenerator;
 
 /**
@@ -38,19 +38,18 @@ import sai.indexing.IndexGenerator;
  * @version 0.2.0
  * @author Joseph Kendall-Morwick
  */
-public class Path1 extends IndexGenerator {
+public class Path1<G extends Graph> implements IndexGenerator<G> {
 
-    private final Class<? extends Feature>[] featureTypes;
+    private final String[] featureTypes;
 
-    public Path1(DBInterface db, Class<? extends Feature> ... featureTypes) {
-        super(db);
+    public Path1(String ... featureTypes) {
         this.featureTypes = featureTypes;
     }
 
     @Override
-    public Set<Index> generateIndices(Graph s) {
+    public Set<Index> generateIndices(DBInterface db, GraphFactory<G> gf, Graph s) {
         Set<Index> indices = new HashSet<Index>();
-        for(Edge e : s.edgeSet()) {
+        for(Edge e : s.getEdges()) {
             Set<Feature> fromNodeFeatures = new HashSet<Feature>();
             Set<Feature> toNodeFeatures = new HashSet<Feature>();
             Set<Feature> edgeFeatures = new HashSet<Feature>();

@@ -46,6 +46,8 @@ import sai.graph.jgrapht.Node;
  * @version 0.2.0
  * @author Joseph Kendall-Morwick
  */
+
+//TODO: completely rewrite
 public class CompleteSubgraphComparator implements BinaryRelation<Graph> {
 
     public static boolean compare(DBInterface db, Graph g1, Graph g2, 

@@ -21,8 +21,10 @@ package sai.indexing;
 
 import java.util.Set;
 
-import sai.DBInterface;
-import sai.graph.jgrapht.Graph;
+import sai.db.DBInterface;
+import sai.graph.Graph;
+import sai.graph.GraphFactory;
+import sai.graph.Index;
 
 /**
  * Implementations of this class are tasked with generating (or retrieving)
@@ -31,17 +33,8 @@ import sai.graph.jgrapht.Graph;
  * @version 0.2.0
  * @author Joseph Kendall-Morwick
  */
-public abstract class IndexGenerator {
+public interface IndexGenerator<G extends Graph> {
 
-    private DBInterface db;
-
-    public IndexGenerator(DBInterface db) {
-        this.db = db;
-    }
-
-    public DBInterface getDB() { return db; }
-
-    public abstract Set<Index> generateIndices(Graph s);
-
+    public Set<Index> generateIndices(DBInterface db, GraphFactory<G> gf, Graph s);
 
 }

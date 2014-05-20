@@ -43,15 +43,8 @@ public class SimpleCountRetriever<G extends Graph> implements GraphRetriever<G> 
 
     private Set<Integer> lastConsideredGraphIDs = new HashSet<Integer>();
     private Set<Integer> retrievedGraphIDs = new HashSet<Integer>();
-	private DBInterface db;
-	private GraphFactory<G> gf;
 
-    public SimpleCountRetriever(DBInterface db, GraphFactory<G> gf) {
-        this.db = db;
-        this.gf = gf;
-    }
-
-    public Iterator<G> retrieve(Set<Index> indices) {
+    public Iterator<G> retrieve(final DBInterface db, final GraphFactory<G> gf, Set<Index> indices) {
         final Multiset<Integer> ranks = HashMultiset.create();
         for (Index i : indices) {
             for (Integer gid : db.retrieveIndexedGraphs(i.getID())) {
@@ -62,7 +55,7 @@ public class SimpleCountRetriever<G extends Graph> implements GraphRetriever<G> 
         retrievedGraphIDs = new HashSet<Integer>();
         lastConsideredGraphIDs = ranks.elementSet();
 
-        for (Integer id : getDB().getHiddenGraphs()) {
+        for (Integer id : db.getHiddenGraphs()) {
             ranks.remove(id);
         }
 
@@ -77,18 +70,13 @@ public class SimpleCountRetriever<G extends Graph> implements GraphRetriever<G> 
                 int gid = Multisets.copyHighestCountFirst(ranks).iterator().next();
                 ranks.remove(gid);
                 retrievedGraphIDs.add(gid);
-                return getDB().retrieveGraph(gid, gf);
+                return db.retrieveGraph(gid, gf);
             }
 
             public void remove() {
             }
         };
     }
-
-	@Override
-	public sai.db.DBInterface getDB() {
-		return db;
-	}
 
     
 }

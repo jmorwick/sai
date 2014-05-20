@@ -32,10 +32,12 @@ import com.google.common.collect.Maps;
 import static info.kendall_morwick.funcles.Tuple.makeTuple;
 import sai.comparison.MapGenerator;
 import sai.comparison.MapHeuristic;
-import sai.graph.jgrapht.Graph;
-import sai.graph.jgrapht.Node;
-import sai.indexing.Index;
 import sai.retrieval.GraphRetriever;
+import sai.db.DBInterface;
+import sai.graph.Graph;
+import sai.graph.GraphFactory;
+import sai.graph.Index;
+import sai.graph.Node;
 
 /**  This class can be used to build a complete interface for retrieving
  * similar structures from a graph database.  In order to use this class,
@@ -47,16 +49,17 @@ import sai.retrieval.GraphRetriever;
  * @version 0.2.0
  * @author Joseph Kendall-Morwick <jmorwick@indiana.edu>
  */
-public class RetrievalInterface {
+public class RetrievalInterface<G extends Graph> {
     private final DBInterface db;
-    private final GraphRetriever r;
+    private final GraphRetriever<G> r;
     private final MapGenerator gen;
     private final MapHeuristic h;
     private int lastRetrievedGraphID = -1;
     private int lastRetrievedIndexSetSize = -1;
 
     public RetrievalInterface(DBInterface db,
-            GraphRetriever r,
+    		GraphFactory<G> gf,
+            GraphRetriever<G> r,
             MapGenerator gen,
             MapHeuristic h) {
         this.db = db;
