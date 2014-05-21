@@ -25,7 +25,6 @@ import java.util.Set;
 import sai.db.DBInterface;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
-import sai.graph.Index;
 
 /** This class is used to provide custom algorithms for ordering and retrieving
  * graphs from the database in accordance with a set of Indices.  The algorithm
@@ -37,5 +36,5 @@ import sai.graph.Index;
 public abstract interface GraphRetriever<G extends Graph> {
 
     public abstract Iterator<G> retrieve(DBInterface db, 
-    		GraphFactory<G> gf, Set<Index> indices);
+    		GraphFactory<G> gf, Set<Graph> indices);
 }

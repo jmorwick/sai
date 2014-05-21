@@ -18,6 +18,9 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sai.comparison;
 
+import info.kendall_morwick.funcles.BinaryRelation;
+import info.kendall_morwick.funcles.Pair;
+
 import java.math.BigInteger;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
@@ -29,17 +32,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import sai.db.DBInterface;
 import sai.graph.Edge;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.Node;
 
-import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+
+import static info.kendall_morwick.funcles.Funcles.apply;
 
 /**
  * @version 0.2.0
@@ -47,13 +52,105 @@ import com.google.common.collect.Sets;
  */
 public class Util {
 
+    
+    /** returns the reverse of this map.  If the map is not one-to-one,
+     * the returned mapping will include an arbitrary selection.
+     * @return
+     */
+    public static <V,K> Map<V, K> reverseMap(Map<K,V> m) {
+      Map<V,K> rev = Maps.newHashMap();
+      for(Map.Entry<K,V> e : m.entrySet())
+        rev.put(e.getValue(), e.getKey());
+      return rev;
+    }
+	
+
+    /** creates a collection from an iterator to allow foreach over iterators */
+    public static <A> Collection<A> iteratorToCollection(final Iterator<A> i) {
+        return new Collection<A>() {
+
+            public int size() {
+                throw new UnsupportedOperationException("Not supported.");
+            }
+
+            public boolean isEmpty() {
+                return i.hasNext();
+            }
+
+            public boolean contains(Object o) {
+                throw new UnsupportedOperationException("Not supported.");
+            }
+
+            public Iterator<A> iterator() {
+                return i;
+            }
+
+            public Object[] toArray() {
+                throw new UnsupportedOperationException("Not supported.");
+            }
+
+            public <T> T[] toArray(T[] a) {
+                throw new UnsupportedOperationException("Not supported.");
+            }
+
+            public boolean add(A e) {
+                throw new UnsupportedOperationException("Not supported.");
+            }
+
+            public boolean remove(Object o) {
+                throw new UnsupportedOperationException("Not supported.");
+            }
+
+            public boolean containsAll(Collection<?> c) {
+                throw new UnsupportedOperationException("Not supported.");
+            }
+
+            public boolean addAll(Collection<? extends A> c) {
+                throw new UnsupportedOperationException("Not supported.");
+            }
+
+            public boolean removeAll(Collection<?> c) {
+                throw new UnsupportedOperationException("Not supported.");
+            }
+
+            public boolean retainAll(Collection<?> c) {
+                throw new UnsupportedOperationException("Not supported.");
+            }
+
+            public void clear() {
+                throw new UnsupportedOperationException("Not supported.");
+            }
+
+        };
+    }
+
+    
+	
+
+    /** performs a complete, exponential-time search to select as many unique values for each key as possible.*/
+    public static <K,V> Map<K,V> 
+    	findRepresentativesComplete(BinaryRelation<V> comparator, Multimap<K,V> m) {
+        BigInteger max = getNumberOfPartialMappings(m);
+        Map<K,V> maxmap = Maps.newHashMap();
+        Iterator<Map<K,V>> partialMappings = null; //TODO: ********IMPLEMENT THIS ITERATOR!!
+        for(BigInteger i = BigInteger.ZERO; i.compareTo(max) < 0; i = i.add(BigInteger.ONE)) {
+            Map<K,V> m2 = partialMappings.next();
+            if(m2.size() > maxmap.size() && isOneToOne(m2))
+                maxmap = m2;
+        }
+        return maxmap;
+    	
+    }
+    
+    
     /** returns a set containing only features of the specified type */
+    //TODO: consider using a predicate as a filter for this
     public static Set<? extends Feature> retainOnly(Set<? extends Feature> features,
-            Set<? extends Class<? extends Feature>> types) {
+            Set<String> names) {
         Set<Feature> ret = new HashSet<Feature>();
         for (Feature f : features) {
-            for (Class<? extends Feature> type : types) {
-                if (type.isInstance(f)) {
+            for (String name : names) {
+                if (name.equals(f.getName())) {
                     ret.add(f);
                     break;
                 }
@@ -64,58 +161,71 @@ public class Util {
 
     /** returns a set containing only features of the specified type */
     public static Set<? extends Feature> retainOnly(Set<? extends Feature> features,
-            Class<? extends Feature>... types) {
-        Set<Class<? extends Feature>> ntypes =
-                new HashSet<Class<? extends Feature>>();
-        for (Class<? extends Feature> t : types) {
+            String... types) {
+        Set<String> ntypes =
+                new HashSet<String>();
+        for (String t : types) {
             ntypes.add(t);
         }
         return retainOnly(features, ntypes);
     }
 
     /** Determines which nodes in s1 can be mapped to which nodes in s2.
-     * This is determined by checking to see if both nodes have the same features
-     * for the feature classes indicated in featureTypes.
      * @param <N> indexable node type
      * @param <E> indexable edge type
      * @param <S> indexable structure type
-     * @param s1 structure from which to map nodes
-     * @param s2 structure to which to map nodes
-     * @param featureTypes feature types to be considered when comparing nodes
+     * @param s1 graph from which to map nodes
+     * @param s2 graph to which to map nodes
+     * @param featureSetComparator determines if sets of features are compatible
      * @return a multi-map indicating which nodes in s1 can be mapped to which in s2
      */
-    public static Multimap<Node, Node> nodeCompatibility(Graph s1, Graph s2) {
-        return nodeCompatibility(s1.vertexSet(), s2.vertexSet());
+    public static Multimap<Node, Node> nodeCompatibility(
+    		BinaryRelation<Set<Feature>> featureSetComparator,
+    		Graph s1, Graph s2) {
+        return nodeCompatibility(featureSetComparator, s1.getNodes(), s2.getNodes());
     }
 
     public static Multimap<Node, Node> nodeCompatibility(
+    		BinaryRelation<Set<Feature>> featureSetComparator,
             Set<Node> s1,
             Set<Node> s2) {
         Multimap<Node, Node> possibilities = HashMultimap.<Node, Node>create();
         for (Node n1 : s1) {
             for (Node n2 : s2) {
-                if (n1.compatible(n2)) {
+                if (apply(featureSetComparator, n1.getFeatures(), n2.getFeatures())) {
                     possibilities.put(n1, n2);
                 }
             }
         }
         return possibilities;
     }
-    public static final Function<Multimap<Edge, Edge>,Integer> completeEdgeMatchCounter =
-            new Function<Multimap<Edge, Edge>,Integer>() {
+    
 
-                @Override
-                public Integer apply(Multimap<Edge, Edge> p1) {
-                    return findRepresentativesComplete(p1).size();
-                }
-            };
 
+	public static boolean isCompatible(DBInterface db, Feature t1, Feature t2) {
+		if(t1.getName().equals(t2.getName()))
+			if(t1.getID() == t2.getID())
+				return true;
+		return db.isCompatible(t1, t2);
+	}
+    
+    public static boolean isCompatible(Edge e1, Edge e2,
+    		BinaryRelation<Set<Feature>> featureSetComparator) {
+    	return apply(featureSetComparator, e1.getFeatures(), e2.getFeatures());
+    }
+    
+    public static boolean isCompatible(Node n1, Node n2,
+    		BinaryRelation<Set<Feature>> featureSetComparator) {
+    	return apply(featureSetComparator, n1.getFeatures(), n2.getFeatures());
+    }
+    
     /** returns the number of subsumed edges for the mapping */
-    public static int matchedEdges(Graph s1,
+    public static int matchedEdges(
+    		final BinaryRelation<Set<Feature>> featureSetComparator,
+    		Graph s1,
             Graph s2,
             Node n1,
-            Map<Node, Node> m,
-            Function<Multimap<Edge, Edge>,Integer> countMappableEdges) {
+            Map<Node, Node> m) {
         Multimap<Edge, Edge> possibleMappings = HashMultimap.<Edge, Edge>create();
         Node n2 = m.get(n1);
         if (n2 == null) {
@@ -124,7 +234,7 @@ public class Util {
 
         for (Edge e1 : s1.getEdges()) {
             for (Edge e2 : s2.getEdges()) {
-                if (!e1.subsumes(e2)) {
+                if (!isCompatible(e1, e2, featureSetComparator)) {
                     continue;
                 }
                 if (n1 == s1.getEdgeSource(e1)
@@ -134,49 +244,64 @@ public class Util {
                 } else if (n1 == s1.getEdgeTarget(e1)
                         && n2 == s2.getEdgeTarget(e2)
                         && m.get(s1.getEdgeSource(e1)) == s2.getEdgeSource(e2)
-                        && e1.subsumes(e2)) {
+                        && isCompatible(e1, e2, featureSetComparator)) {
                     possibleMappings.put(e1, e2);
-                } else if (s1.getDB().directedGraphs()
+                } else if (s1.isDirectedgraph()
                         && n1 == s1.getEdgeSource(e1)
                         && n2 == s2.getEdgeTarget(e2)
                         && m.get(s1.getEdgeTarget(e1)) == s2.getEdgeSource(e2)
-                        && e1.subsumes(e2)) {
+                        && isCompatible(e1, e2, featureSetComparator)) {
                     possibleMappings.put(e1, e2);
-                } else if (s1.getDB().directedGraphs()
+                } else if (s1.isDirectedgraph()
                         && n1 == s1.getEdgeTarget(e1)
                         && n2 == s2.getEdgeSource(e2)
                         && m.get(s1.getEdgeSource(e1)) == s2.getEdgeTarget(e2)
-                        && e1.subsumes(e2)) {
+                        && isCompatible(e1, e2, featureSetComparator)) {
                     possibleMappings.put(e1, e2);
                 }
             }
         }
-        return findRepresentativesComplete(possibleMappings).size();
+        return findRepresentativesComplete(new BinaryRelation<Edge>() {
+
+			@Override
+			public boolean apply(Pair<Edge> args) {
+				return isCompatible(args.a1(), args.a2(), featureSetComparator);
+			}
+        	
+        }, possibleMappings).size();
     }
 
-    public static int matchedEdges(Graph s1,
+    public static int matchedEdges(
+    		final BinaryRelation<Set<Feature>> featureSetComparator,
+    		Graph s1,
             Graph s2,
-            Map<Node, Node> m,
-            Function<Multimap<Edge, Edge>,Integer> countMappableEdges) {
+            Map<Node, Node> m) {
         int matches = 0;
         for (Map.Entry<Node, Node> e : m.entrySet()) {
-            matches += matchedEdges(s1,
+            matches += matchedEdges(
+            		featureSetComparator,
+            		s1,
                     s2,
                     e.getKey(),
-                    m,
-                    countMappableEdges);
+                    m);
         }
 
         return matches / 2;   //each edge will be counted twice (once on the starting node and once on the ending node)
     }
 
-    public static BigInteger getNumberOfCompleteMappings(Graph g1, Graph g2) {
-        Multimap<Node, Node> compatibility = nodeCompatibility(g1, g2);
+    public static BigInteger getNumberOfCompleteMappings(
+    		final BinaryRelation<Set<Feature>> featureSetComparator,
+    		Graph g1, 
+    		Graph g2) {
+        Multimap<Node, Node> compatibility = nodeCompatibility(featureSetComparator, g1, g2);
         return getNumberOfCompleteMappings(compatibility);
     }
 
-    public static BigInteger getNumberOfPartialMappings(Graph g1, Graph g2) {
-        Multimap<Node, Node> compatibility = nodeCompatibility(g1, g2);
+    public static BigInteger getNumberOfPartialMappings(
+    		final BinaryRelation<Set<Feature>> featureSetComparator,
+    		Graph g1, 
+    		Graph g2) {
+        Multimap<Node, Node> compatibility = nodeCompatibility(featureSetComparator, g1, g2);
         return getNumberOfPartialMappings(compatibility);
     }
     
@@ -194,19 +319,6 @@ public class Util {
     }
 
 
-
-  /** performs a complete, EXP-TIME search to select as many unique values for each key as possible.*/
-      public static <K extends Comparable,V extends Comparable> Map<K,V> 
-      		findRepresentativesComplete(Multimap<K,V> m) {
-          BigInteger max = getNumberOfPartialMappings(m);
-          Map<K,V> maxmap = Maps.newHashMap();
-          for(BigInteger i = BigInteger.ZERO; i.compareTo(max) < 0; i = i.add(BigInteger.ONE)) {
-              Map<K,V> m2 = getIthPartialMapping(m, i);
-              if(m2.size() > maxmap.size() && isOneToOne(m2))
-                  maxmap = m2;
-          }
-          return maxmap;
-      }
       
       public static <K,V> BigInteger getNumberOfCompleteMappings(Multimap<K,V> m) {
           BigInteger i = BigInteger.ONE;
@@ -243,7 +355,7 @@ public class Util {
           return ret;
       }
 
-      /** this will be replaced with an iterator-based method */
+      /** this will be replaced with an iterator-based method *
       @Deprecated public static <K extends Comparable,V extends Comparable> 
       		Map<K,V> getIthPartialMapping(Multimap<K,V> m, BigInteger i) {
           Map<K,V> ret = Maps.newHashMap();
@@ -259,7 +371,7 @@ public class Util {
           }
           return ret;
       }
-
+      */
       
       public static <K,V> boolean isOneToOne(Map<K,V> m) {
           Set<V> values = Sets.newHashSet();
@@ -310,6 +422,55 @@ public class Util {
         if(i == id.size()) return null;  //overflow
         return id;
       }
+      
+      /** return an iterator that iterates though each possible subset of this set.
+       *  subsets are generated on demand so that initial operations will not
+       * compromise memory or computation time.  
+       * @return an iterator for all subsets of this set
+       */
+      public static <T> Iterator<Set<T>> getAllSubsetsIterator(final Set<T> s) {
+        return new Iterator<Set<T>>() {
+          List<Boolean> i = getFirstSubsetID(s);
+          public boolean hasNext() {
+            return i != null;
+          }
+
+          public Set<T> next() {
+            if(i == null) return null;
+            Set<T> ret = getSubset(s,i);
+            i = getNextSubsetID(i);
+            return ret;
+          }
+
+          public void remove() {
+            throw new UnsupportedOperationException("remove not supported");
+          }
+
+        };
+      }
+
+      public static <T> Collection<Set<T>> getAllSubsets(Set<T> s) {
+          return iteratorToCollection(getAllSubsetsIterator(s));
+      }
+      
+      
+
+      
+      /** performs a complete, exponential-time search to select as many unique values for each key as possible.*
+          public static <K extends Comparable,V extends Comparable> Map<K,V> 
+          		findRepresentativesComplete(Multimap<K,V> m) {
+              BigInteger max = getNumberOfPartialMappings(m);
+              Map<K,V> maxmap = Maps.newHashMap();
+              for(BigInteger i = BigInteger.ZERO; i.compareTo(max) < 0; i = i.add(BigInteger.ONE)) {
+                  Map<K,V> m2 = getIthPartialMapping(m, i);
+                  if(m2.size() > maxmap.size() && isOneToOne(m2))
+                      maxmap = m2;
+              }
+              return maxmap;
+          }
+          */
+
+      /*
 
       private static <T> Set<Set<T>> 
       		getPartition(Set<T> s, List<List<Boolean>> id) {
@@ -354,100 +515,10 @@ public class Util {
         return row;
       }
 
-      
-      /** return an iterator that iterates though each possible subset of this set.
-       *  subsets are generated on demand so that initial operations will not
-       * comprimise memory or computation time.  
-       * @return an iterator for all subsets of this set
-       */
-      public static <T> Iterator<Set<T>> getAllSubsetsIterator(final Set<T> s) {
-        return new Iterator<Set<T>>() {
-          List<Boolean> i = getFirstSubsetID(s);
-          public boolean hasNext() {
-            return i != null;
-          }
-
-          public Set<T> next() {
-            if(i == null) return null;
-            Set<T> ret = getSubset(s,i);
-            i = getNextSubsetID(i);
-            return ret;
-          }
-
-          public void remove() {
-            throw new UnsupportedOperationException("remove not supported");
-          }
-
-        };
-      }
-
-      public static <T> Collection<Set<T>> getAllSubsets(Set<T> s) {
-          return iteratorToCollection(getAllSubsetsIterator(s));
-      }
-
+*/
       
 
-      /** creates a collection from an iterator to allow foreach over iterators */
-      public static <A> Collection<A> iteratorToCollection(final Iterator<A> i) {
-          return new Collection<A>() {
-
-              public int size() {
-                  throw new UnsupportedOperationException("Not supported.");
-              }
-
-              public boolean isEmpty() {
-                  return i.hasNext();
-              }
-
-              public boolean contains(Object o) {
-                  throw new UnsupportedOperationException("Not supported.");
-              }
-
-              public Iterator<A> iterator() {
-                  return i;
-              }
-
-              public Object[] toArray() {
-                  throw new UnsupportedOperationException("Not supported.");
-              }
-
-              public <T> T[] toArray(T[] a) {
-                  throw new UnsupportedOperationException("Not supported.");
-              }
-
-              public boolean add(A e) {
-                  throw new UnsupportedOperationException("Not supported.");
-              }
-
-              public boolean remove(Object o) {
-                  throw new UnsupportedOperationException("Not supported.");
-              }
-
-              public boolean containsAll(Collection<?> c) {
-                  throw new UnsupportedOperationException("Not supported.");
-              }
-
-              public boolean addAll(Collection<? extends A> c) {
-                  throw new UnsupportedOperationException("Not supported.");
-              }
-
-              public boolean removeAll(Collection<?> c) {
-                  throw new UnsupportedOperationException("Not supported.");
-              }
-
-              public boolean retainAll(Collection<?> c) {
-                  throw new UnsupportedOperationException("Not supported.");
-              }
-
-              public void clear() {
-                  throw new UnsupportedOperationException("Not supported.");
-              }
-
-          };
-      }
-
-      
-
+/*
       public static <T> Iterator<Set<Set<T>>> getAllSecondOrderSubsets(Set<Set<T>> p) {
         int ts = 0;
         for(Set<T> s : p) ts += s.size();
@@ -489,6 +560,7 @@ public class Util {
 
         };
       }
+      */
 
     /** return the i-ith mapping from f to t.  This function is deterministic
      * and each i represents a unique mapping for every i from 0 up to the number
@@ -499,7 +571,7 @@ public class Util {
      * @param t set of values to be mapped to
      * @param i id of the unique mapping to be generated
      * @return a mapping from f to t
-     */
+     *
       public static <FROM, TO> Map<FROM, TO> getMapping(Set<FROM> f, Set<TO> t, int i) {
         Map<FROM, TO> m = Maps.newHashMap();
         if(i < 0 || i >= possibleMappings(f.size(), t.size()).intValue()) return m;
@@ -570,16 +642,7 @@ public class Util {
         if(k.compareTo(n) > 0) return possibleMappings(k, n);
         return bigFactorial(n).divide(bigFactorial(n.subtract(k)));
       }
+      */
       
-      /** returns the reverse of this map.  If the map is not one-to-one,
-       * the returned mapping will include an arbitrary selection.
-       * @return
-       */
-      public static <V,K> Map<V, K> reverseMap(Map<K,V> m) {
-        Map<V,K> rev = Maps.newHashMap();
-        for(Map.Entry<K,V> e : m.entrySet())
-          rev.put(e.getValue(), e.getKey());
-        return rev;
-      }
       
 }

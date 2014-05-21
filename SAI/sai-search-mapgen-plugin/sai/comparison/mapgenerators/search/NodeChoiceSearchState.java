@@ -19,8 +19,12 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
 package sai.comparison.mapgenerators.search;
 
+import java.util.Map;
+
+import com.google.common.collect.Multimap;
+
 import sai.comparison.mapgenerators.search.GraphMapping;
-import sai.graph.jgrapht.Node;
+import sai.graph.Node;
 
 /**
  * An intermediate search state in which a single node to be mapped is chosen,
@@ -33,7 +37,7 @@ public class NodeChoiceSearchState extends GraphMapping {
     private final Node n;
 
     public NodeChoiceSearchState(Map<Node,Node> m, 
-            MultiMap<Node,Node> possibilities, Node n) {
+            Multimap<Node,Node> possibilities, Node n) {
         super(m,possibilities);
         this.n = n;
     }

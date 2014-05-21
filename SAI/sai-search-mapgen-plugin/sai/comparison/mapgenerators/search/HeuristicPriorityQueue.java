@@ -29,9 +29,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import sai.comparison.MapHeuristic;
-import sai.graph.jgrapht.Feature;
-import sai.graph.jgrapht.Graph;
-import sai.graph.jgrapht.Node;
+import sai.graph.Feature;
+import sai.graph.Node;
 
 /**
  * A search priority queue which caches map heuristic computations
@@ -51,7 +50,7 @@ public class HeuristicPriorityQueue extends SearchQueue {
 
 
     public HeuristicPriorityQueue(final MapHeuristic h,
-            Class<? extends Feature>... featureTypes) {
+            String ... featureTypes) {
         super(featureTypes);
         this.queueHueristic = h;
         this.judgeHueristic = h;

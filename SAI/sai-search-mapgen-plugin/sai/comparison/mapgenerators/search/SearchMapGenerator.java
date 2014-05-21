@@ -17,16 +17,15 @@
 
  */
 
-package sai.comparison.mapgenerators;
+package sai.comparison.mapgenerators.search;
 
 import info.kendall_morwick.funcles.T2;
 
 import java.util.Map;
 
 import sai.comparison.MapGenerator;
-import sai.comparison.mapgenerators.search.SearchQueue;
-import sai.graph.jgrapht.Graph;
-import sai.graph.jgrapht.Node;
+import sai.graph.Graph;
+import sai.graph.Node;
 
 /**
  * Generates a mapping between two graphs by BFS in a map-space. 

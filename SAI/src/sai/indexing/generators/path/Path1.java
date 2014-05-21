@@ -28,7 +28,7 @@ import sai.graph.Edge;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
-import sai.graph.Index;
+import sai.graph.Node;
 import sai.indexing.IndexGenerator;
 
 /**
@@ -47,8 +47,8 @@ public class Path1<G extends Graph> implements IndexGenerator<G> {
     }
 
     @Override
-    public Set<Index> generateIndices(DBInterface db, GraphFactory<G> gf, Graph s) {
-        Set<Index> indices = new HashSet<Index>();
+    public Set<Graph> generateIndices(DBInterface db, GraphFactory<G> gf, Graph s) {
+        Set<Graph> indices = new HashSet<Graph>();
         for(Edge e : s.getEdges()) {
             Set<Feature> fromNodeFeatures = new HashSet<Feature>();
             Set<Feature> toNodeFeatures = new HashSet<Feature>();
@@ -65,15 +65,18 @@ public class Path1<G extends Graph> implements IndexGenerator<G> {
             for(Feature n1f : fromNodeFeatures)
                 for(Feature n2f : toNodeFeatures)
                     for(Feature ef : edgeFeatures) {
-                Index i = new Index(getDB());
-                Node fn = new Node(i, getDB());
-                Node tn = new Node(i, getDB());
-                Edge edge = new Edge(i, getDB());
-                fn.addFeature(n1f);
-                tn.addFeature(n2f);
-                if(ef != null) edge.addFeature(ef);
-                i.addEdge(fn, tn, edge);
-                indices.add(i);
+                    	Graph i = gf.createEmptyGraph(
+                    			s.isDirectedgraph(), 
+                    			s.isMultigraph(), 
+                    			s.isPseudograph(), 
+                    			true);
+                    	Node in1 = i.addNode();
+                    	Node in2 = i.addNode();
+                    	Edge ie = i.addEdge(in1, in2);
+                    	i.addFeature(in1, n1f);
+                    	i.addFeature(in2, n2f);
+                    	i.addFeature(ie, ef);
+                    	indices.add(i);
             }
         }
         return indices;

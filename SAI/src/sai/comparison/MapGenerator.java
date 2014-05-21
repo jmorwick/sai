@@ -21,9 +21,9 @@ package sai.comparison;
 
 import java.util.Map;
 
+import sai.graph.Graph;
+import sai.graph.Node;
 import info.kendall_morwick.funcles.T2;
-import sai.graph.jgrapht.Graph;
-import sai.graph.jgrapht.Node;
 
 import com.google.common.base.Function;
 

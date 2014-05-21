@@ -10,9 +10,10 @@ public interface GraphFactory<G extends Graph> {
 	 * @param directed
 	 * @param multi
 	 * @param pseudo
+	 * @param index whether or not this graph should be index-only (not returned in queries)
 	 * @return
 	 */
-	public G createEmptyGraph(boolean directed, boolean multi, boolean pseudo);
+	public G createEmptyGraph(boolean directed, boolean multi, boolean pseudo, boolean index);
 
 	/** creates a copy of the graph g which cannot be altered. It will have the 
 	 * same ID and DBInterface as g, and all node and edge instances will also 

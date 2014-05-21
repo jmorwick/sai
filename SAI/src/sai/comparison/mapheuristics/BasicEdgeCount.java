@@ -30,19 +30,19 @@ import com.google.common.collect.Multiset;
 
 import sai.comparison.MapHeuristic;
 import sai.comparison.mapgenerators.search.GraphMapping;
-import sai.graph.jgrapht.Edge;
-import sai.graph.jgrapht.Graph;
-import sai.graph.jgrapht.Node;
+import sai.graph.Edge;
+import sai.graph.Graph;
+import sai.graph.Node;
 
 
 /**
  * A simple map judging heuristic which counts the number of subsumed edges
  * induced by the mapping. 
  *
- * @version 0.2.0
+ * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
-public class BasicEdgeCount extends MapHeuristic {
+public class BasicEdgeCount implements MapHeuristic {
 
     public static int countMappedEdges(Graph g1, Graph g2, GraphMapping ss) {
         return (int)(double)(new BasicEdgeCount()).apply(Tuple.makeTuple(g1, g2, ss));
@@ -53,15 +53,15 @@ public class BasicEdgeCount extends MapHeuristic {
     		Graph g1 = args.a1();
     		Graph g2 = args.a2();
     		Map<Node, Node> m = args.a3();
-            if(g1.edgeSet().size() == 0) return 0.0;
+            if(g1.getEdges().size() == 0) return 0.0;
             int count = 0;
             Multiset<T2<Node,Node>> available = HashMultiset.create();
-            for(Edge e : g2.edgeSet()) {
+            for(Edge e : g2.getEdges()) {
                 available.add(Tuple.makeTuple(
                         g2.getEdgeSource(e),
                         g2.getEdgeTarget(e)));
             }
-            for(Edge e : g1.edgeSet()) {
+            for(Edge e : g1.getEdges()) {
                 Node n1 = g1.getEdgeSource(e);
                 Node n2 = g1.getEdgeTarget(e);
                 if(m.containsKey(n1) && m.containsKey(n2)) {
@@ -72,7 +72,7 @@ public class BasicEdgeCount extends MapHeuristic {
                     }
                 }
             }
-            double value = (double)count / (double)g1.edgeSet().size();
+            double value = (double)count / (double)g1.getEdges().size();
             return value;
     }
 }

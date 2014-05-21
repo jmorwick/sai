@@ -22,6 +22,7 @@ import sai.comparison.MapHeuristic;
 import sai.comparison.mapgenerators.search.HeuristicPriorityQueue;
 import sai.comparison.mapgenerators.search.OneNodeAtATimeQueue;
 import sai.comparison.mapgenerators.search.GraphMapping;
+import sai.comparison.mapgenerators.search.SearchMapGenerator;
 import sai.graph.jgrapht.Feature;
 import sai.graph.jgrapht.Node;
 

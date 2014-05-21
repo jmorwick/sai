@@ -27,7 +27,7 @@ import sai.graph.jgrapht.Graph;
 import sai.graph.jgrapht.Node;
 import sai.indexing.Index;
 import sai.indexing.generators.path.Path1;
-import sai.indexing.generators.path.Path1Lookup;
+import sai.indexing.retrievers.path.Path1Lookup;
 import static org.junit.Assert.*;
 
 import org.junit.*;

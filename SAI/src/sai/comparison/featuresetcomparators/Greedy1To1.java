@@ -20,13 +20,14 @@ package sai.comparison.featuresetcomparators;
 
 import info.kendall_morwick.funcles.BinaryRelation;
 import info.kendall_morwick.funcles.Pair;
-import info.kendall_morwick.funcles.T2;
-
 import java.util.Set;
+
+import sai.comparison.Util;
+import sai.db.DBInterface;
+import sai.graph.Feature;
 
 import com.google.common.collect.Sets;
 
-import sai.graph.jgrapht.Feature;
 
 /**
  * A quadratic-worse-case comparison algorithm which does not exhaustively check
@@ -39,6 +40,12 @@ import sai.graph.jgrapht.Feature;
  */
 public class Greedy1To1 implements BinaryRelation<Set<? extends Feature>> {
 
+	private final DBInterface db;
+
+	public Greedy1To1(DBInterface db) {
+		this.db = db;
+	}
+	
     /** returns true if each feature in t1s is compatible with at least one
      * feature in t2s, allowing repeats.
      * @param t1s
@@ -52,7 +59,7 @@ public class Greedy1To1 implements BinaryRelation<Set<? extends Feature>> {
         for(Feature t1 : t1s) {
             boolean foundMatch = false;
             for(Feature t2 : t2s) {
-                if(t1.compatible(t2)) {
+                if(Util.isCompatible(db,t1,t2)) {
                     foundMatch = true;
                     t2s.remove(t2);
                     break;

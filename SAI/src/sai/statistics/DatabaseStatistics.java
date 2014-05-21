@@ -18,11 +18,12 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sai.statistics;
 
-import sai.DBInterface;
 import sai.comparison.Util;
-import sai.graph.jgrapht.Edge;
-import sai.graph.jgrapht.Feature;
-import sai.graph.jgrapht.Graph;
+import sai.db.DBInterface;
+import sai.graph.Edge;
+import sai.graph.Feature;
+import sai.graph.Graph;
+import sai.graph.GraphFactory;
 import info.kendall_morwick.funcles.T3;
 import info.kendall_morwick.funcles.Tuple;
 
@@ -39,9 +40,11 @@ import com.google.common.collect.Multisets;
 public class DatabaseStatistics {
 
     private DBInterface db;
+	private GraphFactory<? extends Graph> gf;
 
-    public DatabaseStatistics(DBInterface db) {
+    public DatabaseStatistics(DBInterface db, GraphFactory<? extends Graph> gf) {
         this.db = db;
+        this.gf = gf;
     }
 
     /** TODO: testme */
@@ -55,7 +58,8 @@ public class DatabaseStatistics {
      * connecting edge
      * @param progressIncrement the portion of the total progress after which an update should be printed (1.0 is the total)
      */
-    public Multiset<T3<Feature, Feature, Feature>> get3FeatureLinkOccurances(double progressIncrement) {
+    public Multiset<T3<Feature, Feature, Feature>> 
+    	get3FeatureLinkOccurances(double progressIncrement) {
     	Multiset<T3<Feature, Feature, Feature>> features = HashMultiset.create();
         int total = db.getDatabaseSize();
         int read = 0;
@@ -63,8 +67,9 @@ public class DatabaseStatistics {
         if (progressIncrement < 1.0) {
             System.out.println("0% completed");
         }
-        Iterator<Graph> i = db.getStructureIterator();
-        for (Graph g = i.next(); i.hasNext(); g = i.next()) {
+        Iterator<Integer> i = db.getGraphIDIterator();
+        for (Graph g = db.retrieveGraph(i.next(), gf); i.hasNext(); 
+        		g = db.retrieveGraph(i.next(), gf)) {
             features = Multisets.union(features, get3FeatureLinkOccurances(g));
             if ((double) read / (double) total > lastMessage + progressIncrement) {
                 lastMessage = (double) read / (double) total;
@@ -87,7 +92,7 @@ public class DatabaseStatistics {
     public Multiset<T3<Feature, Feature, Feature>> get3FeatureLinkOccurances(Graph g) {
         Multiset<T3<Feature, Feature, Feature>> features = HashMultiset.create();
         System.out.println(g);
-        for (Edge e : g.edgeSet()) {
+        for (Edge e : g.getEdges()) {
             for (Feature nf1 : g.getEdgeSource(e).getFeatures()) {
                 for (Feature ef : e.getFeatures()) {
                     for (Feature nf2 : g.getEdgeTarget(e).getFeatures()) {
@@ -103,13 +108,13 @@ public class DatabaseStatistics {
      * class) incident to a node with the specified node feature in the Graph g.
      */
     public Multiset<Feature> incomingEdgeFeatures(Feature nodeFeature,
-            Class<? extends Feature> edgeFeatureType, Graph g) {
+            String edgeFeatureName, Graph g) {
         Multiset<Feature> b = HashMultiset.create();
-        for (Edge e : g.edgeSet()) {
+        for (Edge e : g.getEdges()) {
             if (!g.getEdgeTarget(e).getFeatures().contains(nodeFeature)) {
                 continue;
             }
-            for (Feature f : Util.retainOnly(e.getFeatures(), edgeFeatureType)) {
+            for (Feature f : Util.retainOnly(e.getFeatures(), edgeFeatureName)) {
                 b.add(f);
             }
         }
@@ -121,7 +126,7 @@ public class DatabaseStatistics {
      * @param progressIncrement the portion of the total progress after which an update should be printed (1.0 is the total)
      */
     public Multiset<Feature> incomingEdgeFeatures(Feature nodeFeature,
-            Class<? extends Feature> edgeFeatureType, double progressIncrement) {
+            String edgeFeatureName, double progressIncrement) {
         int total = db.getDatabaseSize();
         int read = 0;
         double lastMessage = 0.0;
@@ -129,9 +134,10 @@ public class DatabaseStatistics {
         if (progressIncrement < 1.0) {
             //System.out.println("0% completed");
         }
-        Iterator<Graph> i = db.getStructureIterator();
-        for (Graph g = i.next(); i.hasNext(); g = i.next()) {
-            b = Multisets.union(b,incomingEdgeFeatures(nodeFeature, edgeFeatureType, g));
+        Iterator<Integer> i = db.getGraphIDIterator();
+        for (Graph g = db.retrieveGraph(i.next(), gf); i.hasNext(); 
+        		g = db.retrieveGraph(i.next(), gf)) {
+            b = Multisets.union(b,incomingEdgeFeatures(nodeFeature, edgeFeatureName, g));
             if ((double) read / (double) total > lastMessage + progressIncrement) {
                 lastMessage = (double) read / (double) total;
                 //System.out.println((lastMessage * 100) + "% completed");
@@ -157,8 +163,9 @@ public class DatabaseStatistics {
         if (progressIncrement < 1.0) {
             System.out.println("0% completed");
         }
-        Iterator<Graph> i = db.getStructureIterator();
-        for (Graph g = i.next(); i.hasNext(); g = i.next()) {
+        Iterator<Integer> i = db.getGraphIDIterator();
+        for (Graph g = db.retrieveGraph(i.next(), gf); i.hasNext(); 
+        		g = db.retrieveGraph(i.next(), gf)) {
             features = Multisets.union(features, getAllFeatureLinkOccurances(g));
 
             if ((double) read / (double) total > lastMessage + progressIncrement) {
@@ -181,7 +188,7 @@ public class DatabaseStatistics {
         Multiset<T3<Set<Feature>, Set<Feature>, Set<Feature>>> features = HashMultiset.create();
         int total = db.getDatabaseSize();
         System.out.println(g);
-        for (Edge e : g.edgeSet()) {
+        for (Edge e : g.getEdges()) {
             for (Set<Feature> nf1s : Util.getAllSubsets(g.getEdgeSource(e).getFeatures())) {
                 for (Set<Feature> efs : Util.getAllSubsets(e.getFeatures())) {
                     for (Set<Feature> nf2s : Util.getAllSubsets(g.getEdgeTarget(e).getFeatures())) {

@@ -21,7 +21,6 @@ package sai.comparison.subgraphcomparators;
 
 import info.kendall_morwick.funcles.BinaryRelation;
 import info.kendall_morwick.funcles.Funcles;
-import info.kendall_morwick.funcles.ProcessingThread;
 import info.kendall_morwick.funcles.Pair;
 import info.kendall_morwick.funcles.T2;
 
@@ -31,14 +30,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 
-import sai.DBInterface;
-import sai.comparison.ResultUnavailableException;
 import sai.comparison.Util;
-import sai.graph.jgrapht.Feature;
-import sai.graph.jgrapht.Graph;
-import sai.graph.jgrapht.Node;
+import sai.db.DBInterface;
+import sai.graph.Edge;
+import sai.graph.Feature;
+import sai.graph.Graph;
+import sai.graph.Node;
+
+import static info.kendall_morwick.funcles.Funcles.apply;
 
 /**
  * This class may not be included in 1.0; I'm still considering its inclusion
@@ -50,72 +52,64 @@ import sai.graph.jgrapht.Node;
 //TODO: completely rewrite
 public class CompleteSubgraphComparator implements BinaryRelation<Graph> {
 
-    public static boolean compare(DBInterface db, Graph g1, Graph g2, 
-            Class<? extends Feature> ... features) {
-        CompleteSubgraphComparator csc = new CompleteSubgraphComparator(db, features);
-        return Funcles.apply(csc, g1, g2);
-    }
-    
-    public static Future<Boolean> compareInBackground(DBInterface db, Graph g1, Graph g2, 
-            Class<? extends Feature> ... features) {
-        CompleteSubgraphComparator csc = new CompleteSubgraphComparator(db, features);
-        return Funcles.applyInBackground(csc, g1, g2);
-    }
+	public static boolean compare(DBInterface db, Graph g1, Graph g2, 
+			BinaryRelation<Set<Feature>> featureSetComparator) {
+		CompleteSubgraphComparator csc = new CompleteSubgraphComparator(db, featureSetComparator);
+		return Funcles.apply(csc, g1, g2);
+	}
 
-    private Class<? extends Feature>[] featureTypes;
 	private DBInterface db;
+	private BinaryRelation<Set<Feature>> featureSetComparator;
 
-    public CompleteSubgraphComparator(final DBInterface db,
-            final Class<? extends Feature> ... featureTypes) {
-    	this.db = db;
-    	this.featureTypes = featureTypes;
-    }
-
-    
-    @Override
-    public boolean apply(T2<Graph,Graph> args)
-    		throws ResultUnavailableException {
-    	Graph sub = args.a1();
-    	Graph sup = args.a2();
-                BigInteger numMappings = Util.getNumberOfCompleteMappings(
-                        sub,
-                        sup);
-                Multimap<Node, Node> possibilities = Util.nodeCompatibility(
-                        sub,
-                        sup);
-                BigInteger currentMapping = BigInteger.ZERO;
-
-                //make sure the features for the graphs themselves are compatible
-                if(!db.featureSetsCompatible(
-                        sub.getFeatures(),
-                        sup.getFeatures())) {
-                    return false;
-                }
+	public CompleteSubgraphComparator(final DBInterface db, 
+			BinaryRelation<Set<Feature>> featureSetComparator) {
+		this.db = db;
+		this.featureSetComparator = featureSetComparator;
+	}
 
 
-                while(currentMapping.compareTo(numMappings) < 0) {
-                    Map<Node,Node> map = Util.getIthCompleteMapping(possibilities,currentMapping);
-                    if(map.size() < possibilities.size()) {
-                        return false;
-                    } else if(Util.matchedEdges(
-                            sub,
-                        sup,
-                        map, Util.completeEdgeMatchCounter) ==
-                        sub.edgeSet().size() &&
-                        map.size() == sup.vertexSet().size()) {
-                        return true;
-                    }
+	@Override
+	public boolean apply(Pair<Graph> args) {
+		Graph sub = args.a1();
+		Graph sup = args.a2();
+		BigInteger numMappings = Util.getNumberOfCompleteMappings(
+				featureSetComparator, sub,
+				sup);
+		Multimap<Node, Node> possibilities = Util.nodeCompatibility(
+				featureSetComparator, sub,
+				sup);
+		BigInteger currentMapping = BigInteger.ZERO;
 
-                    if(Thread.currentThread() instanceof ProcessingThread) {
-                    	ProcessingThread pc = (ProcessingThread)Thread.currentThread();
-                        if(pc.askedToDie()) break;
-                    }
-                    currentMapping = currentMapping.add(BigInteger.ONE);
-                }
+		//make sure the features for the graphs themselves are compatible
+		if(!apply(featureSetComparator,
+				sub.getFeatures(),
+				sup.getFeatures())) {
+			return false;
+		}
 
-                if(currentMapping.equals(numMappings)) {
-                    return false;
-                }
-                throw new ResultUnavailableException();
-            }
+
+		while(currentMapping.compareTo(numMappings) < 0) {
+			Map<Node,Node> map = Util.getIthCompleteMapping(possibilities,currentMapping);
+			if(map.size() < possibilities.size()) {
+				return false;
+			} else if(Util.matchedEdges(
+					featureSetComparator,
+					sub,
+					sup,
+					map) ==
+					sub.getEdges().size() &&
+					map.size() == sup.getNodes().size()) {
+				return true;
+			}
+
+			currentMapping = currentMapping.add(BigInteger.ONE);
+		}
+
+		if(currentMapping.equals(numMappings)) {
+			return false;
+		}
+
+		return false; // TODO: is this an error? I was throwing an exception here
+	}
+
 }

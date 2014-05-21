@@ -29,7 +29,6 @@ import com.google.common.collect.Multisets;
 import sai.db.DBInterface;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
-import sai.graph.Index;
 import sai.retrieval.GraphRetriever;
 
 /**
@@ -44,10 +43,10 @@ public class SimpleCountRetriever<G extends Graph> implements GraphRetriever<G> 
     private Set<Integer> lastConsideredGraphIDs = new HashSet<Integer>();
     private Set<Integer> retrievedGraphIDs = new HashSet<Integer>();
 
-    public Iterator<G> retrieve(final DBInterface db, final GraphFactory<G> gf, Set<Index> indices) {
+    public Iterator<G> retrieve(final DBInterface db, final GraphFactory<G> gf, Set<Graph> indices) {
         final Multiset<Integer> ranks = HashMultiset.create();
-        for (Index i : indices) {
-            for (Integer gid : db.retrieveIndexedGraphs(i.getID())) {
+        for (Graph i : indices) {
+            for (Integer gid : db.retrieveIndexedGraphIDs(i.getID())) {
                 ranks.add(gid);
             }
         }

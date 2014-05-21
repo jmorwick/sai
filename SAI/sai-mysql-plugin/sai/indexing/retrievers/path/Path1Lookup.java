@@ -17,7 +17,7 @@
 
  */
 
-package sai.indexing.generators.path;
+package sai.indexing.retrievers.path;
 
 import java.util.Set;
 
@@ -34,7 +34,6 @@ import sai.DBInterface;
 import sai.indexing.Index;
 import sai.indexing.IndexGenerator;
 import sai.indexing.IndexRetriever;
-import sai.indexing.retrievers.path.Path1Retriever;
 
 /**
  * Similar to the Path1 generator but only generates an index if it does not
