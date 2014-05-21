@@ -35,7 +35,7 @@ import sai.graph.Graph;
 import sai.graph.Node;
 
 /**
- * This class may not be included in 1.0; I'm still considering its inclusion
+ * This class may not be included in 2.0; I'm still considering its inclusion
  *
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
