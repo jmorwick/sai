@@ -22,30 +22,22 @@ package sai.comparison.subgraphcomparators;
 import info.kendall_morwick.funcles.BinaryRelation;
 import info.kendall_morwick.funcles.Funcles;
 import info.kendall_morwick.funcles.Pair;
-import info.kendall_morwick.funcles.T2;
-
-import java.math.BigInteger;
-import java.util.HashSet;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Future;
-
-import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 
 import sai.comparison.Util;
 import sai.db.DBInterface;
-import sai.graph.Edge;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.Node;
 
-import static info.kendall_morwick.funcles.Funcles.apply;
-
 /**
  * This class may not be included in 1.0; I'm still considering its inclusion
  *
- * @version 0.2.0
+ * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
 
@@ -54,16 +46,15 @@ public class CompleteSubgraphComparator implements BinaryRelation<Graph> {
 
 	public static boolean compare(DBInterface db, Graph g1, Graph g2, 
 			BinaryRelation<Set<Feature>> featureSetComparator) {
-		CompleteSubgraphComparator csc = new CompleteSubgraphComparator(db, featureSetComparator);
+		CompleteSubgraphComparator csc = 
+				new CompleteSubgraphComparator(db, featureSetComparator);
 		return Funcles.apply(csc, g1, g2);
 	}
 
-	private DBInterface db;
 	private BinaryRelation<Set<Feature>> featureSetComparator;
 
 	public CompleteSubgraphComparator(final DBInterface db, 
 			BinaryRelation<Set<Feature>> featureSetComparator) {
-		this.db = db;
 		this.featureSetComparator = featureSetComparator;
 	}
 
@@ -72,24 +63,29 @@ public class CompleteSubgraphComparator implements BinaryRelation<Graph> {
 	public boolean apply(Pair<Graph> args) {
 		Graph sub = args.a1();
 		Graph sup = args.a2();
-		BigInteger numMappings = Util.getNumberOfCompleteMappings(
-				featureSetComparator, sub,
-				sup);
 		Multimap<Node, Node> possibilities = Util.nodeCompatibility(
 				featureSetComparator, sub,
 				sup);
-		BigInteger currentMapping = BigInteger.ZERO;
 
 		//make sure the features for the graphs themselves are compatible
-		if(!apply(featureSetComparator,
+		//TODO: determine why eclipse thinks the import IS NOT WORKING below... :(
+		//should be: if(!apply(featureSetComparator,
+		if(!info.kendall_morwick.funcles.Funcles.apply(featureSetComparator,
 				sub.getFeatures(),
 				sup.getFeatures())) {
 			return false;
 		}
 
+		Comparator<Node> nc = new Comparator<Node>() {
 
-		while(currentMapping.compareTo(numMappings) < 0) {
-			Map<Node,Node> map = Util.getIthCompleteMapping(possibilities,currentMapping);
+			@Override
+			public int compare(Node n1, Node n2) {
+				return n1.getID() - n2.getID();
+			}
+		};
+		
+		Iterator<Map<Node,Node>> i = Util.getMappingIterator(possibilities, nc, nc);
+		for(Map<Node,Node> map : Util.iteratorToCollection(i)) {
 			if(map.size() < possibilities.size()) {
 				return false;
 			} else if(Util.matchedEdges(
@@ -101,12 +97,6 @@ public class CompleteSubgraphComparator implements BinaryRelation<Graph> {
 					map.size() == sup.getNodes().size()) {
 				return true;
 			}
-
-			currentMapping = currentMapping.add(BigInteger.ONE);
-		}
-
-		if(currentMapping.equals(numMappings)) {
-			return false;
 		}
 
 		return false; // TODO: is this an error? I was throwing an exception here

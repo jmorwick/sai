@@ -26,6 +26,7 @@ import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -42,6 +43,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
 import static info.kendall_morwick.funcles.Funcles.apply;
@@ -320,7 +322,7 @@ public class Util {
 
 
       
-      public static <K,V> BigInteger getNumberOfCompleteMappings(Multimap<K,V> m) {
+      private static <K,V> BigInteger getNumberOfCompleteMappings(Multimap<K,V> m) {
           BigInteger i = BigInteger.ONE;
           for(K k : m.keySet()) {
               if(m.get(k).size() > 0)
@@ -329,21 +331,47 @@ public class Util {
           return i;
       }
 
-      /** this will be replaced with an iterator-based method */
-      @Deprecated public static <K extends Comparable,V extends Comparable> 
-      		Map<K,V> getIthCompleteMapping(Multimap<K,V> m, BigInteger i) {
-          Map<K,V> ret = Maps.newHashMap();
-          List<K> keylist = Lists.newArrayList(m.keySet());
-          Collections.sort(keylist);
-          for(K k : keylist) {
-              BigInteger j = BigInteger.valueOf(m.get(k).size());
-              if(j.equals(BigInteger.ZERO)) continue;
-              List<V> values = Lists.newArrayList(m.get(k));
-              Collections.sort(values);
-              ret.put(k, values.get(i.mod(j).intValue()));
-              i = i.divide(j);
-          }
-          return ret;
+      public static <K extends Comparable, V extends Comparable> Iterator<Map<K,V>> 
+      	getMappingIterator(Multimap<K,V> m) {
+    	  return getMappingIterator(m, Ordering.<K>natural(), Ordering.<V>natural());
+      }
+
+      public static <K,V> Iterator<Map<K,V>> getMappingIterator(final Multimap<K,V> m, 
+    		  final Comparator<K> keyComparator,
+    		  final Comparator<V> valueComparator) {
+    	  final BigInteger limit = getNumberOfCompleteMappings(m);
+    	  
+    	  return new Iterator<Map<K,V>>() {
+    		private BigInteger i = BigInteger.ZERO;
+    		
+			@Override
+			public boolean hasNext() {
+				return i.compareTo(limit) < 0;
+			}
+
+			@Override
+			public Map<K, V> next() {
+		        Map<K,V> ret = Maps.newHashMap();
+		        List<K> keylist = Lists.newArrayList(m.keySet());
+		        Collections.sort(keylist, keyComparator);
+		        for(K k : keylist) {
+		            BigInteger j = BigInteger.valueOf(m.get(k).size());
+                    if(j.equals(BigInteger.ZERO)) continue;
+	                List<V> values = Lists.newArrayList(m.get(k));
+	                Collections.sort(values, valueComparator);
+	                ret.put(k, values.get(i.mod(j).intValue()));
+	                i = i.divide(j);
+	            }
+		        i = i.add(BigInteger.ONE);
+		        return ret;
+			}
+
+			@Override
+			public void remove() {
+				//ignored
+			}
+    		  
+    	  };
       }
 
 
