@@ -1,9 +1,14 @@
-package sai.graph;
+package sai.graph.basic;
 
 import info.kendall_morwick.funcles.Pair;
 
 import java.util.Map;
 import java.util.Set;
+
+import sai.graph.Edge;
+import sai.graph.Feature;
+import sai.graph.Graph;
+import sai.graph.Node;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
@@ -24,6 +29,7 @@ public class MutableGraph implements Graph {
 	private boolean isMultiGraph;
 	private boolean isDirectedGraph;
 	private boolean isIndex;
+
 	
 	public MutableGraph(boolean isPseudoGraph, boolean isMultiGraph,
 			            boolean isDirectedGraph, boolean isIndex) {
@@ -59,6 +65,23 @@ public class MutableGraph implements Graph {
 				addFeature(ce, f);
 			
 		}
+	}
+	
+	public void setID(int id) { this.id = id; }
+	public void setIsPseudoGraph(boolean isPseudoGraph) { 
+		this.isPseudoGraph = isPseudoGraph; 
+	}
+	
+	public void setIsMultiGraph(boolean isMultiGraph) { 
+		this.isMultiGraph = isMultiGraph; 
+	}
+	
+	public void setIsDirectedGraph(boolean isDirectedGraph) { 
+		this.isDirectedGraph = isDirectedGraph; 
+	}
+	
+	public void setIsIndex(boolean isIndex) { 
+		this.isIndex = isIndex; 
 	}
 	
 	@Override

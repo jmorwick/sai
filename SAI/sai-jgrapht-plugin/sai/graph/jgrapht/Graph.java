@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import sai.DBInterface;
 import sai.indexing.Index;
 
 import org.jgrapht.graph.DirectedMultigraph;
@@ -39,6 +38,8 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Sets;
 
+import db.mysql.MySQLDBInterface;
+
 /**
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
@@ -49,21 +50,21 @@ public class Graph
 
     private int DBID = -1;
     private Multiset<Index> indices = HashMultiset.<Index>create();
-    final private DBInterface db;
+    final private MySQLDBInterface db;
     private Set<Feature> features = new HashSet<Feature>();
 
     private final Graph self = this;
 
     private Map<String, Node> alternateIDs = new HashMap<String, Node>();
     
-    public  Graph(DBInterface db,
+    public  Graph(MySQLDBInterface db,
                   Feature ... tags) {
         super(Edge.class);
         this.db = db;
         for(Feature f : tags) this.features.add(f);
     }
 
-    public Graph(DBInterface db, int id) {
+    public Graph(MySQLDBInterface db, int id) {
         super(Edge.class);
             this.DBID = id;
             this.db = db;
@@ -490,7 +491,7 @@ public class Graph
         return hash;
     }
 
-    public DBInterface getDB() {
+    public MySQLDBInterface getDB() {
         return db;
     }
 

@@ -32,7 +32,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import sai.DBInterface;
+import db.mysql.MySQLDBInterface;
 import sai.graph.jgrapht.Edge;
 import sai.graph.jgrapht.Feature;
 import sai.graph.jgrapht.Graph;
@@ -105,7 +105,7 @@ public class GraphvizEncoder {
         return encoding.toString();
     }
     
-    public static void colorNode(Node n, String color, DBInterface db) {
+    public static void colorNode(Node n, String color, MySQLDBInterface db) {
         for(Feature f : n.getFeatures()) {
             if(f instanceof GraphvizProperty) {
                 GraphvizProperty p = (GraphvizProperty)f;

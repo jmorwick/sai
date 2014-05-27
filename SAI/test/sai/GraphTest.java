@@ -20,6 +20,7 @@ package sai;
 
 import org.junit.*;
 
+import db.mysql.MySQLDBInterface;
 import sai.graph.jgrapht.Edge;
 import sai.graph.jgrapht.Graph;
 import static org.junit.Assert.*;
@@ -120,7 +121,7 @@ public class GraphTest {
 
     @Test
     public void testCopyWithoutEdge() {
-        DBInterface db = DBInterfaceTest.getTestDBInterface();
+        MySQLDBInterface db = DBInterfaceTest.getTestDBInterface();
         db.initializeDatabase();
         Graph g = DBInterfaceTest.getSmallGraph1(db);
         for(Edge e : g.edgeSet()) {

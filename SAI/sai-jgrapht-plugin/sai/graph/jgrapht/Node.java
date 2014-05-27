@@ -22,7 +22,7 @@ package sai.graph.jgrapht;
 import java.util.HashSet;
 import java.util.Set;
 
-import sai.DBInterface;
+import db.mysql.MySQLDBInterface;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.base.Predicates.equalTo;
@@ -40,7 +40,7 @@ public class Node implements Comparable {
     private String alternateID;
 
     public Node(Graph parent,
-                         DBInterface db,
+                         MySQLDBInterface db,
                          Feature ... features) {
         this(parent, features);
     }
@@ -59,7 +59,7 @@ public class Node implements Comparable {
 
     public Node(int id,
                          Graph parent,
-                         DBInterface db,
+                         MySQLDBInterface db,
                          Feature ... features) {
         this(parent, db, features);
         this.id = id;

@@ -30,7 +30,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import sai.DBInterface;
+import db.mysql.MySQLDBInterface;
 import sai.graph.jgrapht.Edge;
 import sai.graph.jgrapht.Feature;
 import sai.graph.jgrapht.Graph;
@@ -52,7 +52,7 @@ public class Path1Retriever extends IndexRetriever {
 
 
 
-    public Path1Retriever(DBInterface db,
+    public Path1Retriever(MySQLDBInterface db,
             Class<? extends Feature> ... featureTypes) {
         super(db);
         gen = new Path1(db, featureTypes);
@@ -81,7 +81,7 @@ public class Path1Retriever extends IndexRetriever {
     }
 
     public static T2<Set<Index>, Set<Index>> findOriginalLinkIndices(
-            DBInterface db, Set<Index> indices) {
+            MySQLDBInterface db, Set<Index> indices) {
         Set<Index> discoveredIndices = new HashSet<Index>();
         indices = removeDuplicates(indices);
         for(Index i : Sets.newHashSet(indices)) {

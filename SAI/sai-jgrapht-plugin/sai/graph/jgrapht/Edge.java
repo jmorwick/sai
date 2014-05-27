@@ -21,7 +21,7 @@ package sai.graph.jgrapht;
 
 import java.util.Set;
 
-import sai.DBInterface;
+import db.mysql.MySQLDBInterface;
 import sai.comparison.Util;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newHashSet;
@@ -43,11 +43,11 @@ public class Edge implements Comparable {
         for(Feature tag : tags) this.features.add(tag);
     }
 
-    public Edge(Graph parent, DBInterface db, Feature ... tags) {
+    public Edge(Graph parent, MySQLDBInterface db, Feature ... tags) {
         this(parent,tags);
     }
 
-    public Edge(int id, Graph parent, DBInterface db, Feature ... tags) {
+    public Edge(int id, Graph parent, MySQLDBInterface db, Feature ... tags) {
         this(parent, db, tags);
         this.id = id;
     }

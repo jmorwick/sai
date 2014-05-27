@@ -34,6 +34,7 @@ import org.junit.Test;
 
 import com.google.common.base.Function;
 
+import db.mysql.MySQLDBInterface;
 import sai.comparison.Util;
 import sai.graph.jgrapht.Feature;
 import sai.graph.jgrapht.Graph;
@@ -53,7 +54,7 @@ public class CompleteSubgraphComparatorTest {
 
 
 
-  public static IndexCompatabilityChecker getCompleteChecker(DBInterface db, long maxtime, int numThreads) {
+  public static IndexCompatabilityChecker getCompleteChecker(MySQLDBInterface db, long maxtime, int numThreads) {
       return new IndexCompatabilityChecker(db, maxtime, numThreads,
               new CompleteSubgraphComparator(db));
             
@@ -80,7 +81,7 @@ public class CompleteSubgraphComparatorTest {
     
     @Test
     public void testSmallComparison() {
-        DBInterface db = getTestDBInterface();
+        MySQLDBInterface db = getTestDBInterface();
         Graph g1 = new Graph(db);
         Node n11 = new Node(g1,db, new Feature("a",db));
         Node n12 = new Node(g1,db,new Feature("b",db));
@@ -137,7 +138,7 @@ public class CompleteSubgraphComparatorTest {
 
     @Test
     public void testInSystem() {
-    final DBInterface db = getTestDBInterface();
+    final MySQLDBInterface db = getTestDBInterface();
 
 
     DBInterfaceTest.loadBasicDB(db);
@@ -194,7 +195,7 @@ public class CompleteSubgraphComparatorTest {
 
     @Test
     public void testInSystem2() {  //teasting the LinkedFeaturesLookup index generator
-    final DBInterface db = getTestDBInterface();
+    final MySQLDBInterface db = getTestDBInterface();
 
     db.initializeDatabase();
     DBInterfaceTest.loadBasicDB2(db);

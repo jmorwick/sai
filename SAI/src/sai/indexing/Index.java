@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import sai.DBInterface;
+import db.mysql.MySQLDBInterface;
 import sai.graph.jgrapht.Graph;
 
 /**
@@ -35,14 +35,14 @@ import sai.graph.jgrapht.Graph;
 @Deprecated
 public class Index extends Graph {
 
-    private DBInterface db;
+    private MySQLDBInterface db;
 
-  public Index(DBInterface db) {
+  public Index(MySQLDBInterface db) {
     super(db);
     this.db= db;
   }
 
-    public Index(DBInterface db, Integer id) {
+    public Index(MySQLDBInterface db, Integer id) {
         super(db, id);
         this.db= db;
     }

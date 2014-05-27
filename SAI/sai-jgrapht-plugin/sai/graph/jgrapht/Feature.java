@@ -21,7 +21,7 @@ package sai.graph.jgrapht;
 import java.util.Collection;
 import java.util.Set;
 
-import sai.DBInterface;
+import db.mysql.MySQLDBInterface;
 
 /**
  * @version 2.0.0
@@ -31,7 +31,7 @@ import sai.DBInterface;
 public class Feature {
     private int id = -1;
     private String value;
-    private DBInterface db;
+    private MySQLDBInterface db;
 
 
 /** 'value' is a unique String for this feature
@@ -39,7 +39,7 @@ public class Feature {
  * @param value
  * @param db
  */
-    public Feature(String value, DBInterface db) {
+    public Feature(String value, MySQLDBInterface db) {
         this.db = db;
         db.registerFeatureClass(this);
         this.value =  value;
@@ -51,7 +51,7 @@ public class Feature {
      * @param id
      * @param db
      */
-    protected Feature(int id, DBInterface db) {
+    protected Feature(int id, MySQLDBInterface db) {
         this.db = db;
         db.registerFeatureClass(this);
         this.value = db.getFeatureName(getClass().getName(), id);
@@ -102,7 +102,7 @@ public class Feature {
         return "";
     }
 
-    public DBInterface getDB() {
+    public MySQLDBInterface getDB() {
         return db;
     }
 

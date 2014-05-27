@@ -24,7 +24,6 @@ import info.kendall_morwick.funcles.T2;
 import java.util.List;
 import java.util.Set;
 
-import sai.DBInterface;
 import sai.DBInterfaceTest;
 import sai.comparison.subgraphcomparators.CompleteSubgraphComparator;
 import sai.graph.jgrapht.Feature;
@@ -41,6 +40,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
+import db.mysql.MySQLDBInterface;
 import static sai.DBInterfaceTest.*;
 import static sai.comparison.subgraphcomparators.CompleteSubgraphComparatorTest.*;
 import static org.junit.Assert.*;
@@ -77,7 +77,7 @@ public class Path1IndexRetrievalTest {
         //appropriate number of indices are retrieved
 
 
-        final DBInterface db = getTestDBInterface();
+        final MySQLDBInterface db = getTestDBInterface();
         db.initializeDatabase();
         DBInterfaceTest.loadBasicDiverseDB(db);
 
@@ -99,7 +99,7 @@ public class Path1IndexRetrievalTest {
         assertEquals(8, Sets.union(s1, s2).size());  //the indices should be distinct
 
 
-        final DBInterface db2 = getTestDBInterface();
+        final MySQLDBInterface db2 = getTestDBInterface();
         db2.initializeDatabase();
         DBInterfaceTest.loadBasicDB(db2);
 

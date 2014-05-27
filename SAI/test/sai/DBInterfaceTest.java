@@ -32,20 +32,22 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 
+import db.mysql.MySQLDBInterface;
+
 /**
  *
  * @author jmorwick
  */
 public class DBInterfaceTest {
 
-    final DBInterface db = getTestDBInterface();
+    final MySQLDBInterface db = getTestDBInterface();
     
 
     public DBInterfaceTest() {
     }
 
-    public static DBInterface getTestDBInterface() {
-        return new DBInterface(
+    public static MySQLDBInterface getTestDBInterface() {
+        return new MySQLDBInterface(
             "localhost",
             "sai_test_junit",
             "sai_test_user",
@@ -54,7 +56,7 @@ public class DBInterfaceTest {
     }
 
 
-    public static Graph getSmallGraph1(DBInterface db) {
+    public static Graph getSmallGraph1(MySQLDBInterface db) {
       Graph g1 = new Graph(db);
       Node n1 = new Node(g1, db, new Feature("a",db));
       Node n2 = new Node(g1, db, new Feature("b",db));
@@ -67,7 +69,7 @@ public class DBInterfaceTest {
       return g1;
     }
 
-    public static Graph getSmallGraph2(DBInterface db) {
+    public static Graph getSmallGraph2(MySQLDBInterface db) {
       Graph g1 = new Graph(db);
       Node n1 = new Node(g1, db, new Feature("e",db));
       Node n2 = new Node(g1, db, new Feature("f",db));
@@ -81,7 +83,7 @@ public class DBInterfaceTest {
     }
 
 
-    public static Graph getSmallGraphMultiEdge(DBInterface db) {
+    public static Graph getSmallGraphMultiEdge(MySQLDBInterface db) {
       Graph g1 = new Graph(db);
       Node n1 = new Node(g1, db, new Feature("a",db));
       Node n2 = new Node(g1, db, new Feature("b",db));
@@ -97,7 +99,7 @@ public class DBInterfaceTest {
     }
 
 
-  public static void loadBasicDB(DBInterface db) {
+  public static void loadBasicDB(MySQLDBInterface db) {
       db.addIndexer(new Path1(db, Feature.class));
       db.initializeDatabase();
 
@@ -106,7 +108,7 @@ public class DBInterfaceTest {
       g1 = getSmallGraph1(db);
       g1.saveToDatabase();
   }
-  public static void loadBasicDiverseDB(DBInterface db) {
+  public static void loadBasicDiverseDB(MySQLDBInterface db) {
       db.addIndexer(new Path1(db, Feature.class));
       db.initializeDatabase();
 
@@ -116,7 +118,7 @@ public class DBInterfaceTest {
       g1.saveToDatabase();
   }
   
-  public static void loadBasicDB2(final DBInterface db) {
+  public static void loadBasicDB2(final MySQLDBInterface db) {
       db.addIndexer(new Path1Lookup(db,Feature.class));
 
       Graph g1 = getSmallGraph1(db);

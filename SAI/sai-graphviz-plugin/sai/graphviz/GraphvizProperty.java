@@ -22,7 +22,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import sai.DBInterface;
+import db.mysql.MySQLDBInterface;
 import sai.graph.jgrapht.Feature;
 
 /**
@@ -39,7 +39,7 @@ public class GraphvizProperty extends Feature {
     public static final Set<String> legalProperties =
             Sets.newHashSet("Damping", "K", "URL", "area");  ///TODO: finish list
 
-    public GraphvizProperty(int id, DBInterface db) {
+    public GraphvizProperty(int id, MySQLDBInterface db) {
         super(id, db);
         int cloc = this.getValue().indexOf(":");
         int eqloc = this.getValue().indexOf("=");
@@ -47,7 +47,7 @@ public class GraphvizProperty extends Feature {
         this.propertyValue = getValue().substring(eqloc+1);
     }
 
-    public GraphvizProperty(String property, String value, DBInterface db) {
+    public GraphvizProperty(String property, String value, MySQLDBInterface db) {
         super("graphviz:"+property+"="+value, db);
 
         //TODO: validate

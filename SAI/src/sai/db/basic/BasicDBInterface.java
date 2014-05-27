@@ -24,8 +24,8 @@ import sai.graph.Edge;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
-import sai.graph.MutableGraph;
 import sai.graph.Node;
+import sai.graph.basic.MutableGraph;
 
 public class BasicDBInterface implements DBInterface {
 

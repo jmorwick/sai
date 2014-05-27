@@ -23,7 +23,7 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import sai.DBInterface;
+import db.mysql.MySQLDBInterface;
 import sai.DBInterfaceTest;
 import sai.graph.jgrapht.Graph;
 import sai.graph.jgrapht.Node;
@@ -35,7 +35,7 @@ import sai.graph.jgrapht.Node;
  */
 public class TestGraphviz {
     public static void main(String[] args) throws IOException {
-        DBInterface db = DBInterfaceTest.getTestDBInterface();
+        MySQLDBInterface db = DBInterfaceTest.getTestDBInterface();
         Graph g = DBInterfaceTest.getSmallGraph1(db);
         Graph g2 = DBInterfaceTest.getSmallGraph1(db);
         Map<Node,Node> m = Maps.newHashMap();

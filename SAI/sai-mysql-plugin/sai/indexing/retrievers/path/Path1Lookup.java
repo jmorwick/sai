@@ -27,10 +27,10 @@ import info.kendall_morwick.funcles.T2;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 
+import db.mysql.MySQLDBInterface;
 import sai.graph.jgrapht.Feature;
 import sai.graph.jgrapht.Graph;
 import sai.indexing.generators.path.Path1;
-import sai.DBInterface;
 import sai.indexing.Index;
 import sai.indexing.IndexGenerator;
 import sai.indexing.IndexRetriever;

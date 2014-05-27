@@ -39,6 +39,95 @@ import sai.graph.GraphFactory;
 import sai.graph.Index;
 import sai.graph.Node;
 
+//All the contents of this class/file need to be redistributed in the new SAI design
+
+
+
+//DBInterface graveyard:
+
+
+/*
+public void setFeatureSetComparator(BinaryRelation<Set<? extends Feature>> fsc) {
+    this.fsc = fsc;
+}
+
+public boolean featureSetsCompatible(
+        Set<? extends Feature> t1s,
+        Set<? extends Feature> t2s) {
+    return Funcles.apply(fsc, t1s, t2s);
+}
+
+*/
+
+//----------------------- Indexing -------------------------------------
+//private Set<IndexGenerator> indexers = new HashSet<IndexGenerator>();
+//private Set<IndexRetriever> retrievers = new HashSet<IndexRetriever>();
+
+/** adds an indexer for this interface.  whenever 'indexGraph' is called on a
+ * graph 'g', all indexers added through this method will have their 'indexGraph'
+ * methods called on g, and the resulting indices will be saved to the database.
+ *
+ * @param ig
+ *
+public void addIndexer(IndexGenerator ig) {
+    indexers.add(ig);
+}
+
+
+/** Adds an index retriever to this database.  Whenever findIndices is
+ * called on a graph 'g', each retriever added through this method will
+ * have its 'retrieveIndices' method called on g, and the resulting
+ * indices will be returned together by findIndices.
+ *
+ * @param r
+ *
+public void addRetriever(IndexRetriever r) {
+    retrievers.add(r);
+}
+
+/** uses registered Retrievers to find indices that should be related to
+ * the query graph.  The query graph need not be saved into the database and
+ * this method will not save the query graph to the database.  
+ * @param g
+ * @return
+ *
+public Set<Index> findIndices(Graph g) {
+    Set<Index> indices = new HashSet<Index>();
+    for (IndexRetriever r : retrievers) {
+        indices.addAll(r.retrieveIndices(g));
+    }
+    return indices;
+}
+
+
+/** uses registerd Indexers to generate or locate indices which should be
+ * associated with stored graph g.  Generated indices are saved to the
+ * database.  
+ * @param g
+ *
+public void indexGraph(Graph g) {
+    if (g.getID() < 1) {
+        return; //only index graphs saved to the DB
+    }
+    for (IndexGenerator ig : indexers) {
+        for (Index i : ig.generateIndices(g)) {
+            if (i.getID() < 1) {
+                i.saveToDatabase();
+            }
+            addIndex(g, i);
+        }
+    }
+}
+*/
+
+
+
+
+
+
+//----------------------------------------------------------------------------
+
+
 /**  This class can be used to build a complete interface for retrieving
  * similar structures from a graph database.  In order to use this class,
  * a properly configured Database Interface is required, in addition to a

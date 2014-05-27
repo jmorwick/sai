@@ -36,6 +36,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
+import db.mysql.MySQLDBInterface;
 import static org.junit.Assert.*;
 
 /**
@@ -44,7 +45,7 @@ import static org.junit.Assert.*;
  */
 public class UtilTest {
 
-    final DBInterface db = DBInterfaceTest.getTestDBInterface();
+    final MySQLDBInterface db = DBInterfaceTest.getTestDBInterface();
 
     public UtilTest() {
     }

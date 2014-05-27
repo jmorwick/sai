@@ -16,7 +16,7 @@ You should have received a copy of the Lesser GNU General Public License
 along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
-package sai;
+package sai.db.mysql;
 
 import info.kendall_morwick.funcles.BinaryRelation;
 import info.kendall_morwick.funcles.Funcles;
@@ -24,10 +24,12 @@ import info.kendall_morwick.funcles.Pair;
 import info.kendall_morwick.funcles.T2;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.AccessDeniedException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,20 +47,18 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import sai.comparison.featuresetcomparators.ManyTo1;
-import sai.graph.jgrapht.Edge;
-import sai.graph.jgrapht.Feature;
-import sai.graph.jgrapht.Graph;
-import sai.graph.jgrapht.Node;
-import sai.indexing.Index;
-import sai.indexing.IndexGenerator;
-import sai.indexing.IndexRetriever;
+import sai.db.DBInterface;
+import sai.graph.Edge;
+import sai.graph.Graph;
+import sai.graph.GraphFactory;
+import sai.graph.Node;
+import sai.graph.basic.BasicGraphFactory;
 
 /**
  * @version 2.0
  * @author Joseph Kendall-Morwick
  */
-@Deprecated
-public class DBInterface {
+public class MySQLDBInterface implements DBInterface {
 
 	
 	private Map<Function,Cache> caches = Maps.newHashMap();
@@ -73,14 +73,27 @@ public class DBInterface {
 		}
 	}
 	
+
+    
+
+    public static String slurpStream(InputStream in) throws IOException {
+      StringBuffer out = new StringBuffer();
+      byte[] b = new byte[4096];
+      for (int n; (n = in.read(b)) != -1;) {
+          out.append(new String(b, 0, n));
+      }
+      return out.toString();
+    }
+    
+    
 	
     //-------------------------  Basic Initialization --------------------------
     private static boolean driverLoaded = false;
-    private DBInterface self = this; //used inside closures
+    private MySQLDBInterface self = this; //used inside closures
     private BinaryRelation<Set<? extends Feature>> fsc; //feature-set comparator
     boolean directed = true;
 
-    public DBInterface(String DBHost,
+    public MySQLDBInterface(String DBHost,
             String DBName,
             String DBUsername,
             String DBPassword,
@@ -93,7 +106,7 @@ public class DBInterface {
 
     }
 
-    public DBInterface(String DBHost,
+    public MySQLDBInterface(String DBHost,
             String DBName,
             String DBUsername,
             String DBPassword) {
@@ -119,7 +132,7 @@ public class DBInterface {
         try {
             this.retrievalStatement = retrievalConnection.createStatement();
         } catch (SQLException ex) {
-            Logger.getLogger(DBInterface.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MySQLDBInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         //TODO: set up caching
@@ -188,7 +201,7 @@ public class DBInterface {
         try {
             connection.close();
         } catch (SQLException ex) {
-            Logger.getLogger(DBInterface.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MySQLDBInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -211,7 +224,7 @@ public class DBInterface {
             }
         } catch (SQLException ex) {
             System.err.println(sql);
-            Logger.getLogger(DBInterface.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MySQLDBInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return ls;
@@ -241,7 +254,7 @@ public class DBInterface {
     public void initializeDatabase() {
         try {
             String schemaSQL;
-            InputStream schemaIn = DBInterface.class.getResourceAsStream("resources/sai-base.sql");
+            InputStream schemaIn = MySQLDBInterface.class.getResourceAsStream("resources/sai-base.sql");
             if(schemaIn == null) 
             	schemaIn = new FileInputStream("resources/sai-base.sql");
             
@@ -252,7 +265,7 @@ public class DBInterface {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(DBInterface.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MySQLDBInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -271,7 +284,7 @@ public class DBInterface {
             }
             return newID;
         } catch (SQLException ex) {
-            Logger.getLogger(DBInterface.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MySQLDBInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
         throw new RuntimeException("Error creating new graph in database");
     }
@@ -355,7 +368,7 @@ public class DBInterface {
                 t = Funcles.apply(featureFactories.get(featureclass), id, "");
             } else {
                 try {
-                    loadFeature = (Constructor<Feature>) Class.forName(featureclass).getConstructor(java.lang.Integer.TYPE, DBInterface.class);
+                    loadFeature = (Constructor<Feature>) Class.forName(featureclass).getConstructor(java.lang.Integer.TYPE, MySQLDBInterface.class);
                     t = loadFeature.newInstance(id, self);
                 } catch (IllegalAccessException ex) {
                     System.err.println(ex);
@@ -367,7 +380,7 @@ public class DBInterface {
                     ex.getTargetException().printStackTrace(System.err);
                     throw new RuntimeException("Factory method in " + featureclass + " threw an exception");
                 } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(DBInterface.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MySQLDBInterface.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (NoSuchMethodException ex) {
                     //exception is thrown later
                 } catch (ClassCastException ex) {
@@ -446,21 +459,6 @@ public class DBInterface {
 
     /** removes the supplied structure from the database. */
     public void removeStructureFromDatabase(Graph s) {
-        int id = s.getID();
-        updateDB("DELETE FROM graph_instances WHERE id = " + id);
-        updateDB("DELETE FROM node_instances WHERE graph_id = " + id);
-        updateDB("DELETE FROM edge_instances WHERE graph_id = " + id);
-        updateDB("DELETE FROM graph_features WHERE graph_id = " + id);
-        updateDB("DELETE FROM graph_indices WHERE graph_id = " + id);
-        updateDB("DELETE FROM graph_indices WHERE index_id = " + id);
-        for (Node n : s.vertexSet()) {
-            updateDB("DELETE FROM node_features WHERE graph_id = " + id + 
-                    " AND node_id = " + n.getID());
-        }
-        for (Edge e : s.edgeSet()) {
-            updateDB("DELETE FROM edge_features WHERE graph_id = " + id + 
-                    " AND edge_id = " + e.getID());
-        }
 
     }
     private Function<T2<String, Integer>,String> getFeatureName =
@@ -523,12 +521,12 @@ public class DBInterface {
                             if (rs2.next()) {
                                 tagID = rs2.getInt(1);
                             } else {
-                                Logger.getLogger(DBInterface.class.getName()).log(
+                                Logger.getLogger(MySQLDBInterface.class.getName()).log(
                                         Level.SEVERE, null, "could not retrieve auto inc");
                                 System.exit(1);
                             }
                         } catch (SQLException ex) {
-                            Logger.getLogger(DBInterface.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(MySQLDBInterface.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
 
@@ -684,45 +682,19 @@ public class DBInterface {
             try {
                 retVals.add(Class.forName(m.get("featureclass")));
             } catch (ClassNotFoundException ex) {
-                Logger.getLogger(DBInterface.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MySQLDBInterface.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return retVals;
     }
 
-    public void setFeatureSetComparator(BinaryRelation<Set<? extends Feature>> fsc) {
-        this.fsc = fsc;
-    }
-
-    public boolean featureSetsCompatible(
-            Set<? extends Feature> t1s,
-            Set<? extends Feature> t2s) {
-        return Funcles.apply(fsc, t1s, t2s);
-    }
-    //----------------------- Indexing -------------------------------------
-    private Set<IndexGenerator> indexers = new HashSet<IndexGenerator>();
-    private Set<IndexRetriever> retrievers = new HashSet<IndexRetriever>();
-
-    /** adds an indexer for this interface.  whenever 'indexGraph' is called on a
-     * graph 'g', all indexers added through this method will have their 'indexGraph'
-     * methods called on g, and the resulting indices will be saved to the database.
-     *
-     * @param ig
-     */
-    public void addIndexer(IndexGenerator ig) {
-        indexers.add(ig);
-    }
-
-    /** saves 'i' to the database (if necessary) and associates i with g */
-    public void addIndex(Graph g, Index i) {
-        if (i.getID() < 1) {
-            i.saveToDatabase();
-        }
-        addIndex(g.getID(), i.getID());
-    }
+    
+    //---------------------------------------------------------------------------
+    
 
     /** associates the graph with id 'graphID' with the index with id 'indexID'
      */
+    @Override
     public void addIndex(int graphID, int indexID) {
         if (graphID < 1 || indexID < 1) {
             throw new IllegalArgumentException("Cannot add indices for graphs not saved to the database");
@@ -739,95 +711,71 @@ public class DBInterface {
         }
         updateDB("INSERT INTO graph_indices VALUES (" + indexID + ", " + graphID + ", NULL)");
     }
-
-    /** Adds an index retriever to this database.  Whenever findIndices is
-     * called on a graph 'g', each retriever added through this method will
-     * have its 'retrieveIndices' method called on g, and the resulting
-     * indices will be returned together by findIndices.
-     *
-     * @param r
-     */
-    public void addRetriever(IndexRetriever r) {
-        retrievers.add(r);
-    }
-
-    /** uses registered Retrievers to find indices that should be related to
-     * the query graph.  The query graph need not be saved into the database and
-     * this method will not save the query graph to the database.  
-     * @param g
-     * @return
-     */
-    public Set<Index> findIndices(Graph g) {
-        Set<Index> indices = new HashSet<Index>();
-        for (IndexRetriever r : retrievers) {
-            indices.addAll(r.retrieveIndices(g));
+    
+	@Override
+	public void connect() throws AccessDeniedException {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void disconnect() throws AccessDeniedException,
+			FileNotFoundException {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public boolean isConnected() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public <G extends sai.graph.Graph> G retrieveGraph(int graphID,
+			GraphFactory<G> f) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Iterator<Integer> getGraphIDIterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Set<Integer> getHiddenGraphs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void hideGraph(int graphID) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void unhideGraph(int graphID) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void deleteGraph(int graphID) {
+		Graph s = retrieveGraph(graphID, new BasicGraphFactory());
+        updateDB("DELETE FROM graph_instances WHERE id = " + graphID);
+        updateDB("DELETE FROM node_instances WHERE graph_id = " + graphID);
+        updateDB("DELETE FROM edge_instances WHERE graph_id = " + graphID);
+        updateDB("DELETE FROM graph_features WHERE graph_id = " + graphID);
+        updateDB("DELETE FROM graph_indices WHERE graph_id = " + graphID);
+        updateDB("DELETE FROM graph_indices WHERE index_id = " + graphID);
+        for (Node n : s.getNodes()) {
+            updateDB("DELETE FROM node_features WHERE graph_id = " + graphID + 
+                    " AND node_id = " + n.getID());
         }
-        return indices;
-    }
-
-    /** retrieves indices associated with the stored graph g.
-     *
-     * @param g a graph which already exists in the database
-     * @return
-     */
-    public Set<Index> getIndices(Graph g) {
-        return getIndices(g.getID());
-    }
-
-    /** retieves indices associated with the graph with id 'id'.
-     *
-     * @param id
-     * @return
-     */
-    public Set<Index> getIndices(int id) {
-        Set<Index> ret = new HashSet<Index>();
-        if (id < 1) {
-            throw new IllegalArgumentException("this method only retrieves indices for stored graphs.  Use 'findIndices' for graphs not yet stored.");
+        for (Edge e : s.getEdges()) {
+            updateDB("DELETE FROM edge_features WHERE graph_id = " + graphID + 
+                    " AND edge_id = " + e.getID());
         }
-
-        String sql = "SELECT index_id FROM graph_indices WHERE graph_id = " + id;
-        for (Map<String, String> row : getQueryResults(sql)) {
-            ret.add(new Index(this, Integer.parseInt(row.get("index_id"))));
-        }
-        return ret;
-    }
-
-    /** uses registerd Indexers to generate or locate indices which should be
-     * associated with stored graph g.  Generated indices are saved to the
-     * database.  
-     * @param g
-     */
-    public void indexGraph(Graph g) {
-        if (g.getID() < 1) {
-            return; //only index graphs saved to the DB
-        }
-        for (IndexGenerator ig : indexers) {
-            for (Index i : ig.generateIndices(g)) {
-                if (i.getID() < 1) {
-                    i.saveToDatabase();
-                }
-                addIndex(g, i);
-            }
-        }
-    }
-
-    /** returns whether or not the specified stored index is associated with
-     * the specified stored graph.  
-     * @param g
-     * @param i
-     * @return
-     */
-    public boolean indexedBy(Graph g, Index i) {
-        return getQueryResults("SELECT * FROM graph_indices WHERE index_id = " + i.getID()
-                + " AND graph_id = " + g.getID()).size() > 0;
-    }
-
-    /** returns an iterator which iterates over every index stored in the database.
-     * 
-     * @return
-     */
-    public Iterator<Index> getIndexIterator() {
-        return new Iterator<Index>() {
+		
+	}
+	@Override
+	public Iterator<Integer> getIndexIDIterator() {
+        return new Iterator<Integer>() {
 
             private int id = 0;
 
@@ -836,36 +784,76 @@ public class DBInterface {
                 return getQueryResults(sql).size() > 0;
             }
 
-            public Index next() {
+            public Integer next() {
                 String sql = "SELECT id FROM graph_instances WHERE  is_index = TRUE AND id > " + id + " ORDER BY id LIMIT 1";
                 List<Map<String, String>> ls =
                         getQueryResults(sql);
                 if (ls.size() > 0) {
-                    id = Integer.parseInt(ls.get(0).get("id"));
-                    return (Index) loadStructureFromDatabase(id);
+                    return Integer.parseInt(ls.get(0).get("id"));
                 }
-                return null;
+                return -1;
             }
 
             public void remove() {
                 throw new UnsupportedOperationException("Not supported.");
             }
         };
-    }
+	}
+	
+	@Override
+	public Set<Integer> retrieveIndexIDs(int graphID) {
+        Set<Integer> ret = new HashSet<Integer>();
 
-    public void viewAsUndirectedGraphs() { directed = false; }
-    public void viewAsDirectedGraphs() { directed = true; }
-    public boolean directedGraphs() { return directed; }
-    
-    
-    
-
-    public static String slurpStream(InputStream in) throws IOException {
-      StringBuffer out = new StringBuffer();
-      byte[] b = new byte[4096];
-      for (int n; (n = in.read(b)) != -1;) {
-          out.append(new String(b, 0, n));
-      }
-      return out.toString();
-    }
+        String sql = "SELECT index_id FROM graph_indices WHERE graph_id = " + id;
+        for (Map<String, String> row : getQueryResults(sql)) {
+            ret.add(retrieveGraph(id));
+        }
+        return ret;
+	}
+	
+	@Override
+	public Set<Integer> retrieveIndexedGraphIDs(int indexID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public sai.graph.Feature getFeature(int featureID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Set<String> getFeatureNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Set<Integer> getFeatureIDs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Set<Integer> getFeatureIDs(String featureClass) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void setCompatible(sai.graph.Feature fa, sai.graph.Feature fb) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void setNotCompatible(sai.graph.Feature fa, sai.graph.Feature fb) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public boolean isCompatible(sai.graph.Feature fa, sai.graph.Feature fb) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public int getDatabaseSizeWithoutIndices() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
