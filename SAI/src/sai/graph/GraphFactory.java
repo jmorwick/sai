@@ -1,48 +1,24 @@
 package sai.graph;
 
-import sai.db.DBInterface;
-
 public interface GraphFactory<G extends Graph> {
-	
-	/** creates a graph with no nodes, edges, or features, no DBInterface (null) 
-	 * and an ID of -1. 
-	 * 
-	 * @param directed
-	 * @param multi
-	 * @param pseudo
-	 * @param index whether or not this graph should be index-only (not returned in queries)
-	 * @return
-	 */
-	public G createEmptyGraph(boolean directed, boolean multi, boolean pseudo, boolean index);
 
 	/** creates a copy of the graph g which cannot be altered. It will have the 
-	 * same ID and DBInterface as g, and all node and edge instances will also 
-	 * be copied. Feature instances will not be copied (these references will be 
-	 * preserved). 
+	 * same ID as g, and all node and edge instances will also be copied. Feature 
+	 * instances will not be copied (these references will be preserved). 
 	 * 
-	 * @param g
-	 * @return
+	 * @param g the graph from which to copy features/content
+	 * @return a new graph with the old content
 	 */
-	public G immutableCopy(G g);
+	public G copy(Graph g);
 	
 
 	/** creates a copy of the graph g which cannot be altered. It will have the 
-	 * the given ID and DBInterface, and all node and edge instances will also 
-	 * be copied. Feature instances will not be copied (these references will be 
-	 * preserved). 
+	 * the given ID and all node and edge instances will also be copied. Feature 
+	 * instances will not be copied (these references will be preserved). 
 	 * 
-	 * @param g
-	 * @return
+	 * @param g the graph from which to copy features/content
+	 * @param id the new id for the new graph
+	 * @return a new graph with (mostly) the old content
 	 */
-	public G immutableCopy(G g, int id, DBInterface db);
-	
-	/** creates a mutable copy of the given graph g. The returned graph will 
-	 * have -1 as its ID and null as its DBInterface. All node instances and 
-	 * edge instances contained within the graph will also be copied, but 
-	 * Feature instances will not be copied (these references will be preserved).
-	 * 
-	 * @param g
-	 * @return
-	 */
-	public G mutableCopy(G g);
+	public G copy(Graph g, int id);
 }

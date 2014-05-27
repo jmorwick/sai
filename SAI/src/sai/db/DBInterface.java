@@ -1,5 +1,7 @@
 package sai.db;
 
+import java.io.FileNotFoundException;
+import java.nio.file.AccessDeniedException;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -8,8 +10,8 @@ import sai.graph.Graph;
 import sai.graph.GraphFactory;
 
 public interface DBInterface {
-	public void connect();
-	public void disconnect();
+	public void connect() throws AccessDeniedException;
+	public void disconnect() throws AccessDeniedException, FileNotFoundException;
 	public boolean isConnected();
 	
 	public <G extends Graph> G retrieveGraph(int graphID, GraphFactory<G> f);
@@ -20,12 +22,12 @@ public interface DBInterface {
     public void deleteGraph(int graphID);
 
     public Iterator<Integer> getIndexIDIterator();
-	public void addIndex(Graph g, Graph i); 
+	public void addIndex(int graphID, int indexID); 
 	public Set<Integer> retrieveIndexIDs(int graphID);
 	public Set<Integer> retrieveIndexedGraphIDs(int indexID);
     
-	public Feature getFeature(String featureClass, int featureID);
-	public Set<String> getFeatureClasses();
+	public Feature getFeature(int featureID);
+	public Set<String> getFeatureNames();
 	public Set<Integer> getFeatureIDs();
 	public Set<Integer> getFeatureIDs(String featureClass);
 	public void setCompatible(Feature fa, Feature fb);

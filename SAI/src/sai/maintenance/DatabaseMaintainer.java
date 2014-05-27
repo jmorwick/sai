@@ -21,9 +21,9 @@ package sai.maintenance;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.base.Supplier;
+import sai.db.DBInterface;
 
-import sai.DBInterface;
+import com.google.common.base.Supplier;
 
 /**
  * implementations of this class are intended to be run during idle time to 

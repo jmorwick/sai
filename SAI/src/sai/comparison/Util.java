@@ -22,7 +22,6 @@ import info.kendall_morwick.funcles.BinaryRelation;
 import info.kendall_morwick.funcles.Pair;
 
 import java.math.BigInteger;
-import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -52,6 +51,8 @@ import static info.kendall_morwick.funcles.Funcles.apply;
  * @version 0.2.0
  * @author Joseph Kendall-Morwick
  */
+
+//TODO: consider reorganizing this class and moving some code to the only locations it is used
 public class Util {
 
     

@@ -28,15 +28,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import sai.db.DBInterface;
+import sai.graph.Graph;
+
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListenableFutureTask;
 
-import sai.DBInterface;
-import sai.graph.jgrapht.Graph;
-import sai.indexing.Index;
 import static info.kendall_morwick.funcles.Tuple.makeTuple;
 
 /**
@@ -72,14 +72,14 @@ implements Supplier<List<T2<Integer,Integer>>> {
 	@Override
 	public List<T2<Integer,Integer>> get() {
 		List<T2<Integer,Integer>> results = Lists.newArrayList();
-		Iterator<Index> progress1 = db.getIndexIterator();
+		Iterator<Integer> progress1 = db.getIndexIDIterator();
 
 		while(progress1.hasNext()) {
-			Index i1 = progress1.next();
-			Iterator<Index> progress2 = db.getIndexIterator();
+			int i1 = progress1.next();
+			Iterator<Integer> progress2 = db.getIndexIDIterator();
 			while(progress2.hasNext()) {
-				Index i2 = progress1.next();
-				if(i2.getID() == i1.getID()) continue;
+				int i2 = progress1.next();
+				if(i2 == i1) continue;
 
 				boolean foundAnswer = false; //set to true when an answer for this pair is found
 				for(BinaryRelation<Graph> r : compatibilityCheckers) {
@@ -103,7 +103,7 @@ implements Supplier<List<T2<Integer,Integer>>> {
 					}
 					//process completed threads
 					Iterator<ListenableFuture<Boolean>> i = activeComparisons.iterator();
-					List<T2<Index,Index>> haltAll = Lists.newArrayList();
+					List<T2<Integer,Integer>> haltAll = Lists.newArrayList();
 					while(i.hasNext()) {
 						ListenableFuture<Boolean> pt = i.next();
 						if(!pt.isAlive()) {
@@ -137,12 +137,12 @@ implements Supplier<List<T2<Integer,Integer>>> {
 	}
 
 	private ListenableFuture<Boolean> applyInBackground(
-			final BinaryRelation<Graph> r, final Index i1, final Index i2) {
+			final BinaryRelation<Integer> r, final int i1, final int i2) {
 		return ListenableFutureTask.create(new Callable<Boolean>() {
 
 			@Override
 			public Boolean call() throws Exception {
-				return r.apply(Pair.makePair((Graph)i1, (Graph)i2));
+				return r.apply(Pair.makePair(i1, i2));
 			}
 			
 		});

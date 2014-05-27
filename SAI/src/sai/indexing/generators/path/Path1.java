@@ -28,6 +28,7 @@ import sai.graph.Edge;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
+import sai.graph.MutableGraph;
 import sai.graph.Node;
 import sai.indexing.IndexGenerator;
 
@@ -65,14 +66,14 @@ public class Path1<G extends Graph> implements IndexGenerator<G> {
             for(Feature n1f : fromNodeFeatures)
                 for(Feature n2f : toNodeFeatures)
                     for(Feature ef : edgeFeatures) {
-                    	Graph i = gf.createEmptyGraph(
+                    	MutableGraph i = new MutableGraph(
                     			s.isDirectedgraph(), 
                     			s.isMultigraph(), 
                     			s.isPseudograph(), 
                     			true);
-                    	Node in1 = i.addNode();
-                    	Node in2 = i.addNode();
-                    	Edge ie = i.addEdge(in1, in2);
+                    	Node in1 = i.addNode(1);
+                    	Node in2 = i.addNode(2);
+                    	Edge ie = i.addEdge(1, in1, in2);
                     	i.addFeature(in1, n1f);
                     	i.addFeature(in2, n2f);
                     	i.addFeature(ie, ef);
