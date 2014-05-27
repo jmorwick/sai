@@ -1,14 +1,9 @@
-package sai.graph.basic;
+package sai.graph;
 
 import info.kendall_morwick.funcles.Pair;
 
 import java.util.Map;
 import java.util.Set;
-
-import sai.graph.Edge;
-import sai.graph.Feature;
-import sai.graph.Graph;
-import sai.graph.Node;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;

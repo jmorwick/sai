@@ -30,10 +30,10 @@ import com.google.common.collect.Sets;
 import db.mysql.MySQLDBInterface;
 import sai.graph.jgrapht.Feature;
 import sai.graph.jgrapht.Graph;
-import sai.indexing.generators.path.Path1;
 import sai.indexing.Index;
 import sai.indexing.IndexGenerator;
 import sai.indexing.IndexRetriever;
+import sai.indexing.Path1;
 
 /**
  * Similar to the Path1 generator but only generates an index if it does not

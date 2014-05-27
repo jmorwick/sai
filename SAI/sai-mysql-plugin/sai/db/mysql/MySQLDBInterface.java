@@ -48,11 +48,11 @@ import com.google.common.collect.Sets;
 
 import sai.comparison.featuresetcomparators.ManyTo1;
 import sai.db.DBInterface;
+import sai.graph.BasicGraphFactory;
 import sai.graph.Edge;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
 import sai.graph.Node;
-import sai.graph.basic.BasicGraphFactory;
 
 /**
  * @version 2.0

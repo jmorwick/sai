@@ -1,4 +1,4 @@
-package sai.db.basic;
+package sai.db;
 
 import java.util.HashMap;
 import java.util.InputMismatchException;
@@ -19,13 +19,12 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import sai.db.DBInterface;
 import sai.graph.Edge;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
+import sai.graph.MutableGraph;
 import sai.graph.Node;
-import sai.graph.basic.MutableGraph;
 
 public class BasicDBInterface implements DBInterface {
 

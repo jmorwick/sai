@@ -1,11 +1,6 @@
-package sai.graph.basic;
+package sai.graph;
 
 import java.util.Set;
-
-import sai.graph.Edge;
-import sai.graph.Feature;
-import sai.graph.Graph;
-import sai.graph.Node;
 
 public class BasicGraphWrapper implements Graph {
 	

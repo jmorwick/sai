@@ -17,7 +17,7 @@
 
  */
 
-package sai.indexing.generators.path;
+package sai.indexing;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,9 +28,8 @@ import sai.graph.Edge;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
+import sai.graph.MutableGraph;
 import sai.graph.Node;
-import sai.graph.basic.MutableGraph;
-import sai.indexing.IndexGenerator;
 
 /**
  * An index generator which generates sub-structure indices for each single 

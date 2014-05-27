@@ -1,7 +1,5 @@
-package sai.graph.basic;
+package sai.graph;
 
-import sai.graph.Graph;
-import sai.graph.GraphFactory;
 
 public class BasicGraphFactory implements GraphFactory<BasicGraphWrapper> {
 
