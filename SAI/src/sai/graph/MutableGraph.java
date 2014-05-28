@@ -14,11 +14,11 @@ public class MutableGraph implements Graph {
 	
 	private int id;
 	private Set<Feature> features = Sets.newHashSet();
-	private Map<Integer,Node> nodes = Maps.newHashMap();
-	private Map<Integer,Edge> edges = Maps.newHashMap();
-	private Map<Edge,Pair<Node>> edgeContents = Maps.newHashMap();
-	private Multimap<Node,Feature> nodeFeatures = HashMultimap.create();
-	private Multimap<Edge,Feature> edgeFeatures = HashMultimap.create();
+	private Set<Integer> nodes = Sets.newHashSet();
+	private Set<Integer> edges = Sets.newHashSet();
+	private Map<Integer,Pair<Integer>> edgeContents = Maps.newHashMap();
+	private Multimap<Integer,Feature> nodeFeatures = HashMultimap.create();
+	private Multimap<Integer,Feature> edgeFeatures = HashMultimap.create();
 
 	private boolean isPseudoGraph;
 	private boolean isMultiGraph;
@@ -46,18 +46,18 @@ public class MutableGraph implements Graph {
 		
 		for(Feature f : g.getFeatures()) 
 			addFeature(f);
-		for(Node n : g.getNodes()) {
-			Node cn = addNode(n.getID());
-			for(Feature f : n.getFeatures()) 
-				addFeature(cn, f);
+		for(Integer n : g.getNodeIDs()) {
+			addNode(n);
+			for(Feature f : g.getNodeFeatures(n)) 
+				addNodeFeature(n, f);
 			
 		}
-		for(Edge e : g.getEdges()) {
-			Node fn = getNode(g.getEdgeSource(e).getID());
-			Node tn = getNode(g.getEdgeSource(e).getID());
-			Edge ce = addEdge(e.getID(), fn, tn);
-			for(Feature f : e.getFeatures()) 
-				addFeature(ce, f);
+		for(int e : g.getEdgeIDs()) {
+			int fn = g.getEdgeSourceNodeID(e);
+			int tn = g.getEdgeSourceNodeID(e);
+			addEdge(e, fn, tn);
+			for(Feature f : g.getEdgeFeatures(e)) 
+				addEdgeFeature(e, f);
 			
 		}
 	}
@@ -80,35 +80,27 @@ public class MutableGraph implements Graph {
 	}
 	
 	@Override
-	public int getID() {
+	public int getSaiID() {
 		return id;
 	}
 	@Override
-	public Set<Edge> getEdges() {
-		return Sets.newHashSet(edges.values());
+	public Set<Integer> getEdgeIDs() {
+		return Sets.newHashSet(edges);
 	}
 	@Override
-	public Set<Node> getNodes() {
-		return Sets.newHashSet(nodes.values());
-	}
-	@Override
-	public Node getNode(int id) {
-		return nodes.get(id);
-	}
-	@Override
-	public Edge getEdge(int id) {
-		return edges.get(id);
+	public Set<Integer> getNodeIDs() {
+		return Sets.newHashSet(nodes);
 	}
 	@Override
 	public Set<Feature> getFeatures() {
 		return Sets.newHashSet(features);
 	}
 	@Override
-	public Node getEdgeSource(Edge e) {
+	public int getEdgeSourceNodeID(int e) {
 		return edgeContents.get(e).a1();
 	}
 	@Override
-	public Node getEdgeTarget(Edge e) {
+	public int getEdgeTargetNodeID(int e) {
 		return edgeContents.get(e).a2();
 	}
 	@Override
@@ -128,74 +120,90 @@ public class MutableGraph implements Graph {
 		return isIndex;
 	}
 
-	public Node addNode(final int nid) {
-		final MutableGraph self = this;
-		Node n = new Node(){
-
-			@Override
-			public int getID() {
-				return nid;
-			}
-
-			@Override
-			public Set<Feature> getFeatures() {
-				return Sets.newHashSet(self.nodeFeatures.get(this));
-			}};
-			nodes.put(nid, n);
-			return n;
+	public void addNode(final int nid) {
+		if(nodes.contains(nid))
+			throw new IllegalArgumentException(nid + " is already a node id");
+		nodes.add(nid);
 	}
 	
 	
-	public Edge addEdge(final int eid, Node n1, Node n2) {
-		final MutableGraph self = this;
-		Edge e = new Edge() {
-
-			@Override
-			public int getID() {
-				return eid;
-			}
-
-			@Override
-			public Set<Feature> getFeatures() {
-				return Sets.newHashSet(self.edgeFeatures.get(this));
-			}
-			
-		};
-		edges.put(eid, e);
-		edgeContents.put(e, Pair.makeImmutablePair(n1, n2));
-		return e;
+	public void addEdge(final int eid, int n1, int n2) {
+		if(edges.contains(eid))
+			throw new IllegalArgumentException(eid + " is already an edge id");
+		edges.add(eid);
+		edgeContents.put(eid, Pair.makeImmutablePair(n1, n2));
 	}
 	
-	public void removeNode(Node n) {
-		nodes.remove(n.getID());
-		for(Edge e : getEdges()) {
-			if(getEdgeSource(e).getID() == n.getID() || 
-			   getEdgeTarget(e).getID() == n.getID()) {
+	public void removeNode(int n) {
+		nodes.remove(n);
+		for(int e : getEdgeIDs()) {
+			if(getEdgeSourceNodeID(e) == n || 
+			   getEdgeTargetNodeID(e) == n) {
 				removeEdge(e);
 			}
 		}
 	}
-	public void removeEdge(Edge e) {
-		edges.remove(e.getID());
+	public void removeEdge(int e) {
+		edges.remove(e);
 		edgeContents.remove(e);
+	}
+	
+	public static Feature createFeature(final String name, final String value) {
+		return new Feature() {
+
+			@Override
+			public int getID() {
+				return -1;
+			}
+
+			@Override
+			public String getValue() {
+				return value;
+			}
+
+			@Override
+			public String getName() {
+				return name;
+			}
+			
+		};
 	}
 	
 	public void addFeature(Feature f) {
 		features.add(f);
 	}
+
+	public void addNodeFeature(int nodeID, Feature f) {
+		nodeFeatures.put(nodeID, f);
+	}
+	public void addEdgeFeature(int edgeID, Feature f) {
+		edgeFeatures.put(edgeID, f);
+	}
+
+	public void removeNodeFeature(int nodeID, Feature f) {
+		nodeFeatures.remove(nodeID, f);
+	}
+	public void removeEdgeFeature(int edgeID, Feature f) {
+		edgeFeatures.remove(edgeID, f);
+	}
+
+	@Override
+	public Set<Feature> getNodeFeatures(int n) {
+		return Sets.newHashSet(nodeFeatures.get(n));
+	}
+
+	@Override
+	public Set<Feature> getEdgeFeatures(int n) {
+		return Sets.newHashSet(edgeFeatures.get(n));
+	}
+	
 	public void removeFeature(Feature f) {
 		features.remove(f);
 	}
-	public void addFeature(Node n, Feature f) {
+	public void addFeature(int n, Feature f) {
 		nodeFeatures.put(n, f);
 	}
-	public void removeFeature(Node n, Feature f) {
-		nodeFeatures.remove(n, f);
-	}
-	public void addFeature(Edge e, Feature f) {
-		edgeFeatures.put(e, f);
-	}
-	public void removeFeature(Edge e, Feature f) {
+	public void removeFeature(int e, Feature f) {
 		edgeFeatures.remove(e, f);
 	}
 }

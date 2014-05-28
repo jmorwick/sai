@@ -46,7 +46,7 @@ public class SimpleCountRetriever<G extends Graph> implements GraphRetriever<G> 
     public Iterator<G> retrieve(final DBInterface db, final GraphFactory<G> gf, Set<Graph> indices) {
         final Multiset<Integer> ranks = HashMultiset.create();
         for (Graph i : indices) {
-            for (Integer gid : db.retrieveIndexedGraphIDs(i.getID())) {
+            for (Integer gid : db.retrieveIndexedGraphIDs(i.getSaiID())) {
                 ranks.add(gid);
             }
         }

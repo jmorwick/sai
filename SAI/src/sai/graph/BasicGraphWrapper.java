@@ -11,28 +11,18 @@ public class BasicGraphWrapper implements Graph {
 	}
 
 	@Override
-	public int getID() {
-		return graph.getID();
+	public int getSaiID() {
+		return graph.getSaiID();
 	}
 
 	@Override
-	public Set<Edge> getEdges() {
-		return graph.getEdges();
+	public Set<Integer> getEdgeIDs() {
+		return graph.getEdgeIDs();
 	}
 
 	@Override
-	public Set<Node> getNodes() {
-		return graph.getNodes();
-	}
-
-	@Override
-	public Node getNode(int id) {
-		return graph.getNode(id);
-	}
-
-	@Override
-	public Edge getEdge(int id) {
-		return graph.getEdge(id);
+	public Set<Integer> getNodeIDs() {
+		return graph.getNodeIDs();
 	}
 
 	@Override
@@ -41,13 +31,13 @@ public class BasicGraphWrapper implements Graph {
 	}
 
 	@Override
-	public Node getEdgeSource(Edge e) {
-		return graph.getEdgeSource(e);
+	public int getEdgeSourceNodeID(int e) {
+		return graph.getEdgeSourceNodeID(e);
 	}
 
 	@Override
-	public Node getEdgeTarget(Edge e) {
-		return graph.getEdgeTarget(e);
+	public int getEdgeTargetNodeID(int e) {
+		return graph.getEdgeTargetNodeID(e);
 	}
 
 	@Override
@@ -68,6 +58,16 @@ public class BasicGraphWrapper implements Graph {
 	@Override
 	public boolean isIndex() {
 		return graph.isIndex();
+	}
+
+	@Override
+	public Set<Feature> getNodeFeatures(int nodeID) {
+		return graph.getEdgeFeatures(nodeID);
+	}
+
+	@Override
+	public Set<Feature> getEdgeFeatures(int edgeID) {
+		return graph.getEdgeFeatures(edgeID);
 	}
 	
 }

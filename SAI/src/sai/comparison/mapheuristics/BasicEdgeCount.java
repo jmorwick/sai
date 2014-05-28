@@ -30,10 +30,7 @@ import com.google.common.collect.Multiset;
 
 import sai.comparison.MapHeuristic;
 import sai.comparison.mapgenerators.search.GraphMapping;
-import sai.graph.Edge;
 import sai.graph.Graph;
-import sai.graph.Node;
-
 
 /**
  * A simple map judging heuristic which counts the number of subsumed edges
@@ -52,27 +49,27 @@ public class BasicEdgeCount implements MapHeuristic {
 	public Double apply(T3<Graph, Graph, GraphMapping> args) {
     		Graph g1 = args.a1();
     		Graph g2 = args.a2();
-    		Map<Node, Node> m = args.a3();
-            if(g1.getEdges().size() == 0) return 0.0;
+    		Map<Integer, Integer> m = args.a3();
+            if(g1.getEdgeIDs().size() == 0) return 0.0;
             int count = 0;
-            Multiset<T2<Node,Node>> available = HashMultiset.create();
-            for(Edge e : g2.getEdges()) {
+            Multiset<T2<Integer,Integer>> available = HashMultiset.create();
+            for(Integer e : g2.getEdgeIDs()) {
                 available.add(Tuple.makeTuple(
-                        g2.getEdgeSource(e),
-                        g2.getEdgeTarget(e)));
+                        g2.getEdgeSourceNodeID(e),
+                        g2.getEdgeTargetNodeID(e)));
             }
-            for(Edge e : g1.getEdges()) {
-                Node n1 = g1.getEdgeSource(e);
-                Node n2 = g1.getEdgeTarget(e);
+            for(Integer e : g1.getEdgeIDs()) {
+            	Integer n1 = g1.getEdgeSourceNodeID(e);
+            	Integer n2 = g1.getEdgeTargetNodeID(e);
                 if(m.containsKey(n1) && m.containsKey(n2)) {
-                    T2<Node,Node> t = Tuple.makeTuple(m.get(n1), m.get(n2));
+                    T2<Integer,Integer> t = Tuple.makeTuple(m.get(n1), m.get(n2));
                     if(available.count(t) > 0) {
                         available.setCount(t, -1);
                         count++;
                     }
                 }
             }
-            double value = (double)count / (double)g1.getEdges().size();
+            double value = (double)count / (double)g1.getEdgeIDs().size();
             return value;
     }
 }

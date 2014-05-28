@@ -20,17 +20,10 @@
 package sai.comparison;
 
 
-import java.util.Map;
-
 import sai.comparison.mapgenerators.search.GraphMapping;
 import sai.graph.Graph;
-import sai.graph.Node;
-import info.kendall_morwick.funcles.T2;
 import info.kendall_morwick.funcles.T3;
-import info.kendall_morwick.funcles.Tuple;
-
 import com.google.common.base.Function;
-import com.google.common.collect.Sets;
 
 /**
  * This class houses a method for judging the utility of a mapping between

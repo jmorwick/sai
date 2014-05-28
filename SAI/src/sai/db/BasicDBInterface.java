@@ -1,5 +1,7 @@
 package sai.db;
 
+import info.kendall_morwick.funcles.Pair;
+
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Iterator;
@@ -19,12 +21,10 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import sai.graph.Edge;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
 import sai.graph.MutableGraph;
-import sai.graph.Node;
 
 public class BasicDBInterface implements DBInterface {
 
@@ -38,8 +38,11 @@ public class BasicDBInterface implements DBInterface {
 	private Set<Integer> residentGraphs;
 	private Multimap<Integer,Integer> featureCompatibility;
 	private Multimap<String, Integer> featuresWithName;
+	private Map<Pair<String>,Integer> featureIDs; 
 	private Map<Integer,Feature> features;
 	private Set<Integer> hiddenGraphs;
+	private int nextFeatureID = 0;
+	private int nextGraphID = 0;
 
 	public BasicDBInterface(File dbfile, GraphFactory<?> gf) {
 		this.dbfile = dbfile;
@@ -61,11 +64,14 @@ public class BasicDBInterface implements DBInterface {
 			throw new AccessDeniedException(dbfile.getAbsolutePath());
 		
 		try {
+			nextFeatureID = 0;
+			nextGraphID = 0;
 			BufferedReader in = new BufferedReader(new FileReader(dbfile));
 			int numFeatureNames = Integer.parseInt(in.readLine());
 			
 			//read in features
 			featuresWithName = HashMultimap.create();
+			featureIDs = new HashMap<Pair<String>,Integer>();
 			features = new HashMap<Integer,Feature>();
 			for(int i=0; i<numFeatureNames; i++) {
 				Scanner lin = new Scanner(in.readLine());
@@ -74,7 +80,9 @@ public class BasicDBInterface implements DBInterface {
 				while(lin.hasNext()) {
 					final int fid = lin.nextInt();
 					final String value = lin.next();
+					if(nextFeatureID <= fid) nextFeatureID = fid+1;
 					featuresWithName.put(name, fid);
+					featureIDs.put(Pair.makeImmutablePair(name, value), fid);
 					features.put(fid, new Feature() {
 
 						@Override
@@ -119,6 +127,7 @@ public class BasicDBInterface implements DBInterface {
 				//get general graph into
 				Scanner lin = new Scanner(in.readLine());
 				int gid = lin.nextInt();
+				if(nextGraphID <= gid) nextGraphID = gid+1;
 				boolean directed = lin.nextBoolean();
 				boolean multi = lin.nextBoolean();
 				boolean pseudo = lin.nextBoolean();
@@ -134,9 +143,9 @@ public class BasicDBInterface implements DBInterface {
 				for(int j=0; j<numNodes; j++) {
 					lin = new Scanner(in.readLine());
 					final int nid = lin.nextInt();
-					Node n = g.addNode(nid);
+					g.addNode(nid);
 					while(lin.hasNext()) 
-						g.addFeature(n, features.get(lin.nextInt()));
+						g.addFeature(nid, features.get(lin.nextInt()));
 					lin.close();
 				}
 				
@@ -146,9 +155,9 @@ public class BasicDBInterface implements DBInterface {
 					final int eid = lin.nextInt();
 					final int nid1 = lin.nextInt();
 					final int nid2 = lin.nextInt();
-					Edge e = g.addEdge(eid, g.getNode(nid1), g.getNode(nid2));
+					g.addEdge(eid, nid1, nid2);
 					while(lin.hasNext()) 
-						g.addFeature(e, features.get(lin.nextInt()));
+						g.addFeature(eid, features.get(lin.nextInt()));
 					lin.close();
 				}
 				
@@ -210,6 +219,7 @@ public class BasicDBInterface implements DBInterface {
 		residentGraphs = null;
 		indexes = null;
 		indexedBy = null;
+		featureIDs = null;
 
 		
 		//write features to file
@@ -242,27 +252,27 @@ public class BasicDBInterface implements DBInterface {
 		for(int gid : db.keySet()) {
 			Graph g = db.get(gid);
 			//print out general graph info on one line
-			out.print(g.getID()+",");
+			out.print(g.getSaiID()+",");
 			out.print(g.isDirectedgraph()+",");
 			out.print(g.isMultigraph()+",");
 			out.print(g.isPseudograph()+",");
 			out.print(g.isIndex()+",");
-			out.print(g.getNodes().size()+",");
-			out.print(g.getEdges().size()+",");
+			out.print(g.getNodeIDs().size()+",");
+			out.print(g.getEdgeIDs().size()+",");
 			for(Feature f : g.getFeatures()) 
 				out.print("," + f.getID());
 			out.print("\n");
 			//print a line for each node
-			for(Node n : g.getNodes()) {
-				out.print(n.getID());
-				for(Feature f : n.getFeatures()) 
+			for(int n : g.getNodeIDs()) {
+				out.print(n);
+				for(Feature f : g.getNodeFeatures(n)) 
 					out.print("," + f.getID());
 				out.print("\n");
 			}
 			//print a line for each edge
-			for(Edge e : g.getEdges()) {
-				out.println(e.getID()+","+g.getEdgeSource(e)+","+g.getEdgeTarget(e));
-				for(Feature f : e.getFeatures()) 
+			for(int e : g.getEdgeIDs()) {
+				out.println(e+","+g.getEdgeSourceNodeID(e)+","+g.getEdgeTargetNodeID(e));
+				for(Feature f : g.getEdgeFeatures(e)) 
 					out.print("," + f.getID());
 				out.print("\n");
 			}
@@ -400,6 +410,38 @@ public class BasicDBInterface implements DBInterface {
 	@Override
 	public int getDatabaseSizeWithoutIndices() {
 		return residentGraphs.size();
+	}
+
+	@Override
+	public Feature getFeature(final String featureName, final String featureValue) {
+		Pair<String> key = Pair.makeImmutablePair(featureName, featureValue);
+		if(!featureIDs.containsKey(key)) {
+			final int fid = nextFeatureID;
+			nextFeatureID++;
+			Feature f = new Feature() {
+
+				@Override
+				public int getID() {
+					return fid;
+				}
+
+				@Override
+				public String getValue() {
+					return featureValue;
+				}
+
+				@Override
+				public String getName() {
+					return featureName;
+				}
+				
+			};
+			featureIDs.put(key, f.getID());
+			features.put(f.getID(), f);
+			featuresWithName.put(featureName, f.getID());
+			return f;
+		}
+		return features.get(featureIDs.get(key));
 	}
 
 }

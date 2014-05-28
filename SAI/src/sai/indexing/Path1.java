@@ -24,12 +24,10 @@ import java.util.Set;
 
 import sai.comparison.Util;
 import sai.db.DBInterface;
-import sai.graph.Edge;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
 import sai.graph.MutableGraph;
-import sai.graph.Node;
 
 /**
  * An index generator which generates sub-structure indices for each single 
@@ -49,17 +47,17 @@ public class Path1<G extends Graph> implements IndexGenerator<G> {
     @Override
     public Set<Graph> generateIndices(DBInterface db, GraphFactory<G> gf, Graph s) {
         Set<Graph> indices = new HashSet<Graph>();
-        for(Edge e : s.getEdges()) {
+        for(int e : s.getEdgeIDs()) {
             Set<Feature> fromNodeFeatures = new HashSet<Feature>();
             Set<Feature> toNodeFeatures = new HashSet<Feature>();
             Set<Feature> edgeFeatures = new HashSet<Feature>();
-            edgeFeatures.addAll(Util.retainOnly(e.getFeatures(), featureTypes));
+            edgeFeatures.addAll(Util.retainOnly(s.getEdgeFeatures(e), featureTypes));
             if(edgeFeatures.size() == 0) edgeFeatures.add(null); //make links without edge features
             fromNodeFeatures.addAll(
-                    Util.retainOnly(s.getEdgeSource(e).getFeatures(),
+                    Util.retainOnly(s.getNodeFeatures(s.getEdgeSourceNodeID(e)),
                     featureTypes));
             toNodeFeatures.addAll(
-                    Util.retainOnly(s.getEdgeTarget(e).getFeatures(),
+                    Util.retainOnly(s.getNodeFeatures(s.getEdgeTargetNodeID(e)),
                     featureTypes));
             
             for(Feature n1f : fromNodeFeatures)
@@ -70,12 +68,12 @@ public class Path1<G extends Graph> implements IndexGenerator<G> {
                     			s.isMultigraph(), 
                     			s.isPseudograph(), 
                     			true);
-                    	Node in1 = i.addNode(1);
-                    	Node in2 = i.addNode(2);
-                    	Edge ie = i.addEdge(1, in1, in2);
-                    	i.addFeature(in1, n1f);
-                    	i.addFeature(in2, n2f);
-                    	i.addFeature(ie, ef);
+                    	i.addNode(1);
+                    	i.addNode(2);
+                    	i.addEdge(1, 1, 2);
+                    	i.addFeature(1, n1f);
+                    	i.addFeature(1, n2f);
+                    	i.addFeature(1, ef);
                     	indices.add(i);
             }
         }

@@ -19,6 +19,7 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 package sai.comparison;
 
 import info.kendall_morwick.funcles.BinaryRelation;
+import info.kendall_morwick.funcles.Funcles;
 import info.kendall_morwick.funcles.Pair;
 
 import java.math.BigInteger;
@@ -33,10 +34,8 @@ import java.util.Map;
 import java.util.Set;
 
 import sai.db.DBInterface;
-import sai.graph.Edge;
 import sai.graph.Feature;
 import sai.graph.Graph;
-import sai.graph.Node;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -182,20 +181,14 @@ public class Util {
      * @param featureSetComparator determines if sets of features are compatible
      * @return a multi-map indicating which nodes in s1 can be mapped to which in s2
      */
-    public static Multimap<Node, Node> nodeCompatibility(
+    public static Multimap<Integer, Integer> isCompatible(
     		BinaryRelation<Set<Feature>> featureSetComparator,
     		Graph s1, Graph s2) {
-        return nodeCompatibility(featureSetComparator, s1.getNodes(), s2.getNodes());
-    }
-
-    public static Multimap<Node, Node> nodeCompatibility(
-    		BinaryRelation<Set<Feature>> featureSetComparator,
-            Set<Node> s1,
-            Set<Node> s2) {
-        Multimap<Node, Node> possibilities = HashMultimap.<Node, Node>create();
-        for (Node n1 : s1) {
-            for (Node n2 : s2) {
-                if (apply(featureSetComparator, n1.getFeatures(), n2.getFeatures())) {
+        Multimap<Integer, Integer> possibilities = HashMultimap.create();
+        for (Integer n1 : s1.getNodeIDs()) {
+            for (Integer n2 : s2.getNodeIDs()) {
+                if (apply(featureSetComparator, s1.getNodeFeatures(n1), 
+                		s2.getNodeFeatures(n2))) {
                     possibilities.put(n1, n2);
                 }
             }
@@ -203,74 +196,67 @@ public class Util {
         return possibilities;
     }
     
-
-
 	public static boolean isCompatible(DBInterface db, Feature t1, Feature t2) {
 		if(t1.getName().equals(t2.getName()))
 			if(t1.getID() == t2.getID())
 				return true;
 		return db.isCompatible(t1, t2);
 	}
-    
-    public static boolean isCompatible(Edge e1, Edge e2,
-    		BinaryRelation<Set<Feature>> featureSetComparator) {
-    	return apply(featureSetComparator, e1.getFeatures(), e2.getFeatures());
-    }
-    
-    public static boolean isCompatible(Node n1, Node n2,
-    		BinaryRelation<Set<Feature>> featureSetComparator) {
-    	return apply(featureSetComparator, n1.getFeatures(), n2.getFeatures());
-    }
-    
+	
     /** returns the number of subsumed edges for the mapping */
     public static int matchedEdges(
     		final BinaryRelation<Set<Feature>> featureSetComparator,
-    		Graph s1,
-            Graph s2,
-            Node n1,
-            Map<Node, Node> m) {
-        Multimap<Edge, Edge> possibleMappings = HashMultimap.<Edge, Edge>create();
-        Node n2 = m.get(n1);
+    		final Graph s1,
+            final Graph s2,
+            int n1,
+            Map<Integer, Integer> m) {
+        Multimap<Integer, Integer> possibleMappings = HashMultimap.create();
+        Integer n2 = m.get(n1);
         if (n2 == null) {
             return 0;
         }
 
-        for (Edge e1 : s1.getEdges()) {
-            for (Edge e2 : s2.getEdges()) {
-                if (!isCompatible(e1, e2, featureSetComparator)) {
+        for (Integer e1 : s1.getEdgeIDs()) {
+            for (Integer e2 : s2.getEdgeIDs()) {
+                if (!apply(featureSetComparator, 
+                		s1.getEdgeFeatures(e1), s2.getEdgeFeatures(e2))) {
                     continue;
                 }
-                if (n1 == s1.getEdgeSource(e1)
-                        && n2 == s2.getEdgeSource(e2)
-                        && m.get(s1.getEdgeTarget(e1)) == s2.getEdgeTarget(e2)) {
+                if (n1 == s1.getEdgeSourceNodeID(e1)
+                        && n2 == s2.getEdgeSourceNodeID(e2)
+                        && m.get(s1.getEdgeTargetNodeID(e1)) == s2.getEdgeTargetNodeID(e2)) {
                     possibleMappings.put(e1, e2);
-                } else if (n1 == s1.getEdgeTarget(e1)
-                        && n2 == s2.getEdgeTarget(e2)
-                        && m.get(s1.getEdgeSource(e1)) == s2.getEdgeSource(e2)
-                        && isCompatible(e1, e2, featureSetComparator)) {
-                    possibleMappings.put(e1, e2);
-                } else if (s1.isDirectedgraph()
-                        && n1 == s1.getEdgeSource(e1)
-                        && n2 == s2.getEdgeTarget(e2)
-                        && m.get(s1.getEdgeTarget(e1)) == s2.getEdgeSource(e2)
-                        && isCompatible(e1, e2, featureSetComparator)) {
+                } else if (n1 == s1.getEdgeTargetNodeID(e1)
+                        && n2 == s2.getEdgeTargetNodeID(e2)
+                        && m.get(s1.getEdgeSourceNodeID(e1)) == s2.getEdgeSourceNodeID(e2)
+                        && apply(featureSetComparator, 
+                        		s1.getEdgeFeatures(e1), s2.getEdgeFeatures(e2))) {
                     possibleMappings.put(e1, e2);
                 } else if (s1.isDirectedgraph()
-                        && n1 == s1.getEdgeTarget(e1)
-                        && n2 == s2.getEdgeSource(e2)
-                        && m.get(s1.getEdgeSource(e1)) == s2.getEdgeTarget(e2)
-                        && isCompatible(e1, e2, featureSetComparator)) {
+                        && n1 == s1.getEdgeSourceNodeID(e1)
+                        && n2 == s2.getEdgeTargetNodeID(e2)
+                        && m.get(s1.getEdgeTargetNodeID(e1)) == s2.getEdgeSourceNodeID(e2)
+                        && apply(featureSetComparator,
+                        		s1.getEdgeFeatures(e1), s2.getEdgeFeatures(e2))) {
+                    possibleMappings.put(e1, e2);
+                } else if (s1.isDirectedgraph()
+                        && n1 == s1.getEdgeTargetNodeID(e1)
+                        && n2 == s2.getEdgeSourceNodeID(e2)
+                        && m.get(s1.getEdgeSourceNodeID(e1)) == s2.getEdgeTargetNodeID(e2)
+                        && apply(featureSetComparator,
+                        		s1.getEdgeFeatures(e1), s2.getEdgeFeatures(e2))) {
                     possibleMappings.put(e1, e2);
                 }
             }
         }
-        return findRepresentativesComplete(new BinaryRelation<Edge>() {
+        return findRepresentativesComplete(new BinaryRelation<Integer>() {
 
 			@Override
-			public boolean apply(Pair<Edge> args) {
-				return isCompatible(args.a1(), args.a2(), featureSetComparator);
+			public boolean apply(Pair<Integer> args) {
+				return Funcles.apply(featureSetComparator, 
+						s1.getEdgeFeatures(args.a1()), 
+						s2.getEdgeFeatures(args.a2()));
 			}
-        	
         }, possibleMappings).size();
     }
 
@@ -278,9 +264,9 @@ public class Util {
     		final BinaryRelation<Set<Feature>> featureSetComparator,
     		Graph s1,
             Graph s2,
-            Map<Node, Node> m) {
+            Map<Integer, Integer> m) {
         int matches = 0;
-        for (Map.Entry<Node, Node> e : m.entrySet()) {
+        for (Map.Entry<Integer, Integer> e : m.entrySet()) {
             matches += matchedEdges(
             		featureSetComparator,
             		s1,
@@ -296,7 +282,7 @@ public class Util {
     		final BinaryRelation<Set<Feature>> featureSetComparator,
     		Graph g1, 
     		Graph g2) {
-        Multimap<Node, Node> compatibility = nodeCompatibility(featureSetComparator, g1, g2);
+        Multimap<Integer, Integer> compatibility = isCompatible(featureSetComparator, g1, g2);
         return getNumberOfCompleteMappings(compatibility);
     }
 
@@ -304,7 +290,7 @@ public class Util {
     		final BinaryRelation<Set<Feature>> featureSetComparator,
     		Graph g1, 
     		Graph g2) {
-        Multimap<Node, Node> compatibility = nodeCompatibility(featureSetComparator, g1, g2);
+        Multimap<Integer, Integer> compatibility = isCompatible(featureSetComparator, g1, g2);
         return getNumberOfPartialMappings(compatibility);
     }
     

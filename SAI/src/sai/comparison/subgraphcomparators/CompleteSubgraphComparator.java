@@ -22,17 +22,19 @@ package sai.comparison.subgraphcomparators;
 import info.kendall_morwick.funcles.BinaryRelation;
 import info.kendall_morwick.funcles.Funcles;
 import info.kendall_morwick.funcles.Pair;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Ordering;
 
 import sai.comparison.Util;
 import sai.db.DBInterface;
 import sai.graph.Feature;
 import sai.graph.Graph;
-import sai.graph.Node;
 
 /**
  * This class may not be included in 2.0; I'm still considering its inclusion
@@ -63,7 +65,7 @@ public class CompleteSubgraphComparator implements BinaryRelation<Graph> {
 	public boolean apply(Pair<Graph> args) {
 		Graph sub = args.a1();
 		Graph sup = args.a2();
-		Multimap<Node, Node> possibilities = Util.nodeCompatibility(
+		Multimap<Integer, Integer> possibilities = Util.isCompatible(
 				featureSetComparator, sub,
 				sup);
 
@@ -76,16 +78,10 @@ public class CompleteSubgraphComparator implements BinaryRelation<Graph> {
 			return false;
 		}
 
-		Comparator<Node> nc = new Comparator<Node>() {
-
-			@Override
-			public int compare(Node n1, Node n2) {
-				return n1.getID() - n2.getID();
-			}
-		};
 		
-		Iterator<Map<Node,Node>> i = Util.getMappingIterator(possibilities, nc, nc);
-		for(Map<Node,Node> map : Util.iteratorToCollection(i)) {
+		Iterator<Map<Integer,Integer>> i = Util.getMappingIterator(possibilities, 
+				Ordering.<Integer>natural(), Ordering.<Integer>natural());
+		for(Map<Integer,Integer> map : Util.iteratorToCollection(i)) {
 			if(map.size() < possibilities.size()) {
 				return false;
 			} else if(Util.matchedEdges(
@@ -93,8 +89,8 @@ public class CompleteSubgraphComparator implements BinaryRelation<Graph> {
 					sub,
 					sup,
 					map) ==
-					sub.getEdges().size() &&
-					map.size() == sup.getNodes().size()) {
+					sub.getEdgeIDs().size() &&
+					map.size() == sup.getNodeIDs().size()) {
 				return true;
 			}
 		}

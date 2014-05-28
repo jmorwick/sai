@@ -22,8 +22,8 @@ package sai.comparison;
 import java.util.Map;
 
 import sai.graph.Graph;
-import sai.graph.Node;
-import info.kendall_morwick.funcles.T2;
+
+import info.kendall_morwick.funcles.Pair;
 
 import com.google.common.base.Function;
 
@@ -34,5 +34,5 @@ import com.google.common.base.Function;
  * @author Joseph Kendall-Morwick
  */
 public abstract interface MapGenerator extends 
-		Function<T2<Graph,Graph>,Map<Node,Node>> {
+		Function<Pair<Graph>,Map<Integer,Integer>> {
 }

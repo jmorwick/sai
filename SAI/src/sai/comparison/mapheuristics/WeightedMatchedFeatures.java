@@ -36,10 +36,8 @@ import sai.comparison.MapHeuristic;
 import sai.comparison.Util;
 import sai.comparison.mapgenerators.search.GraphMapping;
 import sai.db.DBInterface;
-import sai.graph.Edge;
 import sai.graph.Feature;
 import sai.graph.Graph;
-import sai.graph.Node;
 
 /**
  * A map heuristic which sums weightings for the number of compatibility
@@ -84,11 +82,11 @@ public class WeightedMatchedFeatures implements MapHeuristic {
 
 	@Override
 	public Double apply(T3<Graph,Graph,GraphMapping> args) {
-		Graph g1 = args.a1(); 
-		Graph g2 = args.a2(); 
-		Map<Node, Node> m = args.a3();
+		final Graph g1 = args.a1(); 
+		final Graph g2 = args.a2(); 
+		Map<Integer, Integer> m = args.a3();
 
-		Map<Node,Node> rm = Util.reverseMap(m);
+		Map<Integer,Integer> rm = Util.reverseMap(m);
 
 		//clear the cache if we're looking at new graphs
 		if (g1C == null || g2C == null
@@ -107,15 +105,15 @@ public class WeightedMatchedFeatures implements MapHeuristic {
 				maxCount += featureClassWeights.get(f.getName());
 			}
 		}
-		for (Edge e : g1.getEdges()) {
-			for (Feature f : e.getFeatures()) {
+		for (Integer e : g1.getEdgeIDs()) {
+			for (Feature f : g1.getEdgeFeatures(e)) {
 				if (featureClassWeights.containsKey(f.getName())) {
 					maxCount += featureClassWeights.get(f.getName());
 				}
 			}
 		}
-		for (Node n : g1.getNodes()) {
-			for (Feature f : n.getFeatures()) {
+		for (Integer n : g1.getNodeIDs()) {
+			for (Feature f : g1.getNodeFeatures(n)) {
 				if (featureClassWeights.containsKey(f.getName())) {
 					maxCount += featureClassWeights.get(f.getName());
 				}
@@ -131,43 +129,43 @@ public class WeightedMatchedFeatures implements MapHeuristic {
 				g1.getFeatures(), g2.getFeatures());
 
 
-				Multimap<T2<Node, Node>, Edge> available = HashMultimap.create();
-				for (Edge e : g2.getEdges()) {
+				Multimap<T2<Integer, Integer>, Integer> available = HashMultimap.create();
+				for (Integer e : g2.getEdgeIDs()) {
 					available.put(Tuple.makeTuple(
-							g2.getEdgeSource(e),
-							g2.getEdgeTarget(e)), e);
+							g2.getEdgeSourceNodeID(e),
+							g2.getEdgeTargetNodeID(e)), e);
 					if(!directed)  
 						//add the opposite direction too if the graph is not directed
 						available.put(Tuple.makeTuple(
-								g2.getEdgeTarget(e),
-								g2.getEdgeSource(e)), e);
+								g2.getEdgeTargetNodeID(e),
+								g2.getEdgeSourceNodeID(e)), e);
 				}
-				for (final Edge e : g1.getEdges()) {  //for each edge in the probe graph
-					Node n1 = g1.getEdgeSource(e);
-					Node n2 = g1.getEdgeTarget(e);
+				for (final Integer e : g1.getEdgeIDs()) {  //for each edge in the probe graph
+					Integer n1 = g1.getEdgeSourceNodeID(e);
+					Integer n2 = g1.getEdgeTargetNodeID(e);
 					if (m.containsKey(n1) && m.containsKey(n2)) {  
 						//if both nodes in the edge are mapped in the candidate map
-						T2<Node, Node> t = Tuple.makeTuple(m.get(n1), m.get(n2));
-						T2<Node, Node> tr = Tuple.makeTuple(m.get(n1), m.get(n2));
-						Function<Edge,Double> f = new Function<Edge,Double>() {
+						T2<Integer, Integer> t = Tuple.makeTuple(m.get(n1), m.get(n2));
+						T2<Integer, Integer> tr = Tuple.makeTuple(m.get(n1), m.get(n2));
+						Function<Integer,Double> f = new Function<Integer,Double>() {
 							@Override
-							public Double apply(Edge e2) {
+							public Double apply(Integer e2) {
 								return getMatchedValues(db, 
-										e.getFeatures(),
-										e2.getFeatures());
+										g1.getEdgeFeatures(e),
+										g2.getEdgeFeatures(e2));
 							}
 						};
 						if (available.get(t).size() > 0) {  
 							//check to see if the edge is preserved
-							Edge e2 = Funcles.argmaxCollection(f,available.get(t));
+							Integer e2 = Funcles.argmaxCollection(f,available.get(t));
 							available.remove(t, e2);
 							count += f.apply(e2);
 						}
 					}
 				}
-				for (Node n : m.keySet()) {
-					count += (Double) getMatchedValues(db, n.getFeatures(), 
-							m.get(n).getFeatures());
+				for (Integer n : m.keySet()) {
+					count += (Double) getMatchedValues(db, g1.getNodeFeatures(n), 
+							g2.getEdgeFeatures(m.get(n)));
 				}
 
 				count /= maxCount;
