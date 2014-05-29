@@ -11,9 +11,4 @@ public interface Graph {
 	public Set<Feature> getEdgeFeatures(int n);
 	public int getEdgeSourceNodeID(int edgeID);
 	public int getEdgeTargetNodeID(int edgeID);
-	
-	public boolean isPseudograph();
-	public boolean isMultigraph();
-	public boolean isDirectedgraph();
-	public boolean isIndex();
 }

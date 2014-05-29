@@ -1,6 +1,7 @@
 package sai.graph;
 
 import info.kendall_morwick.funcles.Pair;
+import info.kendall_morwick.funcles.Tuple;
 
 import java.util.Map;
 import java.util.Set;
@@ -20,18 +21,8 @@ public class MutableGraph implements Graph {
 	private Multimap<Integer,Feature> nodeFeatures = HashMultimap.create();
 	private Multimap<Integer,Feature> edgeFeatures = HashMultimap.create();
 
-	private boolean isPseudoGraph;
-	private boolean isMultiGraph;
-	private boolean isDirectedGraph;
-	private boolean isIndex;
-
-	
-	public MutableGraph(boolean isPseudoGraph, boolean isMultiGraph,
-			            boolean isDirectedGraph, boolean isIndex) {
-		this.isPseudoGraph = isPseudoGraph;
-		this.isMultiGraph = isMultiGraph;
-		this.isDirectedGraph = isDirectedGraph;
-		this.isIndex = isIndex;
+	public MutableGraph() {
+		
 	}
 	
 	/** creates a mutable graph from the given graph for editing purposes.
@@ -39,10 +30,6 @@ public class MutableGraph implements Graph {
 	 * @param g the graph to copy
 	 */
 	public MutableGraph(Graph g) {
-		isPseudoGraph = g.isPseudograph();
-		isMultiGraph = g.isMultigraph();
-		isDirectedGraph = g.isDirectedgraph();
-		isIndex = g.isIndex();
 		
 		for(Feature f : g.getFeatures()) 
 			addFeature(f);
@@ -54,7 +41,7 @@ public class MutableGraph implements Graph {
 		}
 		for(int e : g.getEdgeIDs()) {
 			int fn = g.getEdgeSourceNodeID(e);
-			int tn = g.getEdgeSourceNodeID(e);
+			int tn = g.getEdgeTargetNodeID(e);
 			addEdge(e, fn, tn);
 			for(Feature f : g.getEdgeFeatures(e)) 
 				addEdgeFeature(e, f);
@@ -63,21 +50,6 @@ public class MutableGraph implements Graph {
 	}
 	
 	public void setID(int id) { this.id = id; }
-	public void setIsPseudoGraph(boolean isPseudoGraph) { 
-		this.isPseudoGraph = isPseudoGraph; 
-	}
-	
-	public void setIsMultiGraph(boolean isMultiGraph) { 
-		this.isMultiGraph = isMultiGraph; 
-	}
-	
-	public void setIsDirectedGraph(boolean isDirectedGraph) { 
-		this.isDirectedGraph = isDirectedGraph; 
-	}
-	
-	public void setIsIndex(boolean isIndex) { 
-		this.isIndex = isIndex; 
-	}
 	
 	@Override
 	public int getSaiID() {
@@ -103,22 +75,6 @@ public class MutableGraph implements Graph {
 	public int getEdgeTargetNodeID(int e) {
 		return edgeContents.get(e).a2();
 	}
-	@Override
-	public boolean isPseudograph() {
-		return isPseudoGraph;
-	}
-	@Override
-	public boolean isMultigraph() {
-		return isMultiGraph;
-	}
-	@Override
-	public boolean isDirectedgraph() {
-		return isDirectedGraph;
-	}
-	@Override
-	public boolean isIndex() {
-		return isIndex;
-	}
 
 	public void addNode(final int nid) {
 		if(nodes.contains(nid))
@@ -131,7 +87,8 @@ public class MutableGraph implements Graph {
 		if(edges.contains(eid))
 			throw new IllegalArgumentException(eid + " is already an edge id");
 		edges.add(eid);
-		edgeContents.put(eid, Pair.makeImmutablePair(n1, n2));
+		Pair<Integer> p = Pair.makeImmutablePair(n1, n2);
+		edgeContents.put(eid, p);
 	}
 	
 	public void removeNode(int n) {
@@ -164,6 +121,20 @@ public class MutableGraph implements Graph {
 			@Override
 			public String getName() {
 				return name;
+			}
+
+			@Override
+			public boolean equals(Object o) {
+				if(o instanceof Feature) {
+					Feature f = (Feature)o;
+					return name.equals(f.getName()) && value.equals(f.getValue());
+				}
+				return false;
+			}
+			
+			@Override
+			public int hashCode() {
+				return Tuple.makeTuple(name, value, 124152).hashCode();
 			}
 			
 		};

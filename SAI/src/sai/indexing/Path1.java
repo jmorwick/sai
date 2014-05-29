@@ -63,17 +63,14 @@ public class Path1<G extends Graph> implements IndexGenerator<G> {
             for(Feature n1f : fromNodeFeatures)
                 for(Feature n2f : toNodeFeatures)
                     for(Feature ef : edgeFeatures) {
-                    	MutableGraph i = new MutableGraph(
-                    			s.isDirectedgraph(), 
-                    			s.isMultigraph(), 
-                    			s.isPseudograph(), 
-                    			true);
+                    	MutableGraph i = new MutableGraph();
                     	i.addNode(1);
                     	i.addNode(2);
                     	i.addEdge(1, 1, 2);
                     	i.addFeature(1, n1f);
                     	i.addFeature(1, n2f);
                     	i.addFeature(1, ef);
+                    	i.addFeature(Indexes.getIndexTag(db));
                     	indices.add(i);
             }
         }

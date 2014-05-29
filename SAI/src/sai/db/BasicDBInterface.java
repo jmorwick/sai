@@ -128,13 +128,9 @@ public class BasicDBInterface implements DBInterface {
 				Scanner lin = new Scanner(in.readLine());
 				int gid = lin.nextInt();
 				if(nextGraphID <= gid) nextGraphID = gid+1;
-				boolean directed = lin.nextBoolean();
-				boolean multi = lin.nextBoolean();
-				boolean pseudo = lin.nextBoolean();
-				boolean index = lin.nextBoolean();
 				int numNodes = lin.nextInt();
 				int numEdges = lin.nextInt();
-				MutableGraph g = new MutableGraph(directed, multi, pseudo, index);
+				MutableGraph g = new MutableGraph();
 				while(lin.hasNext()) 
 					g.addFeature(features.get(lin.nextInt()));
 				lin.close();
@@ -253,10 +249,6 @@ public class BasicDBInterface implements DBInterface {
 			Graph g = db.get(gid);
 			//print out general graph info on one line
 			out.print(g.getSaiID()+",");
-			out.print(g.isDirectedgraph()+",");
-			out.print(g.isMultigraph()+",");
-			out.print(g.isPseudograph()+",");
-			out.print(g.isIndex()+",");
 			out.print(g.getNodeIDs().size()+",");
 			out.print(g.getEdgeIDs().size()+",");
 			for(Feature f : g.getFeatures()) 

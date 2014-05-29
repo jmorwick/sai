@@ -39,27 +39,7 @@ public class BasicGraphWrapper implements Graph {
 	public int getEdgeTargetNodeID(int e) {
 		return graph.getEdgeTargetNodeID(e);
 	}
-
-	@Override
-	public boolean isPseudograph() {
-		return graph.isPseudograph();
-	}
-
-	@Override
-	public boolean isMultigraph() {
-		return graph.isMultigraph();
-	}
-
-	@Override
-	public boolean isDirectedgraph() {
-		return graph.isDirectedgraph();
-	}
-
-	@Override
-	public boolean isIndex() {
-		return graph.isIndex();
-	}
-
+	
 	@Override
 	public Set<Feature> getNodeFeatures(int nodeID) {
 		return graph.getEdgeFeatures(nodeID);
