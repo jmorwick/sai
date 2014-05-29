@@ -2,133 +2,119 @@ package sai.graph;
 
 import static org.junit.Assert.*;
 
-import org.junit.Before;
 import org.junit.Test;
+
+import com.google.common.collect.Sets;
+
+import sai.test.SampleGraphs;
 
 public class MutableGraphTest {
 
-	@Before
-	public void setUp() throws Exception {
+	@Test
+	public void testGeneralFeatureFunctionality() {
+		MutableGraph g = new MutableGraph();
+		assertEquals(Sets.newHashSet(), g.getFeatures());
+		g.addFeature(MutableGraph.createFeature("a", "1"));
+		assertEquals(Sets.newHashSet(
+				MutableGraph.createFeature("a", "1")
+				), g.getFeatures());
+		g.addFeature(MutableGraph.createFeature("b", "2"));
+		assertEquals(Sets.newHashSet(
+				MutableGraph.createFeature("a", "1"),
+				MutableGraph.createFeature("b", "2")
+				), g.getFeatures());
+		g.addFeature(MutableGraph.createFeature("b", "3"));
+		assertEquals(Sets.newHashSet(
+				MutableGraph.createFeature("a", "1"),
+				MutableGraph.createFeature("b", "2"),
+				MutableGraph.createFeature("b", "3")
+				), g.getFeatures());
+		g.addFeature(MutableGraph.createFeature("b", "2"));
+		assertEquals(Sets.newHashSet(
+				MutableGraph.createFeature("a", "1"),
+				MutableGraph.createFeature("b", "2"),
+				MutableGraph.createFeature("b", "3")
+				), g.getFeatures());
 	}
 
 	@Test
-	public void testMutableGraphBooleanBooleanBooleanBoolean() {
-		fail("Not yet implemented");
+	public void testNodeFunctionality() {
+		MutableGraph g = new MutableGraph(SampleGraphs.getSmallGraph1());
+		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getNodeIDs());
+		g = new MutableGraph(SampleGraphs.getSmallGraph2());
+		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getNodeIDs());
+		g = new MutableGraph(SampleGraphs.getMultigraph1());
+		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getNodeIDs());
 	}
 
 	@Test
-	public void testMutableGraphGraph() {
-		fail("Not yet implemented");
+	public void testEdgeFunctionality() {
+		MutableGraph g = new MutableGraph(SampleGraphs.getSmallGraph1());
+		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getEdgeIDs());
+		assertEquals(1, g.getEdgeSourceNodeID(1));
+		assertEquals(2, g.getEdgeTargetNodeID(1));
+		assertEquals(2, g.getEdgeSourceNodeID(2));
+		assertEquals(3, g.getEdgeTargetNodeID(2));
+		assertEquals(3, g.getEdgeSourceNodeID(3));
+		assertEquals(4, g.getEdgeTargetNodeID(3));
+		assertEquals(2, g.getEdgeSourceNodeID(4));
+		assertEquals(4, g.getEdgeTargetNodeID(4));
+		g = new MutableGraph(SampleGraphs.getSmallGraph2());
+		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getEdgeIDs());
+		assertEquals(1, g.getEdgeSourceNodeID(1));
+		assertEquals(2, g.getEdgeTargetNodeID(1));
+		assertEquals(2, g.getEdgeSourceNodeID(2));
+		assertEquals(3, g.getEdgeTargetNodeID(2));
+		assertEquals(1, g.getEdgeSourceNodeID(3));
+		assertEquals(4, g.getEdgeTargetNodeID(3));
+		assertEquals(2, g.getEdgeSourceNodeID(4));
+		assertEquals(4, g.getEdgeTargetNodeID(4));
+		g = new MutableGraph(SampleGraphs.getMultigraph1());
+		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getEdgeIDs());
+		assertEquals(1, g.getEdgeSourceNodeID(1));
+		assertEquals(2, g.getEdgeTargetNodeID(1));
+		assertEquals(2, g.getEdgeSourceNodeID(2));
+		assertEquals(3, g.getEdgeTargetNodeID(2));
+		assertEquals(1, g.getEdgeSourceNodeID(3));
+		assertEquals(2, g.getEdgeTargetNodeID(3));
+		assertEquals(2, g.getEdgeSourceNodeID(4));
+		assertEquals(4, g.getEdgeTargetNodeID(4));
 	}
 
 	@Test
-	public void testGetID() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetEdges() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetNodes() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetNode() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetEdge() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetFeatures() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetEdgeSource() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetEdgeTarget() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIsPseudograph() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIsMultigraph() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIsDirectedgraph() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIsIndex() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testAddNode() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testAddEdge() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testRemoveNode() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testRemoveEdge() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testAddFeatureFeature() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testRemoveFeatureFeature() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testAddFeatureNodeFeature() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testRemoveFeatureNodeFeature() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testAddFeatureEdgeFeature() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testRemoveFeatureEdgeFeature() {
-		fail("Not yet implemented");
+	public void testMutators() {
+		MutableGraph g = new MutableGraph();
+		assertEquals(Sets.newHashSet(), g.getNodeIDs());
+		assertEquals(Sets.newHashSet(), g.getEdgeIDs());
+		g.addNode(1);
+		assertEquals(Sets.newHashSet(1), g.getNodeIDs());
+		assertEquals(Sets.newHashSet(), g.getEdgeIDs());
+		g.addNode(2);
+		assertEquals(Sets.newHashSet(1, 2), g.getNodeIDs());
+		assertEquals(Sets.newHashSet(), g.getEdgeIDs());
+		g.removeNode(1);
+		assertEquals(Sets.newHashSet(2), g.getNodeIDs());
+		assertEquals(Sets.newHashSet(), g.getEdgeIDs());
+		g.addNode(3);
+		assertEquals(Sets.newHashSet(2, 3), g.getNodeIDs());
+		assertEquals(Sets.newHashSet(), g.getEdgeIDs());
+		g.addEdge(1, 2, 3);
+		assertEquals(2, g.getEdgeSourceNodeID(1));
+		assertEquals(3, g.getEdgeTargetNodeID(1));
+		assertEquals(Sets.newHashSet(2, 3), g.getNodeIDs());
+		assertEquals(Sets.newHashSet(1), g.getEdgeIDs());
+		g.removeNode(2);
+		assertEquals(Sets.newHashSet(3), g.getNodeIDs());
+		assertEquals(Sets.newHashSet(), g.getEdgeIDs());
+		g.addNode(4);
+		g.addEdge(2, 3, 4);
+		assertEquals(3, g.getEdgeSourceNodeID(2));
+		assertEquals(4, g.getEdgeTargetNodeID(2));
+		assertEquals(Sets.newHashSet(3, 4), g.getNodeIDs());
+		assertEquals(Sets.newHashSet(2), g.getEdgeIDs());
+		g.removeEdge(2);
+		assertEquals(Sets.newHashSet(3, 4), g.getNodeIDs());
+		assertEquals(Sets.newHashSet(), g.getEdgeIDs());
 	}
 
 }
