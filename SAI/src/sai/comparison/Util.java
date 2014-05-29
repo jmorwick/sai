@@ -36,6 +36,7 @@ import java.util.Set;
 import sai.db.DBInterface;
 import sai.graph.Feature;
 import sai.graph.Graph;
+import sai.graph.Graphs;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -215,6 +216,8 @@ public class Util {
         if (n2 == null) {
             return 0;
         }
+        
+        boolean s1directed = Graphs.isDirected(s1);
 
         for (Integer e1 : s1.getEdgeIDs()) {
             for (Integer e2 : s2.getEdgeIDs()) {
@@ -232,14 +235,14 @@ public class Util {
                         && apply(featureSetComparator, 
                         		s1.getEdgeFeatures(e1), s2.getEdgeFeatures(e2))) {
                     possibleMappings.put(e1, e2);
-                } else if (s1.isDirectedgraph()
+                } else if (s1directed
                         && n1 == s1.getEdgeSourceNodeID(e1)
                         && n2 == s2.getEdgeTargetNodeID(e2)
                         && m.get(s1.getEdgeTargetNodeID(e1)) == s2.getEdgeSourceNodeID(e2)
                         && apply(featureSetComparator,
                         		s1.getEdgeFeatures(e1), s2.getEdgeFeatures(e2))) {
                     possibleMappings.put(e1, e2);
-                } else if (s1.isDirectedgraph()
+                } else if (s1directed
                         && n1 == s1.getEdgeTargetNodeID(e1)
                         && n2 == s2.getEdgeSourceNodeID(e2)
                         && m.get(s1.getEdgeSourceNodeID(e1)) == s2.getEdgeTargetNodeID(e2)

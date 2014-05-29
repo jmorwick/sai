@@ -49,6 +49,10 @@ public class BasicDBInterface implements DBInterface {
 		this.gf = gf;
 	}
 	
+	public BasicDBInterface(GraphFactory<?> gf) {
+		this.gf = gf;
+	}
+
 	public void setDBFile(File dbfile) {
 		this.dbfile = dbfile;
 	}

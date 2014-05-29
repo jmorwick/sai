@@ -27,6 +27,7 @@ import sai.db.DBInterface;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
+import sai.graph.Graphs;
 import sai.graph.MutableGraph;
 
 /**
@@ -70,7 +71,7 @@ public class Path1<G extends Graph> implements IndexGenerator<G> {
                     	i.addFeature(1, n1f);
                     	i.addFeature(1, n2f);
                     	i.addFeature(1, ef);
-                    	i.addFeature(Indexes.getIndexTag(db));
+                    	i.addFeature(Graphs.getIndexTag(db));
                     	indices.add(i);
             }
         }

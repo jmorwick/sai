@@ -105,41 +105,6 @@ public class MutableGraph implements Graph {
 		edgeContents.remove(e);
 	}
 	
-	public static Feature createFeature(final String name, final String value) {
-		return new Feature() {
-
-			@Override
-			public int getID() {
-				return -1;
-			}
-
-			@Override
-			public String getValue() {
-				return value;
-			}
-
-			@Override
-			public String getName() {
-				return name;
-			}
-
-			@Override
-			public boolean equals(Object o) {
-				if(o instanceof Feature) {
-					Feature f = (Feature)o;
-					return name.equals(f.getName()) && value.equals(f.getValue());
-				}
-				return false;
-			}
-			
-			@Override
-			public int hashCode() {
-				return Tuple.makeTuple(name, value, 124152).hashCode();
-			}
-			
-		};
-	}
-	
 	public void addFeature(Feature f) {
 		features.add(f);
 	}

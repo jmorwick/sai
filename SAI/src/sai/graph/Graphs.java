@@ -2,8 +2,13 @@ package sai.graph;
 
 import java.util.Set;
 
+import sai.db.DBInterface;
+
 
 public class Graphs {
+
+	private static final String INDEX_FEATURE_NAME = "index graph";
+	private static final String DIRECTED_GRAPH_FEATURE_NAME = "directed graph";
 
 	public static <G extends Graph> G copyWithoutEdge(Graph g, GraphFactory<G> gf, int edgeID) {
         MutableGraph t = new MutableGraph(g);
@@ -34,4 +39,28 @@ public class Graphs {
         return null;
     }
     
+
+	public static final Feature getIndexTag(DBInterface db) {
+		return db.getFeature(INDEX_FEATURE_NAME, "true");
+	}
+	
+	public static final Feature getDirectedTag(DBInterface db) {
+		return db.getFeature(DIRECTED_GRAPH_FEATURE_NAME, "true");
+	}
+	
+	public static boolean isIndex(Graph g) {
+		for(Feature f : g.getFeatures()) 
+			if(f.getName().equals(INDEX_FEATURE_NAME) && 
+					f.getValue().equals("true"))
+				return true;
+		return false;
+	}
+	
+	public static boolean isDirected(Graph g) {
+		for(Feature f : g.getFeatures()) 
+			if(f.getName().equals(INDEX_FEATURE_NAME) && 
+					f.getValue().equals("true"))
+				return true;
+		return false;
+	}
 }

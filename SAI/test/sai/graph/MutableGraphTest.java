@@ -6,50 +6,54 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
+import sai.db.DBInterface;
+import sai.test.SampleDBs;
 import sai.test.SampleGraphs;
 
 public class MutableGraphTest {
+	
+	private static DBInterface db = SampleDBs.getEmptyDB(null);
 
 	@Test
 	public void testGeneralFeatureFunctionality() {
 		MutableGraph g = new MutableGraph();
 		assertEquals(Sets.newHashSet(), g.getFeatures());
-		g.addFeature(MutableGraph.createFeature("a", "1"));
+		g.addFeature(db.getFeature("a", "1"));
 		assertEquals(Sets.newHashSet(
-				MutableGraph.createFeature("a", "1")
+				db.getFeature("a", "1")
 				), g.getFeatures());
-		g.addFeature(MutableGraph.createFeature("b", "2"));
+		g.addFeature(db.getFeature("b", "2"));
 		assertEquals(Sets.newHashSet(
-				MutableGraph.createFeature("a", "1"),
-				MutableGraph.createFeature("b", "2")
+				db.getFeature("a", "1"),
+				db.getFeature("b", "2")
 				), g.getFeatures());
-		g.addFeature(MutableGraph.createFeature("b", "3"));
+		g.addFeature(db.getFeature("b", "3"));
 		assertEquals(Sets.newHashSet(
-				MutableGraph.createFeature("a", "1"),
-				MutableGraph.createFeature("b", "2"),
-				MutableGraph.createFeature("b", "3")
+				db.getFeature("a", "1"),
+				db.getFeature("b", "2"),
+				db.getFeature("b", "3")
 				), g.getFeatures());
-		g.addFeature(MutableGraph.createFeature("b", "2"));
+		g.addFeature(db.getFeature("b", "2"));
 		assertEquals(Sets.newHashSet(
-				MutableGraph.createFeature("a", "1"),
-				MutableGraph.createFeature("b", "2"),
-				MutableGraph.createFeature("b", "3")
+				db.getFeature("a", "1"),
+				db.getFeature("b", "2"),
+				db.getFeature("b", "3")
 				), g.getFeatures());
 	}
 
 	@Test
 	public void testNodeFunctionality() {
-		MutableGraph g = new MutableGraph(SampleGraphs.getSmallGraph1());
+		MutableGraph g = new MutableGraph(SampleGraphs.getSmallGraph1(db));
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getNodeIDs());
-		g = new MutableGraph(SampleGraphs.getSmallGraph2());
+		g = new MutableGraph(SampleGraphs.getSmallGraph2(db));
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getNodeIDs());
-		g = new MutableGraph(SampleGraphs.getMultigraph1());
+		g = new MutableGraph(SampleGraphs.getMultigraph1(db));
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getNodeIDs());
 	}
 
 	@Test
 	public void testEdgeFunctionality() {
-		MutableGraph g = new MutableGraph(SampleGraphs.getSmallGraph1());
+		MutableGraph g = new MutableGraph(SampleGraphs.getSmallGraph1(db));
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getEdgeIDs());
 		assertEquals(1, g.getEdgeSourceNodeID(1));
 		assertEquals(2, g.getEdgeTargetNodeID(1));
@@ -59,7 +63,7 @@ public class MutableGraphTest {
 		assertEquals(4, g.getEdgeTargetNodeID(3));
 		assertEquals(2, g.getEdgeSourceNodeID(4));
 		assertEquals(4, g.getEdgeTargetNodeID(4));
-		g = new MutableGraph(SampleGraphs.getSmallGraph2());
+		g = new MutableGraph(SampleGraphs.getSmallGraph2(db));
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getEdgeIDs());
 		assertEquals(1, g.getEdgeSourceNodeID(1));
 		assertEquals(2, g.getEdgeTargetNodeID(1));
@@ -69,7 +73,7 @@ public class MutableGraphTest {
 		assertEquals(4, g.getEdgeTargetNodeID(3));
 		assertEquals(2, g.getEdgeSourceNodeID(4));
 		assertEquals(4, g.getEdgeTargetNodeID(4));
-		g = new MutableGraph(SampleGraphs.getMultigraph1());
+		g = new MutableGraph(SampleGraphs.getMultigraph1(db));
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getEdgeIDs());
 		assertEquals(1, g.getEdgeSourceNodeID(1));
 		assertEquals(2, g.getEdgeTargetNodeID(1));
