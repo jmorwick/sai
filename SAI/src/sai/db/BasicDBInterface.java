@@ -36,7 +36,6 @@ public class BasicDBInterface implements DBInterface {
 	private Multimap<Integer, Integer> indexedBy;
 	private Set<Integer> indexes;
 	private Set<Integer> residentGraphs;
-	private Multimap<Integer,Integer> featureCompatibility;
 	private Multimap<String, Integer> featuresWithName;
 	private Map<Pair<String>,Integer> featureIDs; 
 	private Map<Integer,Feature> features;
@@ -105,18 +104,6 @@ public class BasicDBInterface implements DBInterface {
 						}
 					});
 				}
-				lin.close();
-			}
-			
-			//read in feature relationships
-			featureCompatibility = HashMultimap.create();
-			int numFeatureRelationships = Integer.parseInt(in.readLine());
-			for(int i=0; i<numFeatureRelationships; i++) {
-				Scanner lin = new Scanner(in.readLine());
-				lin.useDelimiter(",");
-				int fid = lin.nextInt();
-				while(lin.hasNext()) 
-					featureCompatibility.put(fid, lin.nextInt());
 				lin.close();
 			}
 			
@@ -234,18 +221,6 @@ public class BasicDBInterface implements DBInterface {
 		}
 		featuresWithName = null; 
 		features = null;
-		
-		//write feature compatibility to file
-		out.println(featureCompatibility.keySet().size()+"\n"); //output how many records
-		for(int f : featureCompatibility.keySet()) {
-			out.print(f);
-			for (int cf : featureCompatibility.get(f)) {
-				out.print("," + cf);
-			}
-			out.print("\n");
-		}
-		featureCompatibility = null; //destroy records of which features are compatible
-		
 		
 		//write graphs to file
 		out.print(db.keySet() + "\n");
@@ -382,22 +357,7 @@ public class BasicDBInterface implements DBInterface {
 	public Set<Integer> getFeatureIDs(String featureName) {
 		return Sets.newHashSet(featuresWithName.get(featureName));
 	}
-
-	@Override
-	public void setCompatible(Feature fa, Feature fb) {
-		featureCompatibility.put(fa.getID(), fb.getID());
-	}
-
-	@Override
-	public void setNotCompatible(Feature fa, Feature fb) {
-		featureCompatibility.remove(fa.getID(), fb.getID());
-	}
-
-	@Override
-	public boolean isCompatible(Feature fa, Feature fb) {
-		return featureCompatibility.containsEntry(fa.getID(), fb.getID());
-	}
-
+	
 	@Override
 	public int getDatabaseSize() {
 		return residentGraphs.size() + indexes.size();

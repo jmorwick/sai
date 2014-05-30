@@ -31,9 +31,6 @@ public interface DBInterface {
 	public Set<String> getFeatureNames();
 	public Set<Integer> getFeatureIDs();
 	public Set<Integer> getFeatureIDs(String featureClass);
-	public void setCompatible(Feature fa, Feature fb);
-	public void setNotCompatible(Feature fa, Feature fb);
-	public boolean isCompatible(Feature fa, Feature fb);
 	
 	public int getDatabaseSize();
 	public int getDatabaseSizeWithoutIndices();
