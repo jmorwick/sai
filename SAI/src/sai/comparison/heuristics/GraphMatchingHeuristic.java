@@ -17,21 +17,20 @@
 
  */
 
-package sai.comparison;
+package sai.comparison.heuristics;
 
 
-import sai.comparison.mapgenerators.search.GraphMapping;
-import sai.graph.Graph;
-import info.kendall_morwick.funcles.T3;
+import sai.comparison.matching.GraphMatching;
+
 import com.google.common.base.Function;
 
 /**
- * This class houses a method for judging the utility of a mapping between
+ * This class houses a method for judging the utility of a matching between
  * two graphs.  These are mainly used for ranking retrieval candidates.
  *
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
-public interface MapHeuristic extends Function<T3<Graph,Graph,GraphMapping>,Double>{
+public interface GraphMatchingHeuristic extends Function<GraphMatching,Double> {
 
 }

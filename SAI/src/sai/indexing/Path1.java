@@ -22,7 +22,7 @@ package sai.indexing;
 import java.util.HashSet;
 import java.util.Set;
 
-import sai.comparison.Util;
+import sai.SAIUtil;
 import sai.db.DBInterface;
 import sai.graph.Feature;
 import sai.graph.Graph;
@@ -39,10 +39,10 @@ import sai.graph.MutableGraph;
  */
 public class Path1<G extends Graph> implements IndexGenerator<G> {
 
-    private final String[] featureTypes;
+    private final String[] featureNames;
 
     public Path1(String ... featureTypes) {
-        this.featureTypes = featureTypes;
+        this.featureNames = featureTypes;
     }
 
     @Override
@@ -52,14 +52,14 @@ public class Path1<G extends Graph> implements IndexGenerator<G> {
             Set<Feature> fromNodeFeatures = new HashSet<Feature>();
             Set<Feature> toNodeFeatures = new HashSet<Feature>();
             Set<Feature> edgeFeatures = new HashSet<Feature>();
-            edgeFeatures.addAll(Util.retainOnly(s.getEdgeFeatures(e), featureTypes));
+            edgeFeatures.addAll(SAIUtil.retainOnly(s.getEdgeFeatures(e), featureNames));
             if(edgeFeatures.size() == 0) edgeFeatures.add(null); //make links without edge features
             fromNodeFeatures.addAll(
-                    Util.retainOnly(s.getNodeFeatures(s.getEdgeSourceNodeID(e)),
-                    featureTypes));
+                    SAIUtil.retainOnly(s.getNodeFeatures(s.getEdgeSourceNodeID(e)),
+                    featureNames));
             toNodeFeatures.addAll(
-                    Util.retainOnly(s.getNodeFeatures(s.getEdgeTargetNodeID(e)),
-                    featureTypes));
+                    SAIUtil.retainOnly(s.getNodeFeatures(s.getEdgeTargetNodeID(e)),
+                    featureNames));
             
             for(Feature n1f : fromNodeFeatures)
                 for(Feature n2f : toNodeFeatures)

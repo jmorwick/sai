@@ -38,7 +38,7 @@ import sai.retrieval.GraphRetriever;
  * @version 0.2.0
  * @author Joseph Kendall-Morwick
  */
-public class SimpleCountRetriever<G extends Graph> implements GraphRetriever<G> {
+public class BasicCountRetriever<G extends Graph> implements GraphRetriever<G> {
 
     private Set<Integer> lastConsideredGraphIDs = new HashSet<Integer>();
     private Set<Integer> retrievedGraphIDs = new HashSet<Integer>();

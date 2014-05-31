@@ -17,22 +17,20 @@
 
  */
 
-package sai.comparison;
-
-import java.util.Map;
+package sai.comparison.matching;
 
 import sai.graph.Graph;
-
 import info.kendall_morwick.funcles.Pair;
+import info.kendall_morwick.funcles.T2;
 
 import com.google.common.base.Function;
 
 /**
- * A shortcut type for a function generating mappings between two graphs
+ * A shortcut type for a function generating matchings between two graphs
  *
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
-public abstract interface MapGenerator extends 
-		Function<Pair<Graph>,Map<Integer,Integer>> {
+public abstract interface MatchingGenerator extends 
+		Function<T2<Graph,Graph>,GraphMatching> {
 }
