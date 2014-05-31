@@ -1,8 +1,6 @@
 package sai.graph;
 
 import info.kendall_morwick.funcles.Pair;
-import info.kendall_morwick.funcles.Tuple;
-
 import java.util.Map;
 import java.util.Set;
 

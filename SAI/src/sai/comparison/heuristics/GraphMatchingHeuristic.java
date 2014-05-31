@@ -19,7 +19,6 @@
 
 package sai.comparison.heuristics;
 
-
 import sai.comparison.matching.GraphMatching;
 
 import com.google.common.base.Function;

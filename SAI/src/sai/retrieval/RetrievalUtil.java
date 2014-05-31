@@ -6,8 +6,6 @@ import java.util.Set;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
-import sai.comparison.heuristics.GraphMatchingHeuristic;
-import sai.comparison.matching.MatchingGenerator;
 import sai.db.DBInterface;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;

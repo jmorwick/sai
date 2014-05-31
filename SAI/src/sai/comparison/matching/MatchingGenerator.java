@@ -20,7 +20,6 @@
 package sai.comparison.matching;
 
 import sai.graph.Graph;
-import info.kendall_morwick.funcles.Pair;
 import info.kendall_morwick.funcles.T2;
 
 import com.google.common.base.Function;

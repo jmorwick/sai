@@ -11,6 +11,12 @@ import com.google.common.collect.Sets;
 
 public class CompatibilityUtil {
 
+	/** checks to see if features have the same name and value */
+	public static boolean areLexicallyCompatible(Feature a, Feature b) {
+		return a.getName().equals(b.getName()) &&
+						a.getValue().equals(b.getValue());
+	}
+	
 	/** returns a compatibility checker which simply checks to see if 
 	 * two features share a name and value.
 	 * @return
@@ -20,8 +26,7 @@ public class CompatibilityUtil {
 
 			@Override
 			public boolean apply(Pair<Feature> args) {
-				return args.a1().getName().equals(args.a2().getName()) &&
-						args.a1().getValue().equals(args.a2().getValue());
+				return areLexicallyCompatible(args.a1(), args.a2());
 			}
 			
 		};

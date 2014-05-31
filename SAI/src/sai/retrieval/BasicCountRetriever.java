@@ -18,13 +18,13 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sai.retrieval;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
+import com.google.common.collect.Sets;
 
 import sai.db.DBInterface;
 import sai.graph.Graph;
@@ -40,8 +40,8 @@ import sai.retrieval.GraphRetriever;
  */
 public class BasicCountRetriever<G extends Graph> implements GraphRetriever<G> {
 
-    private Set<Integer> lastConsideredGraphIDs = new HashSet<Integer>();
-    private Set<Integer> retrievedGraphIDs = new HashSet<Integer>();
+    private Set<Integer> lastConsideredGraphIDs = Sets.newHashSet();
+    private Set<Integer> retrievedGraphIDs = Sets.newHashSet();
 
     public Iterator<G> retrieve(final DBInterface db, final GraphFactory<G> gf, Set<Graph> indices) {
         final Multiset<Integer> ranks = HashMultiset.create();
@@ -51,7 +51,7 @@ public class BasicCountRetriever<G extends Graph> implements GraphRetriever<G> {
             }
         }
         
-        retrievedGraphIDs = new HashSet<Integer>();
+        retrievedGraphIDs = Sets.newHashSet();
         lastConsideredGraphIDs = ranks.elementSet();
 
         for (Integer id : db.getHiddenGraphs()) {

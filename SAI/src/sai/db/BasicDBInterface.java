@@ -2,7 +2,6 @@ package sai.db;
 
 import info.kendall_morwick.funcles.Pair;
 
-import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.Map;
@@ -18,6 +17,7 @@ import java.io.PrintWriter;
 import java.nio.file.AccessDeniedException; 
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
@@ -74,8 +74,8 @@ public class BasicDBInterface implements DBInterface {
 			
 			//read in features
 			featuresWithName = HashMultimap.create();
-			featureIDs = new HashMap<Pair<String>,Integer>();
-			features = new HashMap<Integer,Feature>();
+			featureIDs = Maps.newHashMap();
+			features = Maps.newHashMap();
 			for(int i=0; i<numFeatureNames; i++) {
 				Scanner lin = new Scanner(in.readLine());
 				lin.useDelimiter(",");
@@ -108,7 +108,7 @@ public class BasicDBInterface implements DBInterface {
 			}
 			
 			//read in graphs
-			db = new HashMap<Integer, Graph>();
+			db = Maps.newHashMap();
 			indexes = Sets.newHashSet();
 			residentGraphs = Sets.newHashSet();
 			hiddenGraphs = Sets.newHashSet();

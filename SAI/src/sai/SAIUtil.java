@@ -19,24 +19,14 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 package sai;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import sai.comparison.compatibility.FeatureSetCompatibilityChecker;
-import sai.comparison.heuristics.GraphMatchingHeuristic;
-import sai.comparison.matching.GraphMatching;
-import sai.comparison.matching.MatchingGenerator;
 import sai.graph.Feature;
-import sai.graph.Graph;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
-
-import static info.kendall_morwick.funcles.Funcles.apply;
 
 /**
  * @version 0.2.0

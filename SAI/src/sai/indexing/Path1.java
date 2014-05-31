@@ -19,8 +19,9 @@
 
 package sai.indexing;
 
-import java.util.HashSet;
 import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 import sai.SAIUtil;
 import sai.db.DBInterface;
@@ -47,11 +48,11 @@ public class Path1<G extends Graph> implements IndexGenerator<G> {
 
     @Override
     public Set<Graph> generateIndices(DBInterface db, GraphFactory<G> gf, Graph s) {
-        Set<Graph> indices = new HashSet<Graph>();
+        Set<Graph> indices = Sets.newHashSet();
         for(int e : s.getEdgeIDs()) {
-            Set<Feature> fromNodeFeatures = new HashSet<Feature>();
-            Set<Feature> toNodeFeatures = new HashSet<Feature>();
-            Set<Feature> edgeFeatures = new HashSet<Feature>();
+            Set<Feature> fromNodeFeatures = Sets.newHashSet();
+            Set<Feature> toNodeFeatures = Sets.newHashSet();
+            Set<Feature> edgeFeatures = Sets.newHashSet();
             edgeFeatures.addAll(SAIUtil.retainOnly(s.getEdgeFeatures(e), featureNames));
             if(edgeFeatures.size() == 0) edgeFeatures.add(null); //make links without edge features
             fromNodeFeatures.addAll(
