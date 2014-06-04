@@ -24,8 +24,8 @@ import info.kendall_morwick.funcles.T2;
 import java.util.List;
 import java.util.Set;
 
-import sai.DBInterfaceTest;
 import sai.comparison.subgraphcomparators.CompleteSubgraphComparator;
+import sai.db.mysql.DBInterfaceTest;
 import sai.graph.jgrapht.Feature;
 import sai.graph.jgrapht.Graph;
 import sai.indexing.Index;
@@ -41,8 +41,8 @@ import org.junit.Test;
 import com.google.common.collect.Sets;
 
 import db.mysql.MySQLDBInterface;
-import static sai.DBInterfaceTest.*;
 import static sai.comparison.subgraphcomparators.CompleteSubgraphComparatorTest.*;
+import static sai.db.mysql.DBInterfaceTest.*;
 import static org.junit.Assert.*;
 
 /**

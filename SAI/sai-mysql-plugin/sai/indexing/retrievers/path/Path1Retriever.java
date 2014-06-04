@@ -36,8 +36,8 @@ import sai.graph.jgrapht.Feature;
 import sai.graph.jgrapht.Graph;
 import sai.graph.jgrapht.Node;
 import sai.indexing.Index;
-import sai.indexing.IndexRetriever;
 import sai.indexing.Path1;
+import sai.test.indexing.IndexRetriever;
 
 
 /**

@@ -24,7 +24,7 @@ import java.util.Map;
 import com.google.common.collect.Multimap;
 
 import sai.comparison.mapgenerators.search.GraphMapping;
-import sai.graph.Node;
+import sai.test.graph.Node;
 
 /**
  * An intermediate search state in which a single node to be mapped is chosen,

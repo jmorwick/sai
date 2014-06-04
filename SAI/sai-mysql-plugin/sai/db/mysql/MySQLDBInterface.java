@@ -46,13 +46,13 @@ import com.google.common.cache.Cache;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import sai.comparison.featuresetcomparators.ManyTo1;
+import sai.comparison.compatibility.ManyTo1;
 import sai.db.DBInterface;
 import sai.graph.BasicGraphFactory;
-import sai.graph.Edge;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
-import sai.graph.Node;
+import sai.test.graph.Edge;
+import sai.test.graph.Node;
 
 /**
  * @version 2.0
@@ -546,7 +546,7 @@ public class MySQLDBInterface implements DBInterface {
         @Override
         public boolean apply(Pair<Feature> p) {
             return self.getQueryResults("SELECT * FROM feature_isa_relationships WHERE parent_id = "
-                    + p.a1().getID() + " AND feature_id = " + p.a2().getID()).size() > 0;
+                    + p.a1().getSaiID() + " AND feature_id = " + p.a2().getSaiID()).size() > 0;
         }
     };
 
@@ -628,19 +628,19 @@ public class MySQLDBInterface implements DBInterface {
         Set<Integer> s = new HashSet<Integer>();
         for (Map<String, String> m :
                 getQueryResults("SELECT gi.id FROM graph_instances gi, graph_features fi WHERE " + 
-                " fi.graph_id = gi.id AND fi.feature_id = " + f.getID())) {
+                " fi.graph_id = gi.id AND fi.feature_id = " + f.getSaiID())) {
             if(ignoreIDs.contains(Integer.parseInt(m.get("id")))) continue;
            s.add(Integer.parseInt(m.get("id")));
         }
         for (Map<String, String> m :
                 getQueryResults("SELECT gi.id FROM graph_instances gi, edge_features fi WHERE " + 
-                " fi.graph_id = gi.id AND fi.feature_id = " + f.getID())) {
+                " fi.graph_id = gi.id AND fi.feature_id = " + f.getSaiID())) {
             if(ignoreIDs.contains(Integer.parseInt(m.get("id")))) continue;
            s.add(Integer.parseInt(m.get("id")));
         }
         for (Map<String, String> m :
                 getQueryResults("SELECT gi.id FROM graph_instances gi, node_features fi WHERE " + 
-                " fi.graph_id = gi.id AND fi.feature_id = " + f.getID())) {
+                " fi.graph_id = gi.id AND fi.feature_id = " + f.getSaiID())) {
             if(ignoreIDs.contains(Integer.parseInt(m.get("id")))) continue;
            s.add(Integer.parseInt(m.get("id")));
         }
@@ -664,7 +664,7 @@ public class MySQLDBInterface implements DBInterface {
 
                 @Override
                 public Integer apply(Feature t) {
-                    String sql = "SELECT COUNT(node_id) FROM node_features WHERE feature_id = " + t.getID();
+                    String sql = "SELECT COUNT(node_id) FROM node_features WHERE feature_id = " + t.getSaiID();
                     List<Map<String, String>> ls = getQueryResults(sql);
                     if (ls.size() > 0) {
                         return Integer.parseInt(ls.get(0).get("COUNT(node_id)"));
@@ -763,13 +763,13 @@ public class MySQLDBInterface implements DBInterface {
         updateDB("DELETE FROM graph_features WHERE graph_id = " + graphID);
         updateDB("DELETE FROM graph_indices WHERE graph_id = " + graphID);
         updateDB("DELETE FROM graph_indices WHERE index_id = " + graphID);
-        for (Node n : s.getNodes()) {
+        for (Node n : s.getNodeIDs()) {
             updateDB("DELETE FROM node_features WHERE graph_id = " + graphID + 
-                    " AND node_id = " + n.getID());
+                    " AND node_id = " + n.getSaiID());
         }
-        for (Edge e : s.getEdges()) {
+        for (Edge e : s.getEdgeIDs()) {
             updateDB("DELETE FROM edge_features WHERE graph_id = " + graphID + 
-                    " AND edge_id = " + e.getID());
+                    " AND edge_id = " + e.getSaiID());
         }
 		
 	}

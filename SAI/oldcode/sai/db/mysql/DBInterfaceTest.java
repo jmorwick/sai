@@ -17,15 +17,12 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
 
-package sai;
+package sai.db.mysql;
 
 import java.util.Iterator;
 
-import sai.graph.jgrapht.Edge;
-import sai.graph.jgrapht.Feature;
-import sai.graph.jgrapht.Graph;
-import sai.graph.jgrapht.Node;
-import sai.indexing.Index;
+import sai.db.DBInterface;
+import sai.graph.Graph;
 import sai.indexing.Path1;
 import sai.indexing.retrievers.path.Path1Lookup;
 import static org.junit.Assert.*;
@@ -56,52 +53,9 @@ public class DBInterfaceTest {
     }
 
 
-    public static Graph getSmallGraph1(MySQLDBInterface db) {
-      Graph g1 = new Graph(db);
-      Node n1 = new Node(g1, db, new Feature("a",db));
-      Node n2 = new Node(g1, db, new Feature("b",db));
-      Node n3 = new Node(g1, db, new Feature("c",db));
-      Node n4 = new Node(g1, db, new Feature("d",db));
-      g1.addEdge(n1, n2, new Feature("a", db));
-      g1.addEdge(n2, n3, new Feature("a", db));
-      g1.addEdge(n1, n4, new Feature("a", db));
-      g1.addEdge(n2, n4, new Feature("a", db));
-      return g1;
-    }
-
-    public static Graph getSmallGraph2(MySQLDBInterface db) {
-      Graph g1 = new Graph(db);
-      Node n1 = new Node(g1, db, new Feature("e",db));
-      Node n2 = new Node(g1, db, new Feature("f",db));
-      Node n3 = new Node(g1, db, new Feature("g",db));
-      Node n4 = new Node(g1, db, new Feature("d",db));
-      g1.addEdge(n1, n2, new Feature("a", db));
-      g1.addEdge(n2, n3, new Feature("a", db));
-      g1.addEdge(n1, n4, new Feature("a", db));
-      g1.addEdge(n2, n4, new Feature("a", db));
-      return g1;
-    }
-
-
-    public static Graph getSmallGraphMultiEdge(MySQLDBInterface db) {
-      Graph g1 = new Graph(db);
-      Node n1 = new Node(g1, db, new Feature("a",db));
-      Node n2 = new Node(g1, db, new Feature("b",db));
-      Node n3 = new Node(g1, db, new Feature("a",db));
-      Node n4 = new Node(g1, db, new Feature("c",db));
-      g1.addEdge(n1, n2, new Feature("a", db));
-      g1.addEdge(n1, n2, new Feature("a", db));
-      g1.addEdge(n1, n2, new Feature("b", db));
-      g1.addEdge(n2, n3, new Feature("a", db));
-      g1.addEdge(n1, n4, new Feature("a", db));
-      g1.addEdge(n2, n4, new Feature("a", db));
-      return g1;
-    }
-
-
-  public static void loadBasicDB(MySQLDBInterface db) {
-      db.addIndexer(new Path1(db, Feature.class));
-      db.initializeDatabase();
+  public static void loadBasicDB(DBInterface db) {
+      //db.addIndexer(new Path1(db, Feature.class));
+      db.connect();
 
       Graph g1 = getSmallGraph1(db);
       g1.saveToDatabase();
@@ -297,7 +251,7 @@ public class DBInterfaceTest {
         while(it.hasNext()) {
             Index ii = it.next();
             assertNotNull(ii);
-            assertEquals(id, ii.getID());
+            assertEquals(id, ii.getSaiID());
             if(id == 1) assertEquals(0, ii.vertexSet().size());
             assertEquals(1, ii.getFeatures().size());
             assertEquals(new Feature("a",db), ii.getFeatures().iterator().next());
@@ -305,7 +259,7 @@ public class DBInterfaceTest {
             if(id > 2) assertEquals(2, ii.vertexSet().size());
             if(id < 4) assertEquals(0, ii.edgeSet().size());
             if(id == 4) assertEquals(1, ii.edgeSet().size());
-            assertTrue(ii.getID() < 5);
+            assertTrue(ii.getSaiID() < 5);
 
             id++;
         }

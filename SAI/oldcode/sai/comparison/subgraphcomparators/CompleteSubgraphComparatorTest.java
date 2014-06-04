@@ -24,8 +24,6 @@ import info.kendall_morwick.funcles.T2;
 import java.util.Iterator;
 import java.util.List;
 
-import sai.*;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -34,17 +32,15 @@ import org.junit.Test;
 
 import com.google.common.base.Function;
 
-import db.mysql.MySQLDBInterface;
-import sai.comparison.Util;
-import sai.graph.jgrapht.Feature;
-import sai.graph.jgrapht.Graph;
-import sai.graph.jgrapht.Node;
-import sai.indexing.Index;
+import sai.SAIUtil;
+import sai.db.DBInterface;
+import sai.db.mysql.DBInterfaceTest;
 import sai.indexing.retrievers.path.Path1Retriever;
 import sai.maintenance.IndexCompatabilityChecker;
 import sai.maintenance.IndexConsolidator;
+import sai.test.*;
 import static org.junit.Assert.*;
-import static sai.DBInterfaceTest.getTestDBInterface;
+import static sai.db.mysql.DBInterfaceTest.getTestDBInterface;
 
 /**
  *
@@ -54,7 +50,7 @@ public class CompleteSubgraphComparatorTest {
 
 
 
-  public static IndexCompatabilityChecker getCompleteChecker(MySQLDBInterface db, long maxtime, int numThreads) {
+  public static IndexCompatabilityChecker getCompleteChecker(DBInterface db, long maxtime, int numThreads) {
       return new IndexCompatabilityChecker(db, maxtime, numThreads,
               new CompleteSubgraphComparator(db));
             

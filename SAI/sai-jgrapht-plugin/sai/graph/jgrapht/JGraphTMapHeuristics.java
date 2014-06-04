@@ -5,16 +5,16 @@ import info.kendall_morwick.funcles.T3;
 
 import java.util.Map;
 
-import sai.comparison.MapHeuristic;
+import sai.comparison.heuristics.GraphMatchingHeuristic;
 import sai.comparison.mapgenerators.search.GraphMapping;
 import sai.graph.Graph;
-import sai.graph.Node;
+import sai.test.graph.Node;
 
 import com.google.common.collect.Sets;
 
 public class JGraphTMapHeuristics {
 
-    public static final MapHeuristic AVOID_LOWER_DEGREE = new MapHeuristic() {
+    public static final GraphMatchingHeuristic AVOID_LOWER_DEGREE = new GraphMatchingHeuristic() {
 
         @Override
         public Double apply(T3<Graph,Graph,GraphMapping> args) {
@@ -38,7 +38,7 @@ public class JGraphTMapHeuristics {
 
     };
 
-    public static final MapHeuristic AVOID_LOWER_OUT_DEGREE = new MapHeuristic() {
+    public static final GraphMatchingHeuristic AVOID_LOWER_OUT_DEGREE = new GraphMatchingHeuristic() {
 
         @Override
         public Double apply(T3<Graph,Graph,GraphMapping> args) {
@@ -62,7 +62,7 @@ public class JGraphTMapHeuristics {
     };
 
 
-    public static final MapHeuristic AVOID_LOWER_IN_DEGREE = new MapHeuristic() {
+    public static final GraphMatchingHeuristic AVOID_LOWER_IN_DEGREE = new GraphMatchingHeuristic() {
 
         @Override
         public Double apply(T3<Graph,Graph,GraphMapping> args) {
@@ -85,7 +85,7 @@ public class JGraphTMapHeuristics {
 
     };
 
-    public static final MapHeuristic AVOID_HIGHER_DEGREE = new MapHeuristic() {
+    public static final GraphMatchingHeuristic AVOID_HIGHER_DEGREE = new GraphMatchingHeuristic() {
 
         @Override
         public Double apply(T3<Graph,Graph,GraphMapping> args) {
@@ -110,7 +110,7 @@ public class JGraphTMapHeuristics {
     };
 
 
-    public static final MapHeuristic AVOID_HIGHER_OUT_DEGREE = new MapHeuristic() {
+    public static final GraphMatchingHeuristic AVOID_HIGHER_OUT_DEGREE = new GraphMatchingHeuristic() {
 
         @Override
         public Double apply(T3<Graph,Graph,GraphMapping> args) {
@@ -134,7 +134,7 @@ public class JGraphTMapHeuristics {
     };
 
 
-    public static final MapHeuristic AVOID_HIGHER_IN_DEGREE = new MapHeuristic() {
+    public static final GraphMatchingHeuristic AVOID_HIGHER_IN_DEGREE = new GraphMatchingHeuristic() {
 
         @Override
         public Double apply(T3<Graph,Graph,GraphMapping> args) {
@@ -159,7 +159,7 @@ public class JGraphTMapHeuristics {
 
 
 
-    public static final MapHeuristic MINIMIZE_DISTANCE = new MapHeuristic() {
+    public static final GraphMatchingHeuristic MINIMIZE_DISTANCE = new GraphMatchingHeuristic() {
 
         private Graph g1 = null;
         private Graph g2 = null;

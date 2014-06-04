@@ -30,14 +30,14 @@ import java.util.Set;
 import com.google.common.collect.Maps;
 
 import static info.kendall_morwick.funcles.Tuple.makeTuple;
-import sai.comparison.MapGenerator;
-import sai.comparison.MapHeuristic;
+import sai.comparison.heuristics.GraphMatchingHeuristic;
+import sai.comparison.matching.MatchingGenerator;
 import sai.retrieval.GraphRetriever;
+import sai.test.graph.Index;
+import sai.test.graph.Node;
 import sai.db.DBInterface;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
-import sai.graph.Index;
-import sai.graph.Node;
 
 //All the contents of this class/file need to be redistributed in the new SAI design
 
@@ -141,25 +141,25 @@ public void indexGraph(Graph g) {
 public class RetrievalInterface<G extends Graph> {
     private final DBInterface db;
     private final GraphRetriever<G> r;
-    private final MapGenerator gen;
-    private final MapHeuristic h;
+    private final MatchingGenerator gen;
+    private final GraphMatchingHeuristic h;
     private int lastRetrievedGraphID = -1;
     private int lastRetrievedIndexSetSize = -1;
 
     public RetrievalInterface(DBInterface db,
     		GraphFactory<G> gf,
             GraphRetriever<G> r,
-            MapGenerator gen,
-            MapHeuristic h) {
+            MatchingGenerator gen,
+            GraphMatchingHeuristic h) {
         this.db = db;
         this.r =r;
         this.gen = gen;
         this.h = h;
     }
 
-    public MapGenerator getMapGenerator() { return gen; }
+    public MatchingGenerator getMapGenerator() { return gen; }
 
-    public MapHeuristic getMapHeuristic() { return h; }
+    public GraphMatchingHeuristic getMapHeuristic() { return h; }
 
     /** returns the id of the last graph to be retrieved from this interface
      * 
@@ -190,7 +190,7 @@ public class RetrievalInterface<G extends Graph> {
 
             public Graph next() {
                 Graph g =  i.next().a1();
-                lastRetrievedGraphID = g.getID();
+                lastRetrievedGraphID = g.getSaiID();
                 return g;
             }
 
@@ -245,7 +245,7 @@ public class RetrievalInterface<G extends Graph> {
                 if(!maps.containsKey(g))
                     maps.put(g, gen.apply(makeTuple(query, g)));
 
-                lastRetrievedGraphID = g.getID();
+                lastRetrievedGraphID = g.getSaiID();
 
                 return makeTuple(g,maps.get(g));
             }

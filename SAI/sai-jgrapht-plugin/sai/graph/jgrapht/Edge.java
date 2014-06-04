@@ -22,7 +22,7 @@ package sai.graph.jgrapht;
 import java.util.Set;
 
 import db.mysql.MySQLDBInterface;
-import sai.comparison.Util;
+import sai.SAIUtil;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.base.Predicates.equalTo;
@@ -83,8 +83,8 @@ public class Edge implements Comparable {
      */
     public boolean subsumes(Edge e2) {
         return parent.getDB().featureSetsCompatible(
-                Util.retainOnly(getFeatures()),
-                Util.retainOnly(e2.getFeatures()));
+                SAIUtil.retainOnly(getFeatures()),
+                SAIUtil.retainOnly(e2.getFeatures()));
     }
 
 

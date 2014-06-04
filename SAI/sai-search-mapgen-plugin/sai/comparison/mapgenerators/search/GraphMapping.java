@@ -22,8 +22,6 @@ package sai.comparison.mapgenerators.search;
 import java.util.HashMap;
 import java.util.Map;
 
-import sai.graph.Node;
-
 import com.google.common.collect.Multimap;
 
 /**
@@ -40,28 +38,28 @@ import com.google.common.collect.Multimap;
 //TODO: redo to base off of jgrapht's graph mapping
 //TODO: look up comparison algorithms used with jgrapht- do best to make these compatible
 
-public class GraphMapping extends HashMap<Node,Node> {
-    private Multimap<Node,Node> possibilities;
+public class GraphMapping extends HashMap<Integer,Integer> {
+    private Multimap<Integer,Integer> possibilities;
 
     public GraphMapping() {
     	//leave possibilities null to signify no restrictions (all possibilities)
     }
     
-    public GraphMapping(Map<Node,Node> m) {
+    public GraphMapping(Map<Integer,Integer> m) {
     	super(m);
     }
     
-    public GraphMapping(Multimap<Node,Node> possibilities) {
+    public GraphMapping(Multimap<Integer,Integer> possibilities) {
         this.possibilities = possibilities;
     }
 
     
-    public GraphMapping(Map<Node,Node> m, Multimap<Node,Node> possibilities) {
+    public GraphMapping(Map<Integer,Integer> m, Multimap<Integer,Integer> possibilities) {
     	super(m);
         this.possibilities = possibilities;
     }
 
-    public Multimap<Node,Node> getPossibilities() { return possibilities; }
+    public Multimap<Integer,Integer> getPossibilities() { return possibilities; }
 
     /** potentially performs an operation that was too expensive to perform at allocation time for a child node */
     public void doOperation() {}

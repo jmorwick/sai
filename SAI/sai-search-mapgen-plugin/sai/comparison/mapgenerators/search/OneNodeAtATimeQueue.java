@@ -31,7 +31,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import sai.comparison.MapHeuristic;
+import sai.comparison.heuristics.GraphMatchingHeuristic;
 import sai.comparison.mapgenerators.search.HeuristicPriorityQueue;
 import sai.comparison.mapgenerators.search.GraphMapping;
 import sai.graph.jgrapht.Feature;
@@ -51,15 +51,15 @@ public class OneNodeAtATimeQueue extends HeuristicPriorityQueue {
     private long bfsTime = 0;
     private long startTime = 0;
 
-    public OneNodeAtATimeQueue(final MapHeuristic queueHeuristic,
-            final MapHeuristic judgeHeuristic,
+    public OneNodeAtATimeQueue(final GraphMatchingHeuristic queueHeuristic,
+            final GraphMatchingHeuristic judgeHeuristic,
             boolean directed,
             Class<? extends Feature>... featureTypes) {
         super(queueHeuristic, judgeHeuristic, featureTypes);
 
     }
     
-    public OneNodeAtATimeQueue(final MapHeuristic h,
+    public OneNodeAtATimeQueue(final GraphMatchingHeuristic h,
             Class<? extends Feature>... featureTypes) {
         super(h, featureTypes);
 

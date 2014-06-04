@@ -23,9 +23,9 @@ import info.kendall_morwick.funcles.T2;
 
 import java.util.Map;
 
-import sai.comparison.MapGenerator;
+import sai.comparison.matching.MatchingGenerator;
 import sai.graph.Graph;
-import sai.graph.Node;
+import sai.test.graph.Node;
 
 /**
  * Generates a mapping between two graphs by BFS in a map-space. 
@@ -33,7 +33,7 @@ import sai.graph.Node;
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
-public class SearchMapGenerator implements MapGenerator {
+public class SearchMapGenerator implements MatchingGenerator {
 
     private SearchQueue searchQueue;
     private final long time;

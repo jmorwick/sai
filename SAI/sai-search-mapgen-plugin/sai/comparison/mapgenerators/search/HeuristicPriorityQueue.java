@@ -28,9 +28,9 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import sai.comparison.MapHeuristic;
+import sai.comparison.heuristics.GraphMatchingHeuristic;
 import sai.graph.Feature;
-import sai.graph.Node;
+import sai.test.graph.Node;
 
 /**
  * A search priority queue which caches map heuristic computations
@@ -43,13 +43,13 @@ public class HeuristicPriorityQueue extends SearchQueue {
     private final MinMaxPriorityQueue<GraphMapping> queue;
     private Map<Node, Node> best;
     private double bestScore = -1;
-    private final MapHeuristic queueHueristic;
-    private final MapHeuristic judgeHueristic;
+    private final GraphMatchingHeuristic queueHueristic;
+    private final GraphMatchingHeuristic judgeHueristic;
     private int bestSize = 0;
     private int maxSize = -1;
 
 
-    public HeuristicPriorityQueue(final MapHeuristic h,
+    public HeuristicPriorityQueue(final GraphMatchingHeuristic h,
             String ... featureTypes) {
         super(featureTypes);
         this.queueHueristic = h;
@@ -57,7 +57,7 @@ public class HeuristicPriorityQueue extends SearchQueue {
         queue = MinMaxPriorityQueue.orderedBy(getDefaultQueueComparator()).create();
     }
 
-    public HeuristicPriorityQueue(final MapHeuristic h,
+    public HeuristicPriorityQueue(final GraphMatchingHeuristic h,
             Comparator<GraphMapping> c,
             Class<? extends Feature>... featureTypes) {
         super(featureTypes);
@@ -66,8 +66,8 @@ public class HeuristicPriorityQueue extends SearchQueue {
         queue = MinMaxPriorityQueue.orderedBy(c).create();
     }
 
-    public HeuristicPriorityQueue(final MapHeuristic queueHeuristic,
-            final MapHeuristic judgeHeuristic,
+    public HeuristicPriorityQueue(final GraphMatchingHeuristic queueHeuristic,
+            final GraphMatchingHeuristic judgeHeuristic,
             Class<? extends Feature>... featureTypes) {
         super(featureTypes);
         this.queueHueristic = queueHeuristic;
@@ -75,8 +75,8 @@ public class HeuristicPriorityQueue extends SearchQueue {
         queue = MinMaxPriorityQueue.orderedBy(getDefaultQueueComparator()).create();
     }
 
-    public HeuristicPriorityQueue(final MapHeuristic queueHeuristic,
-            final MapHeuristic judgeHeuristic,
+    public HeuristicPriorityQueue(final GraphMatchingHeuristic queueHeuristic,
+            final GraphMatchingHeuristic judgeHeuristic,
             Comparator<GraphMapping> c,
             Class<? extends Feature>... featureTypes) {
         super(featureTypes);
@@ -86,7 +86,7 @@ public class HeuristicPriorityQueue extends SearchQueue {
     }
     
     
-    public HeuristicPriorityQueue(final MapHeuristic h, int maxSize,
+    public HeuristicPriorityQueue(final GraphMatchingHeuristic h, int maxSize,
             Class<? extends Feature>... featureTypes) {
         super(featureTypes);
         this.queueHueristic = h;
@@ -95,7 +95,7 @@ public class HeuristicPriorityQueue extends SearchQueue {
         queue = MinMaxPriorityQueue.orderedBy(getDefaultQueueComparator()).maximumSize(maxSize).create();
     }
 
-    public HeuristicPriorityQueue(final MapHeuristic h, 
+    public HeuristicPriorityQueue(final GraphMatchingHeuristic h, 
             Comparator<GraphMapping> c,  int maxSize,
             Class<? extends Feature>... featureTypes) {
         super(featureTypes);
@@ -105,8 +105,8 @@ public class HeuristicPriorityQueue extends SearchQueue {
         queue = MinMaxPriorityQueue.orderedBy(c).maximumSize(maxSize).create();
     }
 
-    public HeuristicPriorityQueue(final MapHeuristic queueHeuristic, 
-            final MapHeuristic judgeHeuristic,  int maxSize,
+    public HeuristicPriorityQueue(final GraphMatchingHeuristic queueHeuristic, 
+            final GraphMatchingHeuristic judgeHeuristic,  int maxSize,
             Class<? extends Feature>... featureTypes) {
         super(featureTypes);
         this.queueHueristic = queueHeuristic;
@@ -115,8 +115,8 @@ public class HeuristicPriorityQueue extends SearchQueue {
         queue = MinMaxPriorityQueue.orderedBy(getDefaultQueueComparator()).maximumSize(maxSize).create();
     }
 
-    public HeuristicPriorityQueue(final MapHeuristic queueHeuristic, 
-            final MapHeuristic judgeHeuristic,  int maxSize,
+    public HeuristicPriorityQueue(final GraphMatchingHeuristic queueHeuristic, 
+            final GraphMatchingHeuristic judgeHeuristic,  int maxSize,
             Comparator<GraphMapping> c,
             Class<? extends Feature>... featureTypes) {
         super(featureTypes);
@@ -126,8 +126,8 @@ public class HeuristicPriorityQueue extends SearchQueue {
         queue = MinMaxPriorityQueue.orderedBy(c).maximumSize(maxSize).create();
     }
 
-    public MapHeuristic getQueueHeuristic() { return queueHueristic; }
-    public MapHeuristic getJudgeHeuristic() { return judgeHueristic; }
+    public GraphMatchingHeuristic getQueueHeuristic() { return queueHueristic; }
+    public GraphMatchingHeuristic getJudgeHeuristic() { return judgeHueristic; }
 
     public void considerMap(Map<Node, Node> m) {
         double score = judgeHueristic.apply(makeTuple(getGraph1(), getGraph2(), m));
@@ -150,18 +150,18 @@ public class HeuristicPriorityQueue extends SearchQueue {
                 me.sort(new Comparator<Map.Entry<Node,Node>>() {
 
             public int compare(Entry<Node, Node> o1, Entry<Node, Node> o2) {
-                int x = o1.getKey().getID();
-                int y = o2.getKey().getID();
+                int x = o1.getKey().getSaiID();
+                int y = o2.getKey().getSaiID();
                 return x < y ? -1 : x > y ? 1 : 0;
             }
         });
                 
                 for(Map.Entry<Node,Node> e : m.entrySet()) {
-                    System.out.print(e.getKey().getID()+"-");
-                    if(e.getKey().getID() == e.getValue().getID()) {
+                    System.out.print(e.getKey().getSaiID()+"-");
+                    if(e.getKey().getSaiID() == e.getValue().getSaiID()) {
                         System.out.print("*");
                     } else System.out.print("X");
-                    System.out.print("->" + e.getValue().getID()+", ");
+                    System.out.print("->" + e.getValue().getSaiID()+", ");
 
                 }
             }

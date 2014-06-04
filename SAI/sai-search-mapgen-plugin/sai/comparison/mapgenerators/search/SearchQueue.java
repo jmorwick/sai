@@ -25,7 +25,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-import sai.comparison.Util;
+import sai.SAIUtil;
 import sai.graph.jgrapht.Feature;
 import sai.graph.jgrapht.Graph;
 import sai.graph.jgrapht.Node;
@@ -84,7 +84,7 @@ public abstract class SearchQueue {
         }
 
         Map<Node, Node> m = Maps.newHashMap();
-        possibilities = Util.nodeCompatibility(g1, g2, types);
+        possibilities = SAIUtil.nodeCompatibility(g1, g2, types);
         GraphMapping s = new GraphMapping(m, possibilities);
         limitPossibilities(s);
         queueState(s);

@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import sai.indexing.Index;
-
 import org.jgrapht.graph.DirectedMultigraph;
 
 import com.google.common.base.Function;
@@ -162,34 +160,34 @@ public class Graph
 
         for(Feature t : getFeatures()) {
             db.updateDB("INSERT INTO graph_features VALUES (" +
-                getID() + ", " + t.getID()+");");
+                getSaiID() + ", " + t.getSaiID()+");");
         }
         for(Node n : vertexSet()) {
 
             db.updateDB("INSERT INTO node_instances VALUES (" +
-                               n.getID() + ", " + getID()+", " + n.getFeatures().size()+");");
+                               n.getSaiID() + ", " + getSaiID()+", " + n.getFeatures().size()+");");
             for(Feature t : n.getFeatures()) {
                 db.updateDB("INSERT INTO node_features VALUES (" +
-                               getID() + ", " +
-                               n.getID() + ", " +
-                               t.getID()+");");
+                               getSaiID() + ", " +
+                               n.getSaiID() + ", " +
+                               t.getSaiID()+");");
 
             }
         }
         for(Edge e : edgeSet()) {
-            Node source = getEdgeSource(e);
-            Node target = getEdgeTarget(e);
+            Node source = getEdgeSourceNodeID(e);
+            Node target = getEdgeTargetNodeID(e);
             db.updateDB("INSERT INTO edge_instances VALUES (" +
-                               e.getID() + ", " +
-                               getID() + ", "+
-                               source.getID() + ", " +
-                               target.getID() + ", " +
+                               e.getSaiID() + ", " +
+                               getSaiID() + ", "+
+                               source.getSaiID() + ", " +
+                               target.getSaiID() + ", " +
                                e.getFeatures().size()+");");
             for(Feature t : e.getFeatures()) {
                 db.updateDB("INSERT INTO edge_features VALUES (" +
-                               getID() + ", " +
-                               e.getID() + ", " +
-                               t.getID()+");");
+                               getSaiID() + ", " +
+                               e.getSaiID() + ", " +
+                               t.getSaiID()+");");
 
             }
         }
@@ -303,220 +301,5 @@ public class Graph
     }
 
 
-    /** returns true if an edge links 'n1' to 'n2' or vice versa.
-     * 
-     * @param n1
-     * @param n2
-     * @return
-     */
-    public boolean linkBetween(Node n1, Node n2) {
-        return linkedTo(n1, n2) || linkedTo(n2, n1);
-    }
-
-    /** returns an edge ID which is not used in this graph
-     *
-     * @return
-     */
-    public int getUnusedEdgeID() {
-        int id = 1;
-        for(Edge edge : this.edgeSet()) {
-            if(id <= edge.getID())
-                id = edge.getID() + 1;
-        }
-        return id;
-    }
-
-    /** returns a node ID which is not used in this graph
-     * 
-     * @return
-     */
-    public int getUnusedNodeID() {
-        int id = 1;
-        for(Node node : this.vertexSet()) {
-            if(id <= node.getID())
-                id = node.getID() + 1;
-        }
-        return id;
-    }
-
-
-    @Override
-    public Set<Node> vertexSet() { return new HashSet<Node>(super.vertexSet()); }
-
-    @Override
-    public Set<Edge> edgeSet() { return new HashSet<Edge>(super.edgeSet()); }
-
-/** creates a copy of this graph.
- * 
- * @return
- */
-    public Graph copy() {
-        Graph t = new Graph(db);
-        for(Node n : vertexSet()) {
-            Node nn = new Node(n.getID(), t, db);
-            for(Feature f : n.getFeatures())
-                nn.addFeature(f);
-            t.addVertex(nn);
-        }
-        for(Edge e : edgeSet()) {
-            Edge ne = new Edge(e.getID(), t, db);
-            for(Feature f : e.getFeatures())
-                ne.addFeature(f);
-            t.addEdge(t.getNode(getEdgeSource(e).getID()),
-                      t.getNode(getEdgeTarget(e).getID()), ne);
-        }
-        for(Feature tag : getFeatures()) {
-            t.addFeature(tag);
-        }
-        return t;
-    }
-
-    /** creates a copy of this graph without the specified node, or any edges
-     * associated with the node
-     *
-     * @param node
-     * @return
-     */
-    public Graph copyWithoutNode(Node node) {
-        if(!vertexSet().contains(node))
-            throw new IllegalArgumentException("Node " + node.getID() + " not in graph " + getID());
-        Graph t = copy();
-        t.removeVertex(t.getNode(node.getID()));
-        return t;
-    }
-
-    /** returns a copy of this graph without the specified edge
-     * 
-     * @param edge
-     * @return
-     */
-    public Graph copyWithoutEdge(Edge edge) {
-        if(!edgeSet().contains(edge))
-            throw new IllegalArgumentException("Edge " + edge.getID() + " not in graph " + getID());
-        Graph t = copy();
-        Edge ne = null;
-        for(Edge e2 : t.getAllEdges(t.getNode(getEdgeSource(edge).getID()), 
-                                    t.getNode(getEdgeTarget(edge).getID()))) {
-            if(e2.getFeatures().equals(edge.getFeatures()))
-                ne = e2;
-        }
-        if(ne == null) throw new IllegalStateException("ERROR: could not determine an equivalent feature set for deleted edge");
-        t.removeEdge(ne);
-        return t;
-    }
-
-
-
-    /** implements the Floyd-Warshall algorithm for finding shortest paths between all pairs of nodes.
-        all distances between nodes conntected by an edge is assumed to be 1.0
-     */
-    public Map<T2<Node,Node>, Double> allPairsShortestPaths() {
-        return allPairsShortestPaths(new Function<Edge,Double>() {
-
-            @Override
-            public Double apply(Edge args) {
-                return 1.0;
-            }
-        });
-    }
-
-    /** implements the Floyd-Warshall algorithm for finding shortest paths between all pairs of nodes */
-    public Map<T2<Node,Node>, Double> allPairsShortestPaths(Function<Edge,Double> edgeCost) {
-        int maxid=0;
-        for(Node n : vertexSet()) {
-            maxid = Math.max(maxid, n.getID());
-        }
-        double[][] distance = new double[maxid+1][maxid+1];
-        for(int i=0; i<=maxid; i++) {
-            for(int j=0; j<=maxid; j++) {
-                distance[i][j] = Double.POSITIVE_INFINITY;
-                Node n1 = this.getNode(i);
-                Node n2 = this.getNode(j);
-                if(n1 == null || n2 == null) continue;
-                if(this.linkedTo(n1, n2)) {
-                    distance[i][j] = edgeCost.apply(
-                    		Funcles.argmaxCollection(edgeCost, getAllEdges(n1, n2)));
-                }
-            }
-        }
-
-        for(int k=0; k<=maxid; k++) {
-            for(int i=0; i<=maxid; i++) {
-                for(int j=0; j<=maxid; j++) {
-                    distance[i][j] = Math.min(distance[i][j],
-                                              distance[i][k]+distance[i][j]);
-                }
-            }
-        }
-        Map<T2<Node,Node>, Double> m = new HashMap<T2<Node,Node>, Double>();
-        for(Node n1 : Sets.newHashSet(vertexSet())) {
-            for(Node n2: vertexSet()) {
-                if(n1 == n2) m.put(T2.makeTuple(n1, n2), 0.0);
-                else if(distance[n1.getID()][n2.getID()] < Double.POSITIVE_INFINITY)
-                    m.put(T2.makeTuple(n1, n2), distance[n1.getID()][n2.getID()]);
-            }
-        }
-        return m;
-    }
-
-
-
-    @Override
-    public String toString() {
-        String ret = "{S: "+features+"\n";
-        ret += "  nodes:\n";
-        for(Node n : vertexSet()) ret += "    "+n+"\n";
-        ret += "  edges:\n";
-        for(Edge e : edgeSet()) ret += "    "+e+"\n";
-        return ret+"\n}";
-    }
-
-    /** returns whether or not this graph and the specified object are
-     * both graphs associated with the same stored graph ID.
-     * @param o
-     * @return
-     */
-    @Override
-    public boolean equals(Object o) {
-        if(o instanceof Graph) {
-            return getID() > 0 && ((Graph)o).getID() == getID();
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 29 * hash + this.DBID;
-        return hash;
-    }
-
-    public MySQLDBInterface getDB() {
-        return db;
-    }
-
-    /** returns the feature of the given feature-class associated with this node.
-     * If more than one such feature exists, an arbitrary selection is returned.
-     * If no such feature exists, an IllegalArgumentException is thrown.
-     * @param <F>
-     * @param featureClass
-     * @return
-     */
-    public <F extends Feature> F getFeature(Class<F> featureClass) {
-        for(Feature f : getFeatures()) {
-            if(featureClass.isInstance(f))
-                return (F)f;
-        }
-        throw new IllegalArgumentException(
-                "No feature with class "+featureClass+" in this node("+
-                toString()+")");
-    }
-    
-    public <F extends Feature> boolean containsFeatureType(Class<F> featureClass) {
-        for(Feature f : getFeatures()) {
-            if(featureClass.isInstance(f))
-                return true;
-        }
-        return false;
-    }
+ 
 }

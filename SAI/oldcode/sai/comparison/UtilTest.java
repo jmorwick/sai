@@ -21,10 +21,12 @@ package sai.comparison;
 
 import java.util.Map;
 
-import sai.*;
+import sai.SAIUtil;
+import sai.db.mysql.DBInterfaceTest;
 import sai.graph.jgrapht.Feature;
 import sai.graph.jgrapht.Graph;
 import sai.graph.jgrapht.Node;
+import sai.test.*;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -101,7 +103,7 @@ public class UtilTest {
         Node n23 = g2.getNode(3);
         Node n14 = g1.getNode(4);
         Node n24 = g2.getNode(4);
-        Multimap<Node,Node> m = Util.nodeCompatibility(g1, g2);
+        Multimap<Node,Node> m = SAIUtil.nodeCompatibility(g1, g2);
         assertTrue(m.containsEntry(n11, n21));
         assertTrue(m.containsEntry(n11, n23));
         assertTrue(m.containsEntry(n12, n22));
@@ -137,19 +139,19 @@ public class UtilTest {
         Map<Node,Node> m = Maps.newHashMap();
         m.put(n12, n22);
         m.put(n11, n21);
-        assertEquals(3, Util.matchedEdges(g1, g2, n11, m, Util.completeEdgeMatchCounter));
-        assertEquals(3, Util.matchedEdges(g1, g2, n12, m, Util.completeEdgeMatchCounter));
-        assertEquals(0, Util.matchedEdges(g1, g2, n13, m, Util.completeEdgeMatchCounter));
-        assertEquals(0, Util.matchedEdges(g1, g2, n14, m, Util.completeEdgeMatchCounter));
-        assertEquals(3, Util.matchedEdges(g1, g2, m, Util.completeEdgeMatchCounter));
+        assertEquals(3, SAIUtil.matchedEdges(g1, g2, n11, m, SAIUtil.completeEdgeMatchCounter));
+        assertEquals(3, SAIUtil.matchedEdges(g1, g2, n12, m, SAIUtil.completeEdgeMatchCounter));
+        assertEquals(0, SAIUtil.matchedEdges(g1, g2, n13, m, SAIUtil.completeEdgeMatchCounter));
+        assertEquals(0, SAIUtil.matchedEdges(g1, g2, n14, m, SAIUtil.completeEdgeMatchCounter));
+        assertEquals(3, SAIUtil.matchedEdges(g1, g2, m, SAIUtil.completeEdgeMatchCounter));
 
         m.put(n14, n24);
         m.put(n13, n23);
-        assertEquals(4, Util.matchedEdges(g1, g2, n11, m, Util.completeEdgeMatchCounter));
-        assertEquals(5, Util.matchedEdges(g1, g2, n12, m, Util.completeEdgeMatchCounter));
-        assertEquals(1, Util.matchedEdges(g1, g2, n13, m, Util.completeEdgeMatchCounter));
-        assertEquals(2, Util.matchedEdges(g1, g2, n14, m, Util.completeEdgeMatchCounter));
-        assertEquals(6, Util.matchedEdges(g1, g2, m, Util.completeEdgeMatchCounter));
+        assertEquals(4, SAIUtil.matchedEdges(g1, g2, n11, m, SAIUtil.completeEdgeMatchCounter));
+        assertEquals(5, SAIUtil.matchedEdges(g1, g2, n12, m, SAIUtil.completeEdgeMatchCounter));
+        assertEquals(1, SAIUtil.matchedEdges(g1, g2, n13, m, SAIUtil.completeEdgeMatchCounter));
+        assertEquals(2, SAIUtil.matchedEdges(g1, g2, n14, m, SAIUtil.completeEdgeMatchCounter));
+        assertEquals(6, SAIUtil.matchedEdges(g1, g2, m, SAIUtil.completeEdgeMatchCounter));
     }
 
 

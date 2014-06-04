@@ -111,8 +111,8 @@ implements Supplier<List<T2<Integer,Integer>>> {
 								i.remove();
 
 								//stop all other running checkers for this pair
-								if(pt.getInput().a1().getID() == i1.getID() &&
-										pt.getInput().a2().getID() == i2.getID())
+								if(pt.getInput().a1().getSaiID() == i1.getSaiID() &&
+										pt.getInput().a2().getSaiID() == i2.getSaiID())
 									foundAnswer = true;
 								haltAll.add(makeTuple(i1,i2));
 
