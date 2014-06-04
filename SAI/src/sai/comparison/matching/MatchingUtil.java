@@ -26,7 +26,7 @@ import com.google.common.collect.Sets;
 
 public class MatchingUtil {
 	
-    public Comparator<Graph> createGraphMatchOrdering(
+    public static Ordering<Graph> createGraphMatchOrdering(
   		  final Graph query,
   		  final MatchingGenerator gen, 
   		  final GraphMatchingHeuristic h) {
@@ -47,14 +47,14 @@ public class MatchingUtil {
   	  };
     }
 
-    public static GraphMatching includeEdgeMatching(final GraphMatching nodeMatching, 
-    		BiMap<Integer,Integer> edgeMatch) {
-    	final BiMap<Integer,Integer> copyEdgeMatch = 
-    			ImmutableBiMap.copyOf(edgeMatch);
+    public static GraphMatching createBasicNodeMatching(final Graph g1, final Graph g2,
+    		BiMap<Integer,Integer> nodeMatch) {
+    	final BiMap<Integer,Integer> copyNodeMatch = 
+    			ImmutableBiMap.copyOf(nodeMatch);
     	
     	// transform Map.Entry to Pair instances
-    	final ImmutableSet<Pair<Integer>> matchedEdges = ImmutableSet.copyOf(
-    			Iterables.transform(edgeMatch.entrySet(), 
+    	final ImmutableSet<Pair<Integer>> matchedNode = ImmutableSet.copyOf(
+    			Iterables.transform(copyNodeMatch.entrySet(), 
     					new Function<Map.Entry<Integer,Integer>,Pair<Integer>>() {
 							@Override
 							public Pair<Integer> apply(
@@ -67,45 +67,115 @@ public class MatchingUtil {
 
 			@Override
 			public Graph getGraph1() {
-				return nodeMatching.getGraph1();
+				return g1;
 			}
 
 			@Override
 			public Graph getGraph2() {
-				return nodeMatching.getGraph2();
+				return g2;
 			}
 
 			@Override
 			public int getMatchedNodeInGraph2(int g1NodeID) {
-				return nodeMatching.getMatchedNodeInGraph2(g1NodeID);
+				if(copyNodeMatch.containsKey(g1NodeID))
+					return copyNodeMatch.get(g1NodeID);
+				return -1;
 			}
 
 			@Override
 			public int getMatchedNodeInGraph1(int g2NodeID) {
-				return nodeMatching.getMatchedNodeInGraph1(g2NodeID);
+				if(copyNodeMatch.inverse().containsKey(g2NodeID))
+					return copyNodeMatch.inverse().get(g2NodeID);
+				return -1;
 			}
 
 			@Override
 			public Set<Pair<Integer>> getAllNodeMatches() {
-				return nodeMatching.getAllNodeMatches();
+				return matchedNode;
 			}
 
 			@Override
 			public int getMatchedEdgeInGraph2(int g1NodeID) {
-				return copyEdgeMatch.get(g1NodeID);
+				return -1;
 			}
 
 			@Override
 			public int getMatchedEdgeInGraph1(int g2NodeID) {
-				return copyEdgeMatch.inverse().get(g2NodeID);
+				return -1;
 			}
 
 			@Override
 			public Set<Pair<Integer>> getAllEdgeMatches() {
-				return matchedEdges;
+				return Sets.newHashSet();
 			}
     		
     	};
+    }
+    	
+
+        public static GraphMatching includeEdgeMatching(final GraphMatching nodeMatching, 
+        		BiMap<Integer,Integer> edgeMatch) {
+        	final BiMap<Integer,Integer> copyEdgeMatch = 
+        			ImmutableBiMap.copyOf(edgeMatch);
+        	
+        	// transform Map.Entry to Pair instances
+        	final ImmutableSet<Pair<Integer>> matchedEdges = ImmutableSet.copyOf(
+        			Iterables.transform(edgeMatch.entrySet(), 
+        					new Function<Map.Entry<Integer,Integer>,Pair<Integer>>() {
+    							@Override
+    							public Pair<Integer> apply(
+    									Entry<Integer, Integer> arg) {
+    								return Pair.makeImmutablePair(
+    										arg.getKey(), arg.getValue());
+    							}
+        			}));
+        	return new GraphMatching() {
+
+    			@Override
+    			public Graph getGraph1() {
+    				return nodeMatching.getGraph1();
+    			}
+
+    			@Override
+    			public Graph getGraph2() {
+    				return nodeMatching.getGraph2();
+    			}
+
+    			@Override
+    			public int getMatchedNodeInGraph2(int g1NodeID) {
+    				return nodeMatching.getMatchedNodeInGraph2(g1NodeID);
+    			}
+
+    			@Override
+    			public int getMatchedNodeInGraph1(int g2NodeID) {
+    				return nodeMatching.getMatchedNodeInGraph1(g2NodeID);
+    			}
+
+    			@Override
+    			public Set<Pair<Integer>> getAllNodeMatches() {
+    				return nodeMatching.getAllNodeMatches();
+    			}
+
+    			@Override
+    			public int getMatchedEdgeInGraph2(int g1NodeID) {
+    				if(copyEdgeMatch.containsKey(g1NodeID))
+    					return copyEdgeMatch.get(g1NodeID);
+    				return -1;
+    			}
+
+    			@Override
+    			public int getMatchedEdgeInGraph1(int g2NodeID) {
+    				if(copyEdgeMatch.inverse().containsKey(g2NodeID))
+    					return copyEdgeMatch.inverse().get(g2NodeID);
+    				return -1;
+    			}
+
+    			@Override
+    			public Set<Pair<Integer>> getAllEdgeMatches() {
+    				return matchedEdges;
+    			}
+        		
+        	};
     }
 
     /** given a matching of nodes, extends the matching to pair up all edges which

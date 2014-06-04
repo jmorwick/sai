@@ -106,4 +106,29 @@ public class SampleGraphs {
 		return ret;
 	}
 
+	public static Graph getSmallGraph3(DBInterface db) {
+	      MutableGraph g = new MutableGraph();
+	      g.addNode(1);
+	      g.addNodeFeature(1, db.getFeature("test", "a"));
+	      g.addNode(2);
+	      g.addNodeFeature(2, db.getFeature("test", "b"));
+	      g.addNodeFeature(4, db.getFeature("test", "d"));
+	      g.addEdge(1, 1, 2);
+	      g.addEdgeFeature(1, db.getFeature("test", "a"));
+	      return g;
+	}
+
+
+	public static Graph getSmallGraph4(DBInterface db) {
+	      MutableGraph g = new MutableGraph();
+	      g.addNode(30);
+	      g.addNodeFeature(30, db.getFeature("test", "a"));
+	      g.addNode(40);
+	      g.addNodeFeature(40, db.getFeature("test", "b"));
+	      g.addNodeFeature(40, db.getFeature("test", "d"));
+	      g.addEdge(10, 30, 40);
+	      g.addEdgeFeature(10, db.getFeature("test", "a"));
+	      return g;
+	}
+
 }
