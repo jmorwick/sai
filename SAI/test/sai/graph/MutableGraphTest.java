@@ -2,17 +2,25 @@ package sai.graph;
 
 import static org.junit.Assert.*;
 
+import java.nio.file.AccessDeniedException;
+
+import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
 import sai.db.DBInterface;
-import sai.test.SampleDBs;
-import sai.test.SampleGraphs;
+import sai.db.SampleDBs;
 
 public class MutableGraphTest {
 	
-	private static DBInterface db = SampleDBs.getEmptyDB(null);
+	private static DBInterface db;
+	
+	@Before 
+	public void setUp() throws AccessDeniedException {
+		db = SampleDBs.getEmptyDB(new BasicGraphFactory());
+		db.connect();
+	}
 
 	@Test
 	public void testGeneralFeatureFunctionality() {
