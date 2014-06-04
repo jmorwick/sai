@@ -42,7 +42,7 @@ public class BasicGraphWrapper implements Graph {
 	
 	@Override
 	public Set<Feature> getNodeFeatures(int nodeID) {
-		return graph.getEdgeFeatures(nodeID);
+		return graph.getNodeFeatures(nodeID);
 	}
 
 	@Override

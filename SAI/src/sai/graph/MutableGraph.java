@@ -134,9 +134,7 @@ public class MutableGraph implements Graph {
 	public void removeFeature(Feature f) {
 		features.remove(f);
 	}
-	public void addFeature(int n, Feature f) {
-		nodeFeatures.put(n, f);
-	}
+	
 	public void removeFeature(int e, Feature f) {
 		edgeFeatures.remove(e, f);
 	}

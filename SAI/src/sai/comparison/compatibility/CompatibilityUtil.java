@@ -36,7 +36,7 @@ public class CompatibilityUtil {
     /** checks if each feature in set 1 is compatible with at least one
      * feature in set 2, allowing repeats.
      */
-	public static FeatureSetCompatibilityChecker Greedy1To1Checker(
+	public static FeatureSetCompatibilityChecker greedy1To1Checker(
 			final FeatureCompatibilityChecker featureComp) {
 		return new FeatureSetCompatibilityChecker() {
 
@@ -66,7 +66,7 @@ public class CompatibilityUtil {
      * returns a quadratic-worst-case feature-set comparison algorithm which 
      * allows one feature to subsume unlimited features in the other feature set. 
      */
-	public static FeatureSetCompatibilityChecker Many1To1Checker(
+	public static FeatureSetCompatibilityChecker many1To1Checker(
 			final FeatureCompatibilityChecker featureComp) {
 		return new FeatureSetCompatibilityChecker() {
 

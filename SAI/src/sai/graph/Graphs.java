@@ -2,6 +2,8 @@ package sai.graph;
 
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
 import sai.db.DBInterface;
 
 
@@ -43,6 +45,9 @@ public class Graphs {
 	public static final Feature getIndexTag(DBInterface db) {
 		return db.getFeature(INDEX_FEATURE_NAME, "true");
 	}
+	public static final Feature getIndexTag() {
+		return new Feature(INDEX_FEATURE_NAME, "true");
+	}
 	
 	public static final Feature getDirectedTag(DBInterface db) {
 		return db.getFeature(DIRECTED_GRAPH_FEATURE_NAME, "true");
@@ -63,4 +68,6 @@ public class Graphs {
 				return true;
 		return false;
 	}
+	
+
 }

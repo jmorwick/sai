@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import sai.graph.Feature;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -33,22 +34,11 @@ import com.google.common.collect.Sets;
  * @author Joseph Kendall-Morwick
  */
 
-public class SAIUtil {
+public class SAIUtil {	
 
-    
-    /** returns the reverse of this map.  If the map is not one-to-one,
-     * the returned mapping will include an arbitrary selection.
-     * @return
-     */
-    public static <V,K> Map<V, K> reverseMap(Map<K,V> m) {
-      Map<V,K> rev = Maps.newHashMap();
-      for(Map.Entry<K,V> e : m.entrySet())
-        rev.put(e.getValue(), e.getKey());
-      return rev;
-    }
-	
-
-    /** creates a collection from an iterator to allow foreach over iterators */
+    /** creates a collection from an iterator to allow for-each over iterators. Only
+     * the isEmpty() and iterator() methods are supported, so this is mostly only 
+     * intended to shorten for-each loop syntax */
     public static <A> Collection<A> iteratorToCollection(final Iterator<A> i) {
         return new Collection<A>() {
 
@@ -144,7 +134,9 @@ public class SAIUtil {
     public static Set<Feature> retainOnly(Set<Feature> features, 
     		Set<String> names) {
     	return Sets.filter(features, featureWhiteListFilter(names));
-    }    
+    }  
+    
+
     /** returns only those features whose names match the specified names
      * 
      * @param features features to select from
@@ -155,13 +147,5 @@ public class SAIUtil {
     		String ... names) {
     	return Sets.filter(features, featureWhiteListFilter(names));
     }
-	public static boolean isLexicallyCompatible(Feature t1, Feature t2) {
-		if(t1.getName().equals(t2.getName()))
-			if(t1.getID() == t2.getID())
-				return true;
-		return false;
-	}
-	
-
 
 }

@@ -34,4 +34,5 @@ public interface DBInterface {
 	
 	public int getDatabaseSize();
 	public int getDatabaseSizeWithoutIndices();
+	public int addGraph(Graph g);
 }
