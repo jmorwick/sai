@@ -35,7 +35,7 @@ import sai.graph.MutableGraph;
  * An index generator which generates sub-structure indices for each single 
  * edge path in a graph with the specified feature types.
  *
- * @version 0.2.0
+ * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
 public class Path1<G extends Graph> implements IndexGenerator<G> {
@@ -47,8 +47,8 @@ public class Path1<G extends Graph> implements IndexGenerator<G> {
     }
 
     @Override
-    public Set<Graph> generateIndices(DBInterface db, GraphFactory<G> gf, Graph s) {
-        Set<Graph> indices = Sets.newHashSet();
+    public Set<G> generateIndices(DBInterface db, GraphFactory<G> gf, Graph s) {
+        Set<G> indices = Sets.newHashSet();
         for(int e : s.getEdgeIDs()) {
             Set<Feature> fromNodeFeatures = Sets.newHashSet();
             Set<Feature> toNodeFeatures = Sets.newHashSet();
@@ -69,11 +69,11 @@ public class Path1<G extends Graph> implements IndexGenerator<G> {
                     	i.addNode(1);
                     	i.addNode(2);
                     	i.addEdge(1, 1, 2);
-                    	i.addFeature(1, n1f);
-                    	i.addFeature(1, n2f);
-                    	i.addFeature(1, ef);
+                    	i.addNodeFeature(1, n1f);
+                    	i.addNodeFeature(2, n2f);
+                    	i.addEdgeFeature(1, ef);
                     	i.addFeature(Graphs.getIndexTag(db));
-                    	indices.add(i);
+                    	indices.add(gf.copy(i));
             }
         }
         return indices;

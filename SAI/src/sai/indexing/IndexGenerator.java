@@ -34,6 +34,6 @@ import sai.graph.GraphFactory;
  */
 public interface IndexGenerator<G extends Graph> {
 
-    public Set<Graph> generateIndices(DBInterface db, GraphFactory<G> gf, Graph s);
+    public Set<G> generateIndices(DBInterface db, GraphFactory<G> gf, Graph s);
 
 }
