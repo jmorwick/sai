@@ -28,8 +28,8 @@ public class HeuristicsTest {
 		db.connect();
 		
 		GraphMatchingHeuristic h = Heuristics.basicEdgeCount();
-		Graph g1 = SampleGraphs.getSmallGraph3(db);
-		Graph g2 = SampleGraphs.getSmallGraph1(db);
+		Graph g1 = SampleGraphs.getSmallGraph3();
+		Graph g2 = SampleGraphs.getSmallGraph1();
 		BiMap<Integer,Integer> nodeMatch = HashBiMap.create();
 		BiMap<Integer,Integer> edgeMatch = HashBiMap.create();
 		GraphMatching m;

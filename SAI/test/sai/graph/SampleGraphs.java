@@ -8,68 +8,69 @@ import sai.graph.MutableGraph;
 
 public class SampleGraphs {
 
-    public static Graph getSmallGraph1(DBInterface db) {
+    public static Graph getSmallGraph1() {
       MutableGraph g = new MutableGraph();
       g.addNode(1);
-      g.addNodeFeature(1, db.getFeature("test", "a"));
+      g.addNodeFeature(1, new Feature("test", "a"));
       g.addNode(2);
-      g.addNodeFeature(2, db.getFeature("test", "b"));
+      g.addNodeFeature(2, new Feature("test", "b"));
       g.addNode(3);
-      g.addNodeFeature(3, db.getFeature("test", "c"));
+      g.addNodeFeature(3, new Feature("test", "c"));
       g.addNode(4);
-      g.addNodeFeature(4, db.getFeature("test", "d"));
+      g.addNodeFeature(4, new Feature("test", "d"));
       g.addEdge(1, 1, 2);
-      g.addEdgeFeature(1, db.getFeature("test", "a"));
+      g.addEdgeFeature(1, new Feature("test", "a"));
       g.addEdge(2, 2, 3);
-      g.addEdgeFeature(2, db.getFeature("test", "a"));
+      g.addEdgeFeature(2, new Feature("test", "a"));
       g.addEdge(3, 3, 4);
-      g.addEdgeFeature(3, db.getFeature("test", "a"));
+      g.addEdgeFeature(3, new Feature("test", "a"));
       g.addEdge(4, 2, 4);
-      g.addEdgeFeature(4, db.getFeature("test", "a"));
+      g.addEdgeFeature(4, new Feature("test", "a"));
       return g;
     }
 
-    public static Graph getSmallGraph2(DBInterface db) {
+    
+    public static Graph getSmallGraph2() {
         MutableGraph g = new MutableGraph();
         g.addNode(1);
-        g.addNodeFeature(1, db.getFeature("test", "a"));
+        g.addNodeFeature(1, new Feature("test", "a"));
         g.addNode(2);
-        g.addNodeFeature(2, db.getFeature("test", "b"));
+        g.addNodeFeature(2, new Feature("test", "b"));
         g.addNode(3);
-        g.addNodeFeature(3, db.getFeature("test", "c"));
+        g.addNodeFeature(3, new Feature("test", "c"));
         g.addNode(4);
-        g.addNodeFeature(4, db.getFeature("test", "d"));
+        g.addNodeFeature(4, new Feature("test", "d"));
         g.addEdge(1, 1, 2);
-        g.addEdgeFeature(1, db.getFeature("test", "a"));
+        g.addEdgeFeature(1, new Feature("test", "a"));
         g.addEdge(2, 2, 3);
-        g.addEdgeFeature(2, db.getFeature("test", "a"));
+        g.addEdgeFeature(2, new Feature("test", "a"));
         g.addEdge(3, 1, 4);
-        g.addEdgeFeature(3, db.getFeature("test", "a"));
+        g.addEdgeFeature(3, new Feature("test", "a"));
         g.addEdge(4, 2, 4);
-        g.addEdgeFeature(4, db.getFeature("test", "a"));
+        g.addEdgeFeature(4, new Feature("test", "a"));
         return g;
     }
 
 
-    public static Graph getMultigraph1(DBInterface db) {
+    public static Graph getMultigraph1() {
 
         MutableGraph g = new MutableGraph();
         g.addNode(1);
-        g.addNodeFeature(1, db.getFeature("test", "a"));
+        g.addNodeFeature(1, new Feature("test", "a"));
         g.addNode(2);
-        g.addNodeFeature(2, db.getFeature("test", "b"));
+        g.addNodeFeature(2, new Feature("test", "b"));
         g.addNode(3);
-        g.addNodeFeature(3, db.getFeature("test", "c"));
+        g.addNodeFeature(3, new Feature("test", "c"));
         g.addNode(4);
-        g.addNodeFeature(4, db.getFeature("test", "d"));
+        g.addNodeFeature(4, new Feature("test", "d"));
         g.addEdge(1, 1, 2);
-        g.addEdgeFeature(1, db.getFeature("test", "a"));
+        g.addEdgeFeature(1, new Feature("test", "a"));
         g.addEdge(2, 2, 3);
-        g.addEdgeFeature(2, db.getFeature("test", "b"));
+        g.addEdgeFeature(2, new Feature("test", "b"));
         g.addEdge(3, 1, 2);
-        g.addEdgeFeature(3, db.getFeature("test", "a"));
+        g.addEdgeFeature(3, new Feature("test", "a"));
         g.addEdge(4, 2, 4);
-        g.addEdgeFeature(4, db.getFeature("test", "a"));
+        g.addEdgeFeature(4, new Feature("test", "a"));
         return g;
     }
 
@@ -106,29 +107,70 @@ public class SampleGraphs {
 		return ret;
 	}
 
-	public static Graph getSmallGraph3(DBInterface db) {
+	public static Graph getSmallGraph3() {
 	      MutableGraph g = new MutableGraph();
 	      g.addNode(1);
-	      g.addNodeFeature(1, db.getFeature("test", "a"));
+	      g.addNodeFeature(1, new Feature("test", "a"));
 	      g.addNode(2);
-	      g.addNodeFeature(2, db.getFeature("test", "b"));
-	      g.addNodeFeature(4, db.getFeature("test", "d"));
+	      g.addNodeFeature(2, new Feature("test", "b"));
 	      g.addEdge(1, 1, 2);
-	      g.addEdgeFeature(1, db.getFeature("test", "a"));
+	      g.addEdgeFeature(1, new Feature("test", "a"));
 	      return g;
 	}
 
 
-	public static Graph getSmallGraph4(DBInterface db) {
+	public static Graph getMediumUnlabeledTreeOneSelfIso() {
+	      MutableGraph g = new MutableGraph();
+	      g.addFeature(Graphs.TREE);
+	      g.addNode(1);
+	      g.addNode(2);
+	      g.addNode(3);
+	      g.addEdge(1, 1, 2);
+	      g.addEdge(2, 1, 3);
+	      g.addNode(4);
+	      g.addNode(5);
+	      g.addEdge(3, 3, 4);
+	      g.addEdge(4, 3, 5);
+	      g.addNode(6);
+	      g.addEdge(5, 5, 6);
+	      return g;
+	}
+	
+	
+
+
+	public static Graph getSmallGraph4() {
 	      MutableGraph g = new MutableGraph();
 	      g.addNode(30);
-	      g.addNodeFeature(30, db.getFeature("test", "a"));
+	      g.addNodeFeature(30, new Feature("test", "a"));
 	      g.addNode(40);
-	      g.addNodeFeature(40, db.getFeature("test", "b"));
-	      g.addNodeFeature(40, db.getFeature("test", "d"));
+	      g.addNodeFeature(40, new Feature("test", "b"));
+	      g.addNodeFeature(40, new Feature("test", "d"));
 	      g.addEdge(10, 30, 40);
-	      g.addEdgeFeature(10, db.getFeature("test", "a"));
+	      g.addEdgeFeature(10, new Feature("test", "a"));
 	      return g;
 	}
+
+    public static Graph getBDIndex() {
+      MutableGraph g = new MutableGraph();
+      g.addNode(2);
+      g.addNodeFeature(2, new Feature("test", "b"));
+      g.addNode(4);
+      g.addNodeFeature(4, new Feature("test", "d"));
+      g.addEdge(4, 2, 4);
+      g.addEdgeFeature(4, new Feature("test", "a"));
+      return g;
+    }
+
+    public static Graph getCDIndex() {
+      MutableGraph g = new MutableGraph();
+      g.addNode(3);
+      g.addNodeFeature(3, new Feature("test", "c"));
+      g.addNode(4);
+      g.addNodeFeature(4, new Feature("test", "d"));
+      g.addEdge(3, 3, 4);
+      g.addEdgeFeature(3, new Feature("test", "a"));
+      return g;
+    }
 
 }

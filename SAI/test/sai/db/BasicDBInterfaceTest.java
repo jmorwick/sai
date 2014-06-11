@@ -62,10 +62,10 @@ public class BasicDBInterfaceTest {
 		db.connect();
 		db.setDBFile(f);
 		assertEquals(0, db.getDatabaseSize());
-		int gid = db.addGraph(SampleGraphs.getSmallGraph1(db));
+		int gid = db.addGraph(SampleGraphs.getSmallGraph1());
 		assertEquals(1, db.getDatabaseSize());
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), db.getFeatureIDs());
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid, gf));
 		
 		db.disconnect();
@@ -76,7 +76,7 @@ public class BasicDBInterfaceTest {
 		db.connect();
 		assertEquals(1, db.getDatabaseSize());
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), db.getFeatureIDs());
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid, gf));
 	}
 
@@ -91,17 +91,17 @@ public class BasicDBInterfaceTest {
 		db.setDBFile(f);
 		assertEquals(0, db.getDatabaseSize());
 		assertEquals(Sets.newHashSet(), db.getFeatureIDs());
-		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1(db));
-		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2(db));
-		int gid3 = db.addGraph(SampleGraphs.getSmallGraph1(db));
+		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
+		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
+		int gid3 = db.addGraph(SampleGraphs.getSmallGraph1());
 
 		assertEquals(3, db.getDatabaseSize());
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), db.getFeatureIDs());
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
 				db.retrieveGraph(gid2, gf));
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid3, gf));
 		
 		db.disconnect();
@@ -112,11 +112,11 @@ public class BasicDBInterfaceTest {
 		db.connect();
 		assertEquals(3, db.getDatabaseSize());
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), db.getFeatureIDs());
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
 				db.retrieveGraph(gid2, gf));
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid3, gf));
 	}
 
@@ -130,22 +130,22 @@ public class BasicDBInterfaceTest {
 		db.connect();
 		db.setDBFile(f);
 		assertEquals(0, db.getDatabaseSize());
-		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1(db));
-		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2(db));
-		MutableGraph i = new MutableGraph(SampleGraphs.getSmallGraph1(db));
-		i.addFeature(Graphs.getIndexTag(db));
+		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
+		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
+		MutableGraph i = new MutableGraph(SampleGraphs.getSmallGraph1());
+		i.addFeature(Graphs.INDEX);
 		int gid3 = db.addGraph(i);
 		db.addIndex(gid1, gid3);
 
 		assertEquals(3, db.getDatabaseSize());
 		assertEquals(2, db.getDatabaseSizeWithoutIndices());
 		assertEquals(Sets.newHashSet(1, 2, 3, 4, 5), db.getFeatureIDs());
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
 				db.retrieveGraph(gid2, gf));
-		MutableGraph rg = new MutableGraph(SampleGraphs.getSmallGraph1(db));
-		rg.addFeature(Graphs.getIndexTag(db));
+		MutableGraph rg = new MutableGraph(SampleGraphs.getSmallGraph1());
+		rg.addFeature(Graphs.INDEX);
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid3, gf));
 		assertEquals(gid3, (int)db.getIndexIDIterator().next());
@@ -168,12 +168,12 @@ public class BasicDBInterfaceTest {
 		assertEquals(3, db.getDatabaseSize());
 		assertEquals(2, db.getDatabaseSizeWithoutIndices());
 		assertEquals(Sets.newHashSet(1, 2, 3, 4, 5), db.getFeatureIDs());
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
 				db.retrieveGraph(gid2, gf));
-		rg = new MutableGraph(SampleGraphs.getSmallGraph1(db));
-		rg.addFeature(Graphs.getIndexTag(db));
+		rg = new MutableGraph(SampleGraphs.getSmallGraph1());
+		rg.addFeature(Graphs.INDEX);
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid3, gf));
 		assertEquals(gid3, (int)db.getIndexIDIterator().next());
@@ -199,14 +199,14 @@ public class BasicDBInterfaceTest {
 		db.connect();
 		db.setDBFile(f);
 		assertEquals(0, db.getDatabaseSize());
-		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1(db));
-		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2(db));
-		MutableGraph i1 = new MutableGraph(SampleGraphs.getSmallGraph1(db));
-		i1.addFeature(Graphs.getIndexTag(db));
+		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
+		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
+		MutableGraph i1 = new MutableGraph(SampleGraphs.getSmallGraph1());
+		i1.addFeature(Graphs.INDEX);
 		int gid3 = db.addGraph(i1);
 		db.addIndex(gid1, gid3);
-		MutableGraph i2 = new MutableGraph(SampleGraphs.getSmallGraph1(db));
-		i2.addFeature(Graphs.getIndexTag(db));
+		MutableGraph i2 = new MutableGraph(SampleGraphs.getSmallGraph1());
+		i2.addFeature(Graphs.INDEX);
 		int gid4 = db.addGraph(i2);
 		db.addIndex(gid1, gid4);
 		db.addIndex(gid3, gid4);
@@ -214,12 +214,12 @@ public class BasicDBInterfaceTest {
 		assertEquals(4, db.getDatabaseSize());
 		assertEquals(2, db.getDatabaseSizeWithoutIndices());
 		assertEquals(Sets.newHashSet(1, 2, 3, 4, 5), db.getFeatureIDs());
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
 				db.retrieveGraph(gid2, gf));
-		MutableGraph rg = new MutableGraph(SampleGraphs.getSmallGraph1(db));
-		rg.addFeature(Graphs.getIndexTag(db));
+		MutableGraph rg = new MutableGraph(SampleGraphs.getSmallGraph1());
+		rg.addFeature(Graphs.INDEX);
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid3, gf));
 		assertGraphsAreIdentical(rg, 
@@ -247,12 +247,12 @@ public class BasicDBInterfaceTest {
 		assertEquals(4, db.getDatabaseSize());
 		assertEquals(2, db.getDatabaseSizeWithoutIndices());
 		assertEquals(Sets.newHashSet(1, 2, 3, 4, 5), db.getFeatureIDs());
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(db), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
 				db.retrieveGraph(gid2, gf));
-		rg = new MutableGraph(SampleGraphs.getSmallGraph1(db));
-		rg.addFeature(Graphs.getIndexTag(db));
+		rg = new MutableGraph(SampleGraphs.getSmallGraph1());
+		rg.addFeature(Graphs.INDEX);
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid3, gf));
 		assertGraphsAreIdentical(rg, 
@@ -273,10 +273,10 @@ public class BasicDBInterfaceTest {
 		BasicDBInterface db = new BasicDBInterface(gf);
 		db.connect();
 		assertEquals(0, db.getDatabaseSize());
-		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1(db));
-		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2(db));
-		int gid3 = db.addGraph(SampleGraphs.getSmallGraph2(db));
-		int gid4 = db.addGraph(SampleGraphs.getSmallGraph1(db));
+		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
+		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
+		int gid3 = db.addGraph(SampleGraphs.getSmallGraph2());
+		int gid4 = db.addGraph(SampleGraphs.getSmallGraph1());
 		
 		Set<Integer> observed = Sets.newHashSet();
 		Set<Integer> total = Sets.newHashSet(gid1, gid2, gid3, gid4);
@@ -302,14 +302,14 @@ public class BasicDBInterfaceTest {
 		BasicDBInterface db = new BasicDBInterface(gf);
 		db.connect();
 		assertEquals(0, db.getDatabaseSize());
-		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1(db));
-		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2(db));
-		MutableGraph i1 = new MutableGraph(SampleGraphs.getSmallGraph1(db));
-		i1.addFeature(Graphs.getIndexTag(db));
+		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
+		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
+		MutableGraph i1 = new MutableGraph(SampleGraphs.getSmallGraph1());
+		i1.addFeature(Graphs.INDEX);
 		int gid3 = db.addGraph(i1);
 		db.addIndex(gid1, gid3);
-		MutableGraph i2 = new MutableGraph(SampleGraphs.getSmallGraph1(db));
-		i2.addFeature(Graphs.getIndexTag(db));
+		MutableGraph i2 = new MutableGraph(SampleGraphs.getSmallGraph1());
+		i2.addFeature(Graphs.INDEX);
 		int gid4 = db.addGraph(i2);
 		db.addIndex(gid1, gid4);
 		db.addIndex(gid3, gid4);
@@ -328,10 +328,10 @@ public class BasicDBInterfaceTest {
 		BasicDBInterface db = new BasicDBInterface(gf);
 		db.connect();
 		assertEquals(0, db.getDatabaseSize());
-		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1(db));
-		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2(db));
-		int gid3 = db.addGraph(SampleGraphs.getSmallGraph2(db));
-		int gid4 = db.addGraph(SampleGraphs.getSmallGraph1(db));
+		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
+		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
+		int gid3 = db.addGraph(SampleGraphs.getSmallGraph2());
+		int gid4 = db.addGraph(SampleGraphs.getSmallGraph1());
 
 		db.hideGraph(gid2);
 		db.hideGraph(gid3);
@@ -368,11 +368,11 @@ public class BasicDBInterfaceTest {
 		BasicDBInterface db = new BasicDBInterface(gf);
 		db.connect();
 		assertEquals(0, db.getDatabaseSize());
-		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1(db));
-		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2(db));
-		int gid3 = db.addGraph(SampleGraphs.getSmallGraph2(db));
+		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
+		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
+		int gid3 = db.addGraph(SampleGraphs.getSmallGraph2());
 		db.deleteGraph(gid3);
-		int gid4 = db.addGraph(SampleGraphs.getSmallGraph1(db));
+		int gid4 = db.addGraph(SampleGraphs.getSmallGraph1());
 		db.hideGraph(gid2);
 		
 		Set<Integer> observed = Sets.newHashSet();

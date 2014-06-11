@@ -47,7 +47,7 @@ public class GraphUtilityTest {
     public void testCopyWithoutEdge() throws AccessDeniedException {
     	DBInterface db = SampleDBs.getEmptyDB(new BasicGraphFactory());
     	db.connect();
-        Graph g = SampleGraphs.getSmallGraph1(db);
+        Graph g = SampleGraphs.getSmallGraph1();
         for(int e : g.getEdgeIDs()) {
             Graph ng = Graphs.copyWithoutEdge(g, new BasicGraphFactory(), e);
             assertEquals(ng.getEdgeIDs().size(), g.getEdgeIDs().size()-1);
@@ -59,7 +59,7 @@ public class GraphUtilityTest {
     public void testCopyWithoutNode() throws AccessDeniedException {
     	DBInterface db = SampleDBs.getEmptyDB(new BasicGraphFactory());
     	db.connect();
-        Graph g = SampleGraphs.getSmallGraph1(db);
+        Graph g = SampleGraphs.getSmallGraph1();
         for(int n : g.getNodeIDs()) {
             Graph ng = Graphs.copyWithoutNode(g, new BasicGraphFactory(), n);
             if(n == 1)

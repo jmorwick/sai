@@ -119,7 +119,7 @@ public class BasicDBInterface implements DBInterface {
 					g.addFeature(features.get(lin.nextInt()));
 				lin.close();
 
-				if(g.getFeatures().contains(Graphs.getIndexTag()))
+				if(g.getFeatures().contains(Graphs.INDEX))
 					indexes.add(gid);
 				else residentGraphs.add(gid);
 				
@@ -322,7 +322,7 @@ public class BasicDBInterface implements DBInterface {
 	@Override
 	public int addGraph(Graph g) {
 		int newGraphID = nextGraphID;
-		if(g.getFeatures().contains(Graphs.getIndexTag()))
+		if(g.getFeatures().contains(Graphs.INDEX))
 			indexes.add(newGraphID);
 		else residentGraphs.add(newGraphID);
 		nextGraphID++;

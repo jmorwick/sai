@@ -23,7 +23,7 @@ public class Path1Test {
 		DBInterface db = SampleDBs.getEmptyDB(gf);
 		IndexGenerator gen = new Path1("test");
 		db.connect();
-		Set<Graph> indices = gen.generateIndices(db, gf, SampleGraphs.getSmallGraph1(db));
+		Set<Graph> indices = gen.generateIndices(db, gf, SampleGraphs.getSmallGraph1());
 		
 		assertEquals(4, indices.size());
 		boolean seen1 = false;

@@ -51,17 +51,17 @@ public class MutableGraphTest {
 
 	@Test
 	public void testNodeFunctionality() {
-		MutableGraph g = new MutableGraph(SampleGraphs.getSmallGraph1(db));
+		MutableGraph g = new MutableGraph(SampleGraphs.getSmallGraph1());
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getNodeIDs());
-		g = new MutableGraph(SampleGraphs.getSmallGraph2(db));
+		g = new MutableGraph(SampleGraphs.getSmallGraph2());
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getNodeIDs());
-		g = new MutableGraph(SampleGraphs.getMultigraph1(db));
+		g = new MutableGraph(SampleGraphs.getMultigraph1());
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getNodeIDs());
 	}
 
 	@Test
 	public void testEdgeFunctionality() {
-		MutableGraph g = new MutableGraph(SampleGraphs.getSmallGraph1(db));
+		MutableGraph g = new MutableGraph(SampleGraphs.getSmallGraph1());
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getEdgeIDs());
 		assertEquals(1, g.getEdgeSourceNodeID(1));
 		assertEquals(2, g.getEdgeTargetNodeID(1));
@@ -71,7 +71,7 @@ public class MutableGraphTest {
 		assertEquals(4, g.getEdgeTargetNodeID(3));
 		assertEquals(2, g.getEdgeSourceNodeID(4));
 		assertEquals(4, g.getEdgeTargetNodeID(4));
-		g = new MutableGraph(SampleGraphs.getSmallGraph2(db));
+		g = new MutableGraph(SampleGraphs.getSmallGraph2());
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getEdgeIDs());
 		assertEquals(1, g.getEdgeSourceNodeID(1));
 		assertEquals(2, g.getEdgeTargetNodeID(1));
@@ -81,7 +81,7 @@ public class MutableGraphTest {
 		assertEquals(4, g.getEdgeTargetNodeID(3));
 		assertEquals(2, g.getEdgeSourceNodeID(4));
 		assertEquals(4, g.getEdgeTargetNodeID(4));
-		g = new MutableGraph(SampleGraphs.getMultigraph1(db));
+		g = new MutableGraph(SampleGraphs.getMultigraph1());
 		assertEquals(Sets.newHashSet(1, 2, 3, 4), g.getEdgeIDs());
 		assertEquals(1, g.getEdgeSourceNodeID(1));
 		assertEquals(2, g.getEdgeTargetNodeID(1));

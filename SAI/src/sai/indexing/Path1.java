@@ -72,7 +72,7 @@ public class Path1<G extends Graph> implements IndexGenerator<G> {
                     	i.addNodeFeature(1, n1f);
                     	i.addNodeFeature(2, n2f);
                     	i.addEdgeFeature(1, ef);
-                    	i.addFeature(Graphs.getIndexTag(db));
+                    	i.addFeature(Graphs.INDEX);
                     	indices.add(gf.copy(i));
             }
         }

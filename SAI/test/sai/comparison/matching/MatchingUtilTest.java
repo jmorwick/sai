@@ -33,8 +33,8 @@ public class MatchingUtilTest {
 	public void testBasicNodeMatching() throws AccessDeniedException {
 		DBInterface db = SampleDBs.getEmptyDB(new BasicGraphFactory());
 		db.connect();
-		Graph g1 = SampleGraphs.getSmallGraph1(db);
-		Graph g2 = SampleGraphs.getSmallGraph3(db);
+		Graph g1 = SampleGraphs.getSmallGraph1();
+		Graph g2 = SampleGraphs.getSmallGraph3();
 		BiMap<Integer,Integer> nodeMatch = HashBiMap.create();
 
 		GraphMatching m = MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch);
@@ -86,8 +86,8 @@ public class MatchingUtilTest {
 		DBInterface db = SampleDBs.getEmptyDB(new BasicGraphFactory());
 		db.connect();
 		
-		Graph g1 = SampleGraphs.getSmallGraph3(db);
-		Graph g2 = SampleGraphs.getSmallGraph1(db);
+		Graph g1 = SampleGraphs.getSmallGraph3();
+		Graph g2 = SampleGraphs.getSmallGraph1();
 		BiMap<Integer,Integer> nodeMatch = HashBiMap.create();
 		BiMap<Integer,Integer> edgeMatch = HashBiMap.create();
 		GraphMatching m;
@@ -136,8 +136,8 @@ public class MatchingUtilTest {
 		DBInterface db = SampleDBs.getEmptyDB(new BasicGraphFactory());
 		db.connect();
 		
-		Graph g1 = SampleGraphs.getSmallGraph1(db);
-		Graph g2 = SampleGraphs.getSmallGraph1(db);
+		Graph g1 = SampleGraphs.getSmallGraph1();
+		Graph g2 = SampleGraphs.getSmallGraph1();
 		BiMap<Integer,Integer> nodeMatch = HashBiMap.create();
 		GraphMatching m;
 		FeatureSetCompatibilityChecker fscc = 
@@ -235,10 +235,10 @@ public class MatchingUtilTest {
 						fscc);
 			}};
 		Ordering<Graph> o = 
-				MatchingUtil.createGraphMatchOrdering(SampleGraphs.getSmallGraph1(db), fakeGen, h); 
-		Graph g1 = SampleGraphs.getSmallGraph1(db);
-		Graph g2 = SampleGraphs.getSmallGraph2(db);
-		Graph g3 = SampleGraphs.getSmallGraph4(db);
+				MatchingUtil.createGraphMatchOrdering(SampleGraphs.getSmallGraph1(), fakeGen, h); 
+		Graph g1 = SampleGraphs.getSmallGraph1();
+		Graph g2 = SampleGraphs.getSmallGraph2();
+		Graph g3 = SampleGraphs.getSmallGraph4();
 		List<Graph> ls = o.reverse() //descending instead of ascending order
 				.sortedCopy(Sets.newHashSet(g3, g1, g2));
 		assertTrue(ls.get(0) == g1);
