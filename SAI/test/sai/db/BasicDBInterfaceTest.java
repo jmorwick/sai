@@ -64,7 +64,6 @@ public class BasicDBInterfaceTest {
 		assertEquals(0, db.getDatabaseSize());
 		int gid = db.addGraph(SampleGraphs.getSmallGraph1());
 		assertEquals(1, db.getDatabaseSize());
-		assertEquals(Sets.newHashSet(1, 2, 3, 4), db.getFeatureIDs());
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid, gf));
 		
@@ -75,7 +74,6 @@ public class BasicDBInterfaceTest {
 		db.setDBFile(f);
 		db.connect();
 		assertEquals(1, db.getDatabaseSize());
-		assertEquals(Sets.newHashSet(1, 2, 3, 4), db.getFeatureIDs());
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid, gf));
 	}
@@ -90,13 +88,11 @@ public class BasicDBInterfaceTest {
 		db.connect();
 		db.setDBFile(f);
 		assertEquals(0, db.getDatabaseSize());
-		assertEquals(Sets.newHashSet(), db.getFeatureIDs());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
 		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
 		int gid3 = db.addGraph(SampleGraphs.getSmallGraph1());
 
 		assertEquals(3, db.getDatabaseSize());
-		assertEquals(Sets.newHashSet(1, 2, 3, 4), db.getFeatureIDs());
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
@@ -111,7 +107,6 @@ public class BasicDBInterfaceTest {
 		db.setDBFile(f);
 		db.connect();
 		assertEquals(3, db.getDatabaseSize());
-		assertEquals(Sets.newHashSet(1, 2, 3, 4), db.getFeatureIDs());
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
@@ -139,7 +134,6 @@ public class BasicDBInterfaceTest {
 
 		assertEquals(3, db.getDatabaseSize());
 		assertEquals(2, db.getDatabaseSizeWithoutIndices());
-		assertEquals(Sets.newHashSet(1, 2, 3, 4, 5), db.getFeatureIDs());
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
@@ -167,7 +161,6 @@ public class BasicDBInterfaceTest {
 		db.connect();
 		assertEquals(3, db.getDatabaseSize());
 		assertEquals(2, db.getDatabaseSizeWithoutIndices());
-		assertEquals(Sets.newHashSet(1, 2, 3, 4, 5), db.getFeatureIDs());
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
@@ -213,7 +206,6 @@ public class BasicDBInterfaceTest {
 
 		assertEquals(4, db.getDatabaseSize());
 		assertEquals(2, db.getDatabaseSizeWithoutIndices());
-		assertEquals(Sets.newHashSet(1, 2, 3, 4, 5), db.getFeatureIDs());
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
@@ -246,7 +238,6 @@ public class BasicDBInterfaceTest {
 		db.connect();
 		assertEquals(4, db.getDatabaseSize());
 		assertEquals(2, db.getDatabaseSizeWithoutIndices());
-		assertEquals(Sets.newHashSet(1, 2, 3, 4, 5), db.getFeatureIDs());
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
@@ -387,45 +378,4 @@ public class BasicDBInterfaceTest {
 		assertTrue(!gi.hasNext());
 	}
 	
-	@Test
-	public void testBasicFeatureMethods() throws AccessDeniedException {
-		GraphFactory gf = new BasicGraphFactory();
-		BasicDBInterface db = new BasicDBInterface(gf);
-		db.connect();
-		
-		
-		assertEquals(Sets.newHashSet(), db.getFeatureIDs());
-		assertEquals(Sets.newHashSet(), db.getFeatureNames());
-		assertEquals(Sets.newHashSet(), db.getFeatureIDs("a"));
-		assertNull(db.getFeature(1));
-		
-		Feature f1 = db.getFeature("a", "1");
-		assertEquals(f1, db.getFeature(1));
-		assertEquals(f1, db.getFeature("a", "1"));
-		assertEquals(Sets.newHashSet(1), db.getFeatureIDs());
-		assertEquals(Sets.newHashSet("a"), db.getFeatureNames());
-		assertEquals(Sets.newHashSet(1), db.getFeatureIDs("a"));
-		
-		Feature f2 = db.getFeature("a", "2");
-		assertEquals(f1, db.getFeature(1));
-		assertEquals(f1, db.getFeature("a", "1"));
-		assertEquals(f2, db.getFeature(2));
-		assertEquals(f2, db.getFeature("a", "2"));
-		assertEquals(Sets.newHashSet(1,2), db.getFeatureIDs());
-		assertEquals(Sets.newHashSet("a"), db.getFeatureNames());
-		assertEquals(Sets.newHashSet(1,2), db.getFeatureIDs("a"));
-		
-		Feature f3 = db.getFeature("b", "1");
-		assertEquals(f1, db.getFeature(1));
-		assertEquals(f1, db.getFeature("a", "1"));
-		assertEquals(f2, db.getFeature(2));
-		assertEquals(f2, db.getFeature("a", "2"));
-		assertEquals(f3, db.getFeature(3));
-		assertEquals(f3, db.getFeature("b", "1"));
-		assertEquals(Sets.newHashSet(1,2,3), db.getFeatureIDs());
-		assertEquals(Sets.newHashSet("a","b"), db.getFeatureNames());
-		assertEquals(Sets.newHashSet(1,2), db.getFeatureIDs("a"));
-		assertEquals(Sets.newHashSet(3), db.getFeatureIDs("b"));
-	}
-
 }

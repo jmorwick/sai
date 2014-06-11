@@ -26,26 +26,26 @@ public class MutableGraphTest {
 	public void testGeneralFeatureFunctionality() {
 		MutableGraph g = new MutableGraph();
 		assertEquals(Sets.newHashSet(), g.getFeatures());
-		g.addFeature(db.getFeature("a", "1"));
+		g.addFeature(new Feature("a", "1"));
 		assertEquals(Sets.newHashSet(
-				db.getFeature("a", "1")
+				new Feature("a", "1")
 				), g.getFeatures());
-		g.addFeature(db.getFeature("b", "2"));
+		g.addFeature(new Feature("b", "2"));
 		assertEquals(Sets.newHashSet(
-				db.getFeature("a", "1"),
-				db.getFeature("b", "2")
+				new Feature("a", "1"),
+				new Feature("b", "2")
 				), g.getFeatures());
-		g.addFeature(db.getFeature("b", "3"));
+		g.addFeature(new Feature("b", "3"));
 		assertEquals(Sets.newHashSet(
-				db.getFeature("a", "1"),
-				db.getFeature("b", "2"),
-				db.getFeature("b", "3")
+				new Feature("a", "1"),
+				new Feature("b", "2"),
+				new Feature("b", "3")
 				), g.getFeatures());
-		g.addFeature(db.getFeature("b", "2"));
+		g.addFeature(new Feature("b", "2"));
 		assertEquals(Sets.newHashSet(
-				db.getFeature("a", "1"),
-				db.getFeature("b", "2"),
-				db.getFeature("b", "3")
+				new Feature("a", "1"),
+				new Feature("b", "2"),
+				new Feature("b", "3")
 				), g.getFeatures());
 	}
 

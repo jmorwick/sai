@@ -45,10 +45,10 @@ public class SAIUtilTest {
 	public void testFeatureRetention() throws AccessDeniedException {
 		DBInterface db = SampleDBs.getEmptyDB(null);
 		db.connect();
-		Feature f1 = db.getFeature("a", "1");
-		Feature f2 = db.getFeature("a", "2");
-		Feature f3 = db.getFeature("a", "1");
-		Feature f4 = db.getFeature("b", "1");
+		Feature f1 = new Feature("a", "1");
+		Feature f2 = new Feature("a", "2");
+		Feature f3 = new Feature("a", "1");
+		Feature f4 = new Feature("b", "1");
 
 		assertTrue(SAIUtil.featureWhiteListFilter("a", "b").apply(f1));
 		assertTrue(SAIUtil.featureWhiteListFilter("a", "b").apply(f2));

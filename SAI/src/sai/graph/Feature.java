@@ -2,22 +2,14 @@ package sai.graph;
 
 
 public final class Feature {
-	private int id;
 	private String value;
 	private String name;
 	
 	public Feature(String name, String value) { 
-		this.id = -1;
 		this.name = name;
 		this.value = value;
 	}
 	
-	public Feature(String name, String value, int id) {
-		this(name,value);
-		this.id = id;
-	}
-	
-	public int getID() { return id; }
 	public String getValue() { return value; }
 	public String getName() { return name; }
 	

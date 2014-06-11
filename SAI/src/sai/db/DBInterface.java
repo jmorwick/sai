@@ -25,12 +25,6 @@ public interface DBInterface {
 	public void addIndex(int graphID, int indexID); 
 	public Set<Integer> retrieveIndexIDs(int graphID);
 	public Set<Integer> retrieveIndexedGraphIDs(int indexID);
-
-	public Feature getFeature(int featureID);
-	public Feature getFeature(String featureName, String featureValue);
-	public Set<String> getFeatureNames();
-	public Set<Integer> getFeatureIDs();
-	public Set<Integer> getFeatureIDs(String featureClass);
 	
 	public int getDatabaseSize();
 	public int getDatabaseSizeWithoutIndices();
