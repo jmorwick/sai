@@ -47,7 +47,7 @@ public class Path1<G extends Graph> implements IndexGenerator<G> {
     }
 
     @Override
-    public Set<G> generateIndices(DBInterface db, GraphFactory<G> gf, Graph s) {
+    public Set<G> generateIndices(DBInterface db, GraphFactory<? extends G> gf, Graph s) {
         Set<G> indices = Sets.newHashSet();
         for(int e : s.getEdgeIDs()) {
             Set<Feature> fromNodeFeatures = Sets.newHashSet();

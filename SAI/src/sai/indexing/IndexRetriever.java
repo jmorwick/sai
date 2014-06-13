@@ -23,7 +23,6 @@ import java.util.Set;
 
 import sai.db.DBInterface;
 import sai.graph.Graph;
-import sai.graph.GraphFactory;
 
 /**
  * Implementations of this class are tasked with generating (or retrieving)
@@ -32,8 +31,8 @@ import sai.graph.GraphFactory;
  * @version 0.2.0
  * @author Joseph Kendall-Morwick
  */
-public interface IndexGenerator<G extends Graph> {
+public interface IndexRetriever<DB extends DBInterface> {
 
-    public Set<G> generateIndices(DBInterface db, GraphFactory<? extends G> gf, Graph s);
+    public Set<Integer> retrieveIndices(DB db, Graph q);
 
 }

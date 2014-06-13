@@ -1,5 +1,7 @@
 package sai.graph;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Set;
 
 public class BasicGraphWrapper implements Graph {
@@ -48,6 +50,42 @@ public class BasicGraphWrapper implements Graph {
 	@Override
 	public Set<Feature> getEdgeFeatures(int edgeID) {
 		return graph.getEdgeFeatures(edgeID);
+	}
+	
+	@Override
+	public String toString() {
+		StringWriter sout = new StringWriter();
+		PrintWriter out = new PrintWriter(sout);
+		out.print(getSaiID()+",");
+		out.print(getNodeIDs().size()+",");
+		out.print(getEdgeIDs().size());
+		for(Feature f : getFeatures()) 
+			out.print("," + f);
+		out.print("\n");
+		//print a line for each node
+		for(int n : getNodeIDs()) {
+			out.print(n);
+			for(Feature f : getNodeFeatures(n)) 
+				out.print("," + f);
+			out.print("\n");
+		}
+		//print a line for each edge
+		for(int e : getEdgeIDs()) {
+			out.print(e+","+getEdgeSourceNodeID(e)+","+getEdgeTargetNodeID(e));
+			for(Feature f : getEdgeFeatures(e)) 
+				out.print("," + f);
+			out.print("\n");
+		}
+		return sout.toString();
+	}
+
+	@Override 
+	public int hashCode() { return toString().hashCode(); }
+
+	@Override 
+	public boolean equals(Object o) { 
+		return (o instanceof BasicGraphWrapper) ?
+			 o.toString().equals(toString()) : false;
 	}
 	
 }

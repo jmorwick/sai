@@ -1,7 +1,5 @@
 package sai.db;
 
-import info.kendall_morwick.funcles.Pair;
-
 import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.Map;
@@ -40,6 +38,7 @@ public class BasicDBInterface implements DBInterface {
 	private Multimap<Integer, Integer> indexedBy;
 	private Set<Integer> indexes;
 	private Set<Integer> residentGraphs;
+	private Map<Integer,Graph> hashedGraphs;
 	private Multimap<String, Feature> featuresWithName;
 	private BiMap<Integer,Feature> featureIDs; 
 	private Set<Integer> hiddenGraphs;
@@ -71,6 +70,7 @@ public class BasicDBInterface implements DBInterface {
 		db = Maps.newHashMap();
 		indexes = Sets.newHashSet();
 		residentGraphs = Sets.newHashSet();
+		hashedGraphs = Maps.newHashMap();
 		hiddenGraphs = Sets.newHashSet();
 		indexing = HashMultimap.create();
 		indexedBy = HashMultimap.create();
@@ -150,7 +150,7 @@ public class BasicDBInterface implements DBInterface {
 				
 				//put complete graph in db...
 				db.put(gid, gf.copy(g, gid));
-				
+				hashedGraphs.put(g.hashCode(), g);
 			}
 			
 			//read in indexing details
@@ -252,6 +252,7 @@ public class BasicDBInterface implements DBInterface {
 			}
 		}
 		db = null;
+		hashedGraphs = null;
 		
 		//write indexes to file
 		out.println(indexing.keySet().size());
@@ -275,21 +276,24 @@ public class BasicDBInterface implements DBInterface {
 		return db != null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <G extends Graph> G retrieveGraph(int graphID, GraphFactory<G> f) {
 		if(hiddenGraphs.contains(graphID) || !db.containsKey(graphID))
 			return null;
-
-		if(f == gf && db.get(graphID).getSaiID() == graphID) {
-			// if the same factory that created the graph is supplied, return it
-			return (G) db.get(graphID);
-		}
 		
 		//otherwise, rebuild it...
 		G g =  f.copy(db.get(graphID), graphID);
 		db.put(graphID, g);
 		return g;
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public <G extends Graph> G retrieveGraph(int graphID) {
+		if(hiddenGraphs.contains(graphID) || !db.containsKey(graphID))
+			return null;
+		
+		return (G) db.get(graphID);
 	}
 
 	@Override
@@ -320,6 +324,10 @@ public class BasicDBInterface implements DBInterface {
 	 */
 	@Override
 	public int addGraph(Graph g) {
+		//check to see if the exact graph is already present
+		if(hashedGraphs.containsKey(g.hashCode()))
+			return hashedGraphs.get(g.hashCode()).getSaiID();
+		
 		int newGraphID = nextGraphID;
 		if(g.getFeatures().contains(Graphs.INDEX))
 			indexes.add(newGraphID);
@@ -331,6 +339,7 @@ public class BasicDBInterface implements DBInterface {
 
 	@Override
 	public void deleteGraph(int graphID) {
+		hashedGraphs.remove(db.get(graphID));
 		db.remove(graphID);
 		indexes.remove(graphID);
 		residentGraphs.remove(graphID);
