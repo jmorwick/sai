@@ -210,7 +210,6 @@ public class BasicDBInterface implements DBInterface {
 		residentGraphs = null;
 		indexes = null;
 		indexedBy = null;
-		featureIDs = null;
 
 		
 		//write features to file
@@ -234,20 +233,20 @@ public class BasicDBInterface implements DBInterface {
 			out.print(g.getNodeIDs().size()+",");
 			out.print(g.getEdgeIDs().size());
 			for(Feature f : g.getFeatures()) 
-				out.print("," + featureIDs.get(f));
+				out.print("," + featureIDs.inverse().get(f));
 			out.print("\n");
 			//print a line for each node
 			for(int n : g.getNodeIDs()) {
 				out.print(n);
 				for(Feature f : g.getNodeFeatures(n)) 
-					out.print("," + featureIDs.get(f));
+					out.print("," + featureIDs.inverse().get(f));
 				out.print("\n");
 			}
 			//print a line for each edge
 			for(int e : g.getEdgeIDs()) {
 				out.print(e+","+g.getEdgeSourceNodeID(e)+","+g.getEdgeTargetNodeID(e));
 				for(Feature f : g.getEdgeFeatures(e)) 
-					out.print("," + featureIDs.get(f));
+					out.print("," + featureIDs.inverse().get(f));
 				out.print("\n");
 			}
 		}
@@ -264,6 +263,7 @@ public class BasicDBInterface implements DBInterface {
 			out.println();
 		}
 		indexing = null;
+		featureIDs = null;
 		
 		out.close();
 	}

@@ -29,7 +29,7 @@ import com.google.common.collect.Sets;
 import sai.db.DBInterface;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
-import sai.retrieval.GraphRetriever;
+import sai.retrieval.IndexBasedGraphRetriever;
 
 /**
  * A retriever which ranks graphs by the number of specified indices they are
@@ -38,12 +38,11 @@ import sai.retrieval.GraphRetriever;
  * @version 0.2.0
  * @author Joseph Kendall-Morwick
  */
-public class BasicCountRetriever<G extends Graph> implements GraphRetriever<G> {
+public class BasicCountRetriever implements IndexBasedGraphRetriever {
 
-    private Set<Integer> lastConsideredGraphIDs = Sets.newHashSet();
     private Set<Integer> retrievedGraphIDs = Sets.newHashSet();
 
-    public Iterator<G> retrieve(final DBInterface db, final GraphFactory<G> gf, Set<Integer> indices) {
+    public Iterator<Integer> retrieve(final DBInterface db, Set<Integer> indices) {
         final Multiset<Integer> ranks = HashMultiset.create();
         for (int iid : indices) {
             for (Integer gid : db.retrieveIndexedGraphIDs(iid)) {
@@ -52,24 +51,23 @@ public class BasicCountRetriever<G extends Graph> implements GraphRetriever<G> {
         }
         
         retrievedGraphIDs = Sets.newHashSet();
-        lastConsideredGraphIDs = ranks.elementSet();
 
         for (Integer id : db.getHiddenGraphs()) {
             ranks.remove(id);
         }
 
-        return new Iterator<G>() {
+        return new Iterator<Integer>() {
 
             public boolean hasNext() {
                 return ranks.size() > 0;
             }
 
-            public G next() {
+            public Integer next() {
                 if(!hasNext()) throw new IllegalStateException("Cannot retrieve next id -- there aren't any left");
                 int gid = Multisets.copyHighestCountFirst(ranks).iterator().next();
                 ranks.remove(gid, ranks.count(gid));
                 retrievedGraphIDs.add(gid);
-                return db.retrieveGraph(gid, gf);
+                return gid;
             }
 
             public void remove() {

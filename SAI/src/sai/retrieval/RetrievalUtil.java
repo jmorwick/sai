@@ -13,25 +13,19 @@ import sai.graph.GraphFactory;
 public class RetrievalUtil {
 	
 	
-	public static <G extends Graph> GraphRetriever<G> build2PhasedRetriever(
-			final GraphRetriever<G> phase1,
+	public static <G extends Graph> Iterator<G> twoPhasedRetrieval(
+			final GraphRetriever phase1,
 			DBInterface db, 
     		GraphFactory<G> gf,
     		final Ordering<G> o,
+    		G query,
     		final int window1,
     		final int window2) {
-		return new GraphRetriever<G>() {
-
-			@Override
-			public Iterator<G> retrieve(DBInterface db, GraphFactory<G> gf,
-					Set<Integer> indexIDs) {
 				final Set<G> graphs = Sets.newHashSet();
-				Iterator<G> gi = phase1.retrieve(db, gf, indexIDs);
+				Iterator<Integer> gi = phase1.retrieve(db, query);
 				for(int i=0; i<window1; i++)
-					graphs.add(gi.next());
+					graphs.add(db.retrieveGraph(gi.next(), gf));
 				return o.greatestOf(graphs, window2).iterator();
-			}
 			
-		};
 	}
 }

@@ -32,7 +32,7 @@ import com.google.common.collect.Maps;
 import static info.kendall_morwick.funcles.Tuple.makeTuple;
 import sai.comparison.heuristics.GraphMatchingHeuristic;
 import sai.comparison.matching.MatchingGenerator;
-import sai.retrieval.GraphRetriever;
+import sai.retrieval.IndexBasedGraphRetriever;
 import sai.test.graph.Index;
 import sai.test.graph.Node;
 import sai.db.DBInterface;
@@ -140,7 +140,7 @@ public void indexGraph(Graph g) {
  */
 public class RetrievalInterface<G extends Graph> {
     private final DBInterface db;
-    private final GraphRetriever<G> r;
+    private final IndexBasedGraphRetriever<G> r;
     private final MatchingGenerator gen;
     private final GraphMatchingHeuristic h;
     private int lastRetrievedGraphID = -1;
@@ -148,7 +148,7 @@ public class RetrievalInterface<G extends Graph> {
 
     public RetrievalInterface(DBInterface db,
     		GraphFactory<G> gf,
-            GraphRetriever<G> r,
+            IndexBasedGraphRetriever<G> r,
             MatchingGenerator gen,
             GraphMatchingHeuristic h) {
         this.db = db;
@@ -169,7 +169,7 @@ public class RetrievalInterface<G extends Graph> {
         return lastRetrievedGraphID;
     }
 
-    public GraphRetriever getRetriever() { return r; }
+    public IndexBasedGraphRetriever getRetriever() { return r; }
 
     /** returns an iterator which iterates through graphs similar to the query.
      *

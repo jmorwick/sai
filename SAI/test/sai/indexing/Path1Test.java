@@ -21,7 +21,7 @@ public class Path1Test {
 	public void testPath1() throws AccessDeniedException {
 		GraphFactory gf = new BasicGraphFactory();
 		DBInterface db = SampleDBs.getEmptyDB(gf);
-		IndexGenerator gen = new Path1("test");
+		IndexGenerator gen = new Path1IndexGenerator("test");
 		db.connect();
 		Set<Graph> indices = gen.generateIndices(db, gf, SampleGraphs.getSmallGraph1());
 		

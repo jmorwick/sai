@@ -1,5 +1,6 @@
 package sai.indexing;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -9,18 +10,19 @@ import sai.graph.BasicGraphFactory;
 import sai.graph.BasicGraphWrapper;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
+import sai.retrieval.GraphRetriever;
 
-public class BasicPath1Retriever implements IndexRetriever<BasicDBInterface> {
+public class BasicPath1IndexRetriever implements GraphRetriever<BasicDBInterface> {
 
-	private IndexGenerator<Graph> gen = new Path1<Graph>();
+	private IndexGenerator<Graph> gen = new Path1IndexGenerator<Graph>();
 	private GraphFactory<BasicGraphWrapper> gf = new BasicGraphFactory();
 	
 	@Override
-	public Set<Integer> retrieveIndices(BasicDBInterface db, Graph q) {
+	public Iterator<Integer> retrieve(BasicDBInterface db, Graph q) {
 		Set<Integer> indexes = Sets.newHashSet();
 		for(Graph i : gen.generateIndices(db, gf, q))
 			indexes.add(db.addGraph(i));
-		return indexes;
+		return indexes.iterator();
 	}
 
 }

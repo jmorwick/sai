@@ -36,7 +36,7 @@ import sai.graph.jgrapht.Feature;
 import sai.graph.jgrapht.Graph;
 import sai.graph.jgrapht.Node;
 import sai.indexing.Index;
-import sai.indexing.Path1;
+import sai.indexing.Path1IndexGenerator;
 import sai.test.indexing.IndexRetriever;
 
 
@@ -48,14 +48,14 @@ import sai.test.indexing.IndexRetriever;
  * @author Joseph Kendall-Morwick
  */
 public class Path1Retriever extends IndexRetriever {
-    private final Path1 gen;
+    private final Path1IndexGenerator gen;
 
 
 
     public Path1Retriever(MySQLDBInterface db,
             Class<? extends Feature> ... featureTypes) {
         super(db);
-        gen = new Path1(db, featureTypes);
+        gen = new Path1IndexGenerator(db, featureTypes);
     }
 
 

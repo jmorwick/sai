@@ -32,7 +32,7 @@ import sai.graph.jgrapht.Feature;
 import sai.graph.jgrapht.Graph;
 import sai.indexing.Index;
 import sai.indexing.IndexGenerator;
-import sai.indexing.Path1;
+import sai.indexing.Path1IndexGenerator;
 import sai.test.indexing.IndexRetriever;
 
 /**
@@ -46,12 +46,12 @@ import sai.test.indexing.IndexRetriever;
 public class Path1Lookup implements IndexGenerator {
     private IndexRetriever retriever;
     private Function<T2<Graph, Graph>,BinaryRelation<Graph>> compFactory;
-    private final Path1 gen;
+    private final Path1IndexGenerator gen;
 
 
     public Path1Lookup(String ... featureTypes
             ) {
-        gen = new Path1(featureTypes);
+        gen = new Path1IndexGenerator(featureTypes);
         retriever = new Path1Retriever(db, featureTypes);
     }
     

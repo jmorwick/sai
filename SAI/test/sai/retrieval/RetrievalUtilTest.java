@@ -29,38 +29,38 @@ public class RetrievalUtilTest {
 	public void testBasicCountRetriever() throws AccessDeniedException {
 		GraphFactory gf = new BasicGraphFactory();
 		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices(gf);
-		GraphRetriever r = new BasicCountRetriever();
-		Iterator<Graph> i = r.retrieve(db, gf, Sets.newHashSet(5, 6, 7, 9));
+		IndexBasedGraphRetriever r = new BasicCountRetriever();
+		Iterator<Integer> i = r.retrieve(db, Sets.newHashSet(5, 6, 7, 9));
 		assertTrue(i.hasNext());
-		assertEquals(1, i.next().getSaiID());
+		assertEquals(1, (int)i.next());
 		assertTrue(i.hasNext());
-		assertEquals(2, i.next().getSaiID());
+		assertEquals(2, (int)i.next());
 		assertTrue(i.hasNext());
-		assertEquals(4, i.next().getSaiID());
+		assertEquals(4, (int)i.next());
 		assertTrue(i.hasNext());
-		assertEquals(3, i.next().getSaiID());
+		assertEquals(3, (int)i.next());
 		assertTrue(!i.hasNext());
 		
-		i = r.retrieve(db, gf, Sets.newHashSet(5, 6, 7, 8));
+		i = r.retrieve(db, Sets.newHashSet(5, 6, 7, 8));
 		assertTrue(i.hasNext());
-		assertEquals(2, i.next().getSaiID());
+		assertEquals(2, (int)i.next());
 		assertTrue(i.hasNext());
-		assertEquals(1, i.next().getSaiID());
+		assertEquals(1, (int)i.next());
 		assertTrue(i.hasNext());
-		assertEquals(4, i.next().getSaiID());
+		assertEquals(4, (int)i.next());
 		assertTrue(i.hasNext());
-		assertEquals(3, i.next().getSaiID());
+		assertEquals(3, (int)i.next());
 		assertTrue(!i.hasNext());
 		
-		i = r.retrieve(db, gf, Sets.newHashSet(5, 6, 7));
+		i = r.retrieve(db, Sets.newHashSet(5, 6, 7));
 		assertTrue(i.hasNext());
-		assertTrue(Sets.newHashSet(1, 2).contains(i.next().getSaiID()));
+		assertTrue(Sets.newHashSet(1, 2).contains((int)i.next()));
 		assertTrue(i.hasNext());
-		assertTrue(Sets.newHashSet(1, 2).contains(i.next().getSaiID()));
+		assertTrue(Sets.newHashSet(1, 2).contains((int)i.next()));
 		assertTrue(i.hasNext());
-		assertEquals(4, i.next().getSaiID());
+		assertEquals(4, (int)i.next());
 		assertTrue(i.hasNext());
-		assertEquals(3, i.next().getSaiID());
+		assertEquals(3, (int)i.next());
 		assertTrue(!i.hasNext());
 		
 	}
@@ -110,7 +110,7 @@ public class RetrievalUtilTest {
 		fail("Not yet implemented");
 	}
 	
-	//TODO: create an index retriever interface an integrate in to the 2-phase retriever framework
-	//TODO: test this with a basic implementation that looks up 
+	//TODO: create an index retriever interface and integrate in to the 2-phase retriever framework
+	//TODO: create a test for the basic lookup index retriever
 
 }

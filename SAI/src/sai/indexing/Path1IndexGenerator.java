@@ -38,11 +38,11 @@ import sai.graph.MutableGraph;
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
-public class Path1<G extends Graph> implements IndexGenerator<G> {
+public class Path1IndexGenerator<G extends Graph> implements IndexGenerator<G> {
 
     private final String[] featureNames;
 
-    public Path1(String ... featureTypes) {
+    public Path1IndexGenerator(String ... featureTypes) {
         this.featureNames = featureTypes;
     }
 

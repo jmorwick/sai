@@ -23,7 +23,7 @@ import java.util.Iterator;
 
 import sai.db.DBInterface;
 import sai.graph.Graph;
-import sai.indexing.Path1;
+import sai.indexing.Path1IndexGenerator;
 import sai.indexing.retrievers.path.Path1Lookup;
 import static org.junit.Assert.*;
 
@@ -63,7 +63,7 @@ public class DBInterfaceTest {
       g1.saveToDatabase();
   }
   public static void loadBasicDiverseDB(MySQLDBInterface db) {
-      db.addIndexer(new Path1(db, Feature.class));
+      db.addIndexer(new Path1IndexGenerator(db, Feature.class));
       db.initializeDatabase();
 
       Graph g1 = getSmallGraph1(db);
