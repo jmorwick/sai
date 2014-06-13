@@ -2,7 +2,12 @@ package sai.retrieval;
 
 import static org.junit.Assert.*;
 
+import java.nio.file.AccessDeniedException;
+import java.util.Iterator;
+
 import org.junit.Test;
+
+import com.google.common.collect.Sets;
 
 import static info.kendall_morwick.funcles.Funcles.apply;
 import sai.comparison.compatibility.CompatibilityUtil;
@@ -10,19 +15,54 @@ import sai.comparison.heuristics.Heuristics;
 import sai.comparison.matching.GraphMatching;
 import sai.comparison.matching.MatchingGenerator;
 import sai.comparison.matching.MatchingUtil;
+import sai.db.BasicDBInterface;
 import sai.db.DBInterface;
 import sai.db.SampleDBs;
 import sai.graph.BasicGraphFactory;
 import sai.graph.Graph;
+import sai.graph.GraphFactory;
 import sai.graph.SampleGraphs;
 
 public class RetrievalUtilTest {
 
 	@Test
-	public void testBasicCountRetriever() {
-		//TODO: create a sample DB with some indexing in it
-		//TODO: create a few queries and check w/ sampling DB and basic count retriever for accuracy
-		fail("Not yet implemented");
+	public void testBasicCountRetriever() throws AccessDeniedException {
+		GraphFactory gf = new BasicGraphFactory();
+		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices(gf);
+		GraphRetriever r = new BasicCountRetriever();
+		Iterator<Graph> i = r.retrieve(db, gf, Sets.newHashSet(5, 6, 7, 9));
+		assertTrue(i.hasNext());
+		assertEquals(1, i.next().getSaiID());
+		assertTrue(i.hasNext());
+		assertEquals(2, i.next().getSaiID());
+		assertTrue(i.hasNext());
+		assertEquals(4, i.next().getSaiID());
+		assertTrue(i.hasNext());
+		assertEquals(3, i.next().getSaiID());
+		assertTrue(!i.hasNext());
+		
+		i = r.retrieve(db, gf, Sets.newHashSet(5, 6, 7, 8));
+		assertTrue(i.hasNext());
+		assertEquals(2, i.next().getSaiID());
+		assertTrue(i.hasNext());
+		assertEquals(1, i.next().getSaiID());
+		assertTrue(i.hasNext());
+		assertEquals(4, i.next().getSaiID());
+		assertTrue(i.hasNext());
+		assertEquals(3, i.next().getSaiID());
+		assertTrue(!i.hasNext());
+		
+		i = r.retrieve(db, gf, Sets.newHashSet(5, 6, 7));
+		assertTrue(i.hasNext());
+		assertTrue(Sets.newHashSet(1, 2).contains(i.next().getSaiID()));
+		assertTrue(i.hasNext());
+		assertTrue(Sets.newHashSet(1, 2).contains(i.next().getSaiID()));
+		assertTrue(i.hasNext());
+		assertEquals(4, i.next().getSaiID());
+		assertTrue(i.hasNext());
+		assertEquals(3, i.next().getSaiID());
+		assertTrue(!i.hasNext());
+		
 	}
 
 	private void selfTest(Graph g, MatchingGenerator gen) {

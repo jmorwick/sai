@@ -151,25 +151,14 @@ public class SampleGraphs {
 	      return g;
 	}
 
-    public static Graph getBDIndex() {
+    public static Graph getOneEdgeIndex(String n1Val, String n2Val, String edgeVal) {
       MutableGraph g = new MutableGraph();
+      g.addNode(1);
+      g.addNodeFeature(1, new Feature("test", n1Val));
       g.addNode(2);
-      g.addNodeFeature(2, new Feature("test", "b"));
-      g.addNode(4);
-      g.addNodeFeature(4, new Feature("test", "d"));
-      g.addEdge(4, 2, 4);
-      g.addEdgeFeature(4, new Feature("test", "a"));
-      return g;
-    }
-
-    public static Graph getCDIndex() {
-      MutableGraph g = new MutableGraph();
-      g.addNode(3);
-      g.addNodeFeature(3, new Feature("test", "c"));
-      g.addNode(4);
-      g.addNodeFeature(4, new Feature("test", "d"));
-      g.addEdge(3, 3, 4);
-      g.addEdgeFeature(3, new Feature("test", "a"));
+      g.addNodeFeature(2, new Feature("test", n2Val));
+      g.addEdge(1, 1, 2);
+      g.addEdgeFeature(1, new Feature("test", edgeVal));
       return g;
     }
 

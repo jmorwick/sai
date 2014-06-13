@@ -24,9 +24,9 @@ public class RetrievalUtil {
 
 			@Override
 			public Iterator<G> retrieve(DBInterface db, GraphFactory<G> gf,
-					Set<Graph> indices) {
+					Set<Integer> indexIDs) {
 				final Set<G> graphs = Sets.newHashSet();
-				Iterator<G> gi = phase1.retrieve(db, gf, indices);
+				Iterator<G> gi = phase1.retrieve(db, gf, indexIDs);
 				for(int i=0; i<window1; i++)
 					graphs.add(gi.next());
 				return o.greatestOf(graphs, window2).iterator();

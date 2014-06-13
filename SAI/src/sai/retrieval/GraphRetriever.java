@@ -36,5 +36,5 @@ import sai.graph.GraphFactory;
 public abstract interface GraphRetriever<G extends Graph> {
 
     public abstract Iterator<G> retrieve(DBInterface db, 
-    		GraphFactory<G> gf, Set<Graph> indices);
+    		GraphFactory<G> gf, Set<Integer> indices);
 }

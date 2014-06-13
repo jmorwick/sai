@@ -43,10 +43,10 @@ public class BasicCountRetriever<G extends Graph> implements GraphRetriever<G> {
     private Set<Integer> lastConsideredGraphIDs = Sets.newHashSet();
     private Set<Integer> retrievedGraphIDs = Sets.newHashSet();
 
-    public Iterator<G> retrieve(final DBInterface db, final GraphFactory<G> gf, Set<Graph> indices) {
+    public Iterator<G> retrieve(final DBInterface db, final GraphFactory<G> gf, Set<Integer> indices) {
         final Multiset<Integer> ranks = HashMultiset.create();
-        for (Graph i : indices) {
-            for (Integer gid : db.retrieveIndexedGraphIDs(i.getSaiID())) {
+        for (int iid : indices) {
+            for (Integer gid : db.retrieveIndexedGraphIDs(iid)) {
                 ranks.add(gid);
             }
         }
@@ -67,7 +67,7 @@ public class BasicCountRetriever<G extends Graph> implements GraphRetriever<G> {
             public G next() {
                 if(!hasNext()) throw new IllegalStateException("Cannot retrieve next id -- there aren't any left");
                 int gid = Multisets.copyHighestCountFirst(ranks).iterator().next();
-                ranks.remove(gid);
+                ranks.remove(gid, ranks.count(gid));
                 retrievedGraphIDs.add(gid);
                 return db.retrieveGraph(gid, gf);
             }
@@ -76,6 +76,4 @@ public class BasicCountRetriever<G extends Graph> implements GraphRetriever<G> {
             }
         };
     }
-
-    
 }
