@@ -22,6 +22,7 @@ public class RetrievalUtil {
 			@Override
 			public Iterator<Integer> retrieve(DBInterface db, Graph q) {
 				Set<Integer> indices = Sets.newHashSet(indexRetriever.retrieve(db, q));
+				System.out.println(indices);
 				return ibRetriever.retrieve(db, indices);
 			}
 		};

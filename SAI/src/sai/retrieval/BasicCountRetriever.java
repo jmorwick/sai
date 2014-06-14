@@ -55,7 +55,6 @@ public class BasicCountRetriever implements IndexBasedGraphRetriever {
         for (Integer id : db.getHiddenGraphs()) {
             ranks.remove(id);
         }
-
         return new Iterator<Integer>() {
 
             public boolean hasNext() {

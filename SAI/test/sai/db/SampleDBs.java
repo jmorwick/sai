@@ -37,7 +37,7 @@ public class SampleDBs {
 		int bd = db.addGraph(SampleGraphs.getOneEdgeIndex("b", "d", "a"));
 		int cd = db.addGraph(SampleGraphs.getOneEdgeIndex("c", "d", "a"));
 
-		db.addIndex(g1, ab); //5
+		db.addIndex(g1, ab); //5  
 		db.addIndex(g1, bc); //7
 		db.addIndex(g1, cd); //9
 		db.addIndex(g1, ad); //6

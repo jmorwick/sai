@@ -159,6 +159,8 @@ public class SampleGraphs {
       g.addNodeFeature(2, new Feature("test", n2Val));
       g.addEdge(1, 1, 2);
       g.addEdgeFeature(1, new Feature("test", edgeVal));
+      
+      g.addFeature(Graphs.INDEX);
       return g;
     }
 
