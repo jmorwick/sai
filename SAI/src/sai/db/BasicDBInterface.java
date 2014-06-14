@@ -187,7 +187,7 @@ public class BasicDBInterface implements DBInterface {
 					null, "formatting error when reading file");
 		}
 	}
-
+	
 	/** saves database details completely to the db file 
 	 * provided to the constructor.
 	 * @throws FileNotFoundException 
@@ -218,7 +218,7 @@ public class BasicDBInterface implements DBInterface {
 		for(String name : featuresWithName.keySet()) {
 			out.print(name);
 			for(Feature f : featuresWithName.get(name)) {
-				out.print("," + featureIDs.inverse().get(f));
+				out.print("," + lookupID(f));
 				out.print("," + f.getValue());
 			}
 			out.print("\n");
@@ -234,20 +234,20 @@ public class BasicDBInterface implements DBInterface {
 			out.print(g.getNodeIDs().size()+",");
 			out.print(g.getEdgeIDs().size());
 			for(Feature f : g.getFeatures()) 
-				out.print("," + featureIDs.inverse().get(f));
+				out.print("," + lookupID(f));
 			out.print("\n");
 			//print a line for each node
 			for(int n : g.getNodeIDs()) {
 				out.print(n);
 				for(Feature f : g.getNodeFeatures(n)) 
-					out.print("," + featureIDs.inverse().get(f));
+					out.print("," + lookupID(f));
 				out.print("\n");
 			}
 			//print a line for each edge
 			for(int e : g.getEdgeIDs()) {
 				out.print(e+","+g.getEdgeSourceNodeID(e)+","+g.getEdgeTargetNodeID(e));
 				for(Feature f : g.getEdgeFeatures(e)) 
-					out.print("," + featureIDs.inverse().get(f));
+					out.print("," + lookupID(f));
 				out.print("\n");
 			}
 		}
@@ -267,6 +267,13 @@ public class BasicDBInterface implements DBInterface {
 		featureIDs = null;
 		
 		out.close();
+	}
+	
+	private int lookupID(Feature f) {
+		if(featureIDs.values().contains(f))
+			return featureIDs.inverse().get(f);
+
+		throw new IllegalArgumentException();
 	}
 
 	/** this db is "connected" when a db file has been loaded and is available 
@@ -339,7 +346,26 @@ public class BasicDBInterface implements DBInterface {
 		nextGraphID++;
 		db.put(newGraphID, g);
 		hashedGraphs.put(g.hashCode(), newGraphID);
+		
+		//add all features
+		for(Feature f : g.getFeatures())
+			addFeature(f);
+		for(int nid : g.getNodeIDs())
+			for(Feature f : g.getNodeFeatures(nid))
+				addFeature(f);
+		for(int eid : g.getEdgeIDs())
+			for(Feature f : g.getEdgeFeatures(eid))
+				addFeature(f);
+		
 		return newGraphID;
+	}
+	
+	private void addFeature(Feature f) {
+		if(!featureIDs.containsValue(f)) {
+			featureIDs.put(nextFeatureID,  f);
+			featuresWithName.put(f.getName(), f);
+			nextFeatureID++;
+		}
 	}
 
 	@Override

@@ -122,7 +122,7 @@ public class BasicDBInterfaceTest {
 				db.retrieveGraph(gid1, gf));
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
 				db.retrieveGraph(gid2, gf));
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph3(), 
 				db.retrieveGraph(gid3, gf));
 	}
 
@@ -255,10 +255,12 @@ public class BasicDBInterfaceTest {
 				db.retrieveGraph(gid1, gf));
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
 				db.retrieveGraph(gid2, gf));
-		rg = new MutableGraph(SampleGraphs.getSmallGraph1());
+		rg = new MutableGraph(SampleGraphs.getOneEdgeIndex("a", "b", "a"));
 		rg.addFeature(Graphs.INDEX);
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid3, gf));
+		rg = new MutableGraph(SampleGraphs.getOneEdgeIndex("b", "c", "a"));
+		rg.addFeature(Graphs.INDEX);
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid4, gf));
 		assertEquals(Sets.newHashSet(), db.retrieveIndexedGraphIDs(gid1));
