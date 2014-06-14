@@ -22,6 +22,7 @@ import sai.graph.BasicGraphFactory;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
 import sai.graph.SampleGraphs;
+import sai.indexing.BasicPath1IndexRetriever;
 
 public class RetrievalUtilTest {
 
@@ -105,12 +106,52 @@ public class RetrievalUtilTest {
 	}
 	
 	@Test
+	public void testBuildPhase1Retriever() throws AccessDeniedException {
+		GraphFactory gf = new BasicGraphFactory();
+		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices(gf);
+		GraphRetriever r = RetrievalUtil.createPhase1Retriever(
+				new BasicPath1IndexRetriever("test"), 
+				new BasicCountRetriever());
+		Iterator<Integer> i = r.retrieve(db, SampleGraphs.getSmallGraph1());
+		assertTrue(i.hasNext());
+		assertEquals(1, (int)i.next());
+		assertTrue(i.hasNext());
+		assertEquals(2, (int)i.next());
+		assertTrue(i.hasNext());
+		assertEquals(4, (int)i.next());
+		assertTrue(i.hasNext());
+		assertEquals(3, (int)i.next());
+		assertTrue(!i.hasNext());
+		
+		i = r.retrieve(db, SampleGraphs.getSmallGraph2());
+		assertTrue(i.hasNext());
+		assertEquals(2, (int)i.next());
+		assertTrue(i.hasNext());
+		assertEquals(1, (int)i.next());
+		assertTrue(i.hasNext());
+		assertEquals(4, (int)i.next());
+		assertTrue(i.hasNext());
+		assertEquals(3, (int)i.next());
+		assertTrue(!i.hasNext());
+		
+		i = r.retrieve(db, SampleGraphs.getSmallGraph4());
+		assertTrue(i.hasNext());
+		assertTrue(Sets.newHashSet(1, 2, 4).contains((int)i.next()));
+		assertTrue(i.hasNext());
+		assertTrue(Sets.newHashSet(1, 2, 4).contains((int)i.next()));
+		assertTrue(i.hasNext());
+		assertTrue(Sets.newHashSet(1, 2, 4).contains((int)i.next()));
+		assertTrue(i.hasNext());
+		assertEquals(3, (int)i.next());
+		assertTrue(!i.hasNext());
+	}
+	
+	@Test
 	public void testBuild2PhasedRetriever() {
 		//TODO: use test DB from first test w/ mistakes in indexing and see that complete checker corrects them
 		fail("Not yet implemented");
 	}
 	
-	//TODO: create an index retriever interface and integrate in to the 2-phase retriever framework
 	//TODO: create a test for the basic lookup index retriever
 
 }

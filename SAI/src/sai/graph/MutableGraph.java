@@ -11,7 +11,6 @@ import com.google.common.collect.Sets;
 
 public class MutableGraph implements Graph {
 	
-	private int id;
 	private Set<Feature> features = Sets.newHashSet();
 	private Set<Integer> nodes = Sets.newHashSet();
 	private Set<Integer> edges = Sets.newHashSet();
@@ -47,12 +46,6 @@ public class MutableGraph implements Graph {
 		}
 	}
 	
-	public void setID(int id) { this.id = id; }
-	
-	@Override
-	public int getSaiID() {
-		return id;
-	}
 	@Override
 	public Set<Integer> getEdgeIDs() {
 		return Sets.newHashSet(edges);

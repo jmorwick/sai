@@ -3,7 +3,6 @@ package sai.graph;
 import java.util.Set;
 
 public interface Graph {
-	public int getSaiID();
 	public Set<Integer> getEdgeIDs();
 	public Set<Integer> getNodeIDs();
 	public Set<Feature> getFeatures();

@@ -11,7 +11,6 @@ public class BasicGraphFactory implements GraphFactory<BasicGraphWrapper> {
 	@Override
 	public BasicGraphWrapper copy(Graph g, int id) {
 		MutableGraph mg = new MutableGraph(g);
-		mg.setID(id);
 		return new BasicGraphWrapper(mg);
 	}
 

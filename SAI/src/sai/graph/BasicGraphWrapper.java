@@ -13,11 +13,6 @@ public class BasicGraphWrapper implements Graph {
 	}
 
 	@Override
-	public int getSaiID() {
-		return graph.getSaiID();
-	}
-
-	@Override
 	public Set<Integer> getEdgeIDs() {
 		return graph.getEdgeIDs();
 	}
@@ -56,7 +51,6 @@ public class BasicGraphWrapper implements Graph {
 	public String toString() {
 		StringWriter sout = new StringWriter();
 		PrintWriter out = new PrintWriter(sout);
-		out.print(getSaiID()+",");
 		out.print(getNodeIDs().size()+",");
 		out.print(getEdgeIDs().size());
 		for(Feature f : getFeatures()) 

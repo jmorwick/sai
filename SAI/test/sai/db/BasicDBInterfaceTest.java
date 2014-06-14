@@ -52,6 +52,20 @@ public class BasicDBInterfaceTest {
 		assertEquals(0, db.getDatabaseSize());
 	}
 	
+
+
+	@Test
+	public void testRepeatGraphs() throws AccessDeniedException {
+		BasicDBInterface db = new BasicDBInterface(new BasicGraphFactory());
+		db.connect();
+		System.out.println("#@@@@@@");
+		int g1 = db.addGraph(SampleGraphs.getSmallGraph1());
+		System.out.println("#@@@@@@");
+		assertEquals(g1, db.addGraph(SampleGraphs.getSmallGraph1()));
+		System.out.println("#@@@@@@");
+		assertEquals(1, db.getDatabaseSize());
+	}
+	
 	@Test
 	public void testSavingToAndLoadingFromFileOneGraph() throws AccessDeniedException {
 		GraphFactory gf = new BasicGraphFactory();

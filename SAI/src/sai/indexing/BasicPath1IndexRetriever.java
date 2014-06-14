@@ -14,8 +14,12 @@ import sai.retrieval.GraphRetriever;
 
 public class BasicPath1IndexRetriever implements GraphRetriever<BasicDBInterface> {
 
-	private IndexGenerator<Graph> gen = new Path1IndexGenerator<Graph>();
+	private IndexGenerator<Graph> gen;
 	private GraphFactory<BasicGraphWrapper> gf = new BasicGraphFactory();
+	
+	public BasicPath1IndexRetriever(String ... featureNames) {
+		gen = new Path1IndexGenerator<Graph>(featureNames);
+	}
 	
 	@Override
 	public Iterator<Integer> retrieve(BasicDBInterface db, Graph q) {

@@ -22,6 +22,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import sai.graph.BasicGraphFactory;
+import sai.graph.BasicGraphWrapper;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
@@ -38,7 +39,7 @@ public class BasicDBInterface implements DBInterface {
 	private Multimap<Integer, Integer> indexedBy;
 	private Set<Integer> indexes;
 	private Set<Integer> residentGraphs;
-	private Map<Integer,Graph> hashedGraphs;
+	private Map<Integer,Integer> hashedGraphs;
 	private Multimap<String, Feature> featuresWithName;
 	private BiMap<Integer,Feature> featureIDs; 
 	private Set<Integer> hiddenGraphs;
@@ -150,7 +151,7 @@ public class BasicDBInterface implements DBInterface {
 				
 				//put complete graph in db...
 				db.put(gid, gf.copy(g, gid));
-				hashedGraphs.put(g.hashCode(), g);
+				hashedGraphs.put(g.hashCode(), gid);
 			}
 			
 			//read in indexing details
@@ -229,7 +230,7 @@ public class BasicDBInterface implements DBInterface {
 		for(int gid : db.keySet()) {
 			Graph g = retrieveGraph(gid, new BasicGraphFactory());
 			//print out general graph info on one line
-			out.print(g.getSaiID()+",");
+			out.print(gid+",");
 			out.print(g.getNodeIDs().size()+",");
 			out.print(g.getEdgeIDs().size());
 			for(Feature f : g.getFeatures()) 
@@ -324,9 +325,12 @@ public class BasicDBInterface implements DBInterface {
 	 */
 	@Override
 	public int addGraph(Graph g) {
+		if(!(g instanceof BasicGraphWrapper))
+			g = new BasicGraphWrapper(g);
+		
 		//check to see if the exact graph is already present
 		if(hashedGraphs.containsKey(g.hashCode()))
-			return hashedGraphs.get(g.hashCode()).getSaiID();
+			return hashedGraphs.get(g.hashCode());
 		
 		int newGraphID = nextGraphID;
 		if(g.getFeatures().contains(Graphs.INDEX))
@@ -334,6 +338,7 @@ public class BasicDBInterface implements DBInterface {
 		else residentGraphs.add(newGraphID);
 		nextGraphID++;
 		db.put(newGraphID, g);
+		hashedGraphs.put(g.hashCode(), newGraphID);
 		return newGraphID;
 	}
 
