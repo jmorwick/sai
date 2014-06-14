@@ -58,11 +58,8 @@ public class BasicDBInterfaceTest {
 	public void testRepeatGraphs() throws AccessDeniedException {
 		BasicDBInterface db = new BasicDBInterface(new BasicGraphFactory());
 		db.connect();
-		System.out.println("#@@@@@@");
 		int g1 = db.addGraph(SampleGraphs.getSmallGraph1());
-		System.out.println("#@@@@@@");
 		assertEquals(g1, db.addGraph(SampleGraphs.getSmallGraph1()));
-		System.out.println("#@@@@@@");
 		assertEquals(1, db.getDatabaseSize());
 	}
 	
@@ -104,14 +101,14 @@ public class BasicDBInterfaceTest {
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
 		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
-		int gid3 = db.addGraph(SampleGraphs.getSmallGraph1());
+		int gid3 = db.addGraph(SampleGraphs.getSmallGraph3());
 
 		assertEquals(3, db.getDatabaseSize());
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
 				db.retrieveGraph(gid2, gf));
-		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
+		assertGraphsAreIdentical(SampleGraphs.getSmallGraph3(), 
 				db.retrieveGraph(gid3, gf));
 		
 		db.disconnect();
@@ -208,11 +205,11 @@ public class BasicDBInterfaceTest {
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
 		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
-		MutableGraph i1 = new MutableGraph(SampleGraphs.getSmallGraph1());
+		MutableGraph i1 = new MutableGraph(SampleGraphs.getOneEdgeIndex("a", "b", "a"));
 		i1.addFeature(Graphs.INDEX);
 		int gid3 = db.addGraph(i1);
 		db.addIndex(gid1, gid3);
-		MutableGraph i2 = new MutableGraph(SampleGraphs.getSmallGraph1());
+		MutableGraph i2 = new MutableGraph(SampleGraphs.getOneEdgeIndex("b", "c", "a"));
 		i2.addFeature(Graphs.INDEX);
 		int gid4 = db.addGraph(i2);
 		db.addIndex(gid1, gid4);
@@ -224,10 +221,12 @@ public class BasicDBInterfaceTest {
 				db.retrieveGraph(gid1, gf));
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
 				db.retrieveGraph(gid2, gf));
-		MutableGraph rg = new MutableGraph(SampleGraphs.getSmallGraph1());
+		MutableGraph rg = new MutableGraph(SampleGraphs.getOneEdgeIndex("a", "b", "a"));
 		rg.addFeature(Graphs.INDEX);
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid3, gf));
+		rg = new MutableGraph(SampleGraphs.getOneEdgeIndex("b", "c", "a"));
+		rg.addFeature(Graphs.INDEX);
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid4, gf));
 		assertEquals(Sets.newHashSet(), db.retrieveIndexedGraphIDs(gid1));
@@ -280,8 +279,8 @@ public class BasicDBInterfaceTest {
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
 		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
-		int gid3 = db.addGraph(SampleGraphs.getSmallGraph2());
-		int gid4 = db.addGraph(SampleGraphs.getSmallGraph1());
+		int gid3 = db.addGraph(SampleGraphs.getSmallGraph3());
+		int gid4 = db.addGraph(SampleGraphs.getSmallGraph4());
 		
 		Set<Integer> observed = Sets.newHashSet();
 		Set<Integer> total = Sets.newHashSet(gid1, gid2, gid3, gid4);
@@ -309,22 +308,18 @@ public class BasicDBInterfaceTest {
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
 		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
-		MutableGraph i1 = new MutableGraph(SampleGraphs.getSmallGraph1());
+		MutableGraph i1 = new MutableGraph(SampleGraphs.getOneEdgeIndex("a", "b", "a"));
 		i1.addFeature(Graphs.INDEX);
 		int gid3 = db.addGraph(i1);
 		db.addIndex(gid1, gid3);
-		MutableGraph i2 = new MutableGraph(SampleGraphs.getSmallGraph1());
+		MutableGraph i2 = new MutableGraph(SampleGraphs.getOneEdgeIndex("a", "b", "a"));
 		i2.addFeature(Graphs.INDEX);
 		int gid4 = db.addGraph(i2);
 		db.addIndex(gid1, gid4);
 		db.addIndex(gid3, gid4);
 		
-		Iterator<Integer> ii = db.getIndexIDIterator();
-		assertTrue(ii.hasNext());
-		assertEquals(gid3, (int)ii.next());
-		assertTrue(ii.hasNext());
-		assertEquals(gid4, (int)ii.next());
-		assertTrue(!ii.hasNext());
+		Set<Integer> observed = Sets.newHashSet(db.getIndexIDIterator());
+		assertEquals(Sets.newHashSet(gid3, gid4), observed);
 	}
 
 	@Test
@@ -335,36 +330,32 @@ public class BasicDBInterfaceTest {
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
 		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
-		int gid3 = db.addGraph(SampleGraphs.getSmallGraph2());
-		int gid4 = db.addGraph(SampleGraphs.getSmallGraph1());
+		int gid3 = db.addGraph(SampleGraphs.getSmallGraph3());
+		int gid4 = db.addGraph(SampleGraphs.getSmallGraph4());
+
+		Set<Integer> observed = Sets.newHashSet(db.getGraphIDIterator());
+		Set<Integer> expected = Sets.newHashSet(gid1, gid2, gid3, gid4);
+		assertEquals(expected, observed);
 
 		db.hideGraph(gid2);
+		expected = Sets.newHashSet(gid1, gid3, gid4);
+		observed = Sets.newHashSet(db.getGraphIDIterator());
+		assertEquals(expected, observed);
+		
 		db.hideGraph(gid3);
+		expected = Sets.newHashSet(gid1, gid4);
+		observed = Sets.newHashSet(db.getGraphIDIterator());
+		assertEquals(expected, observed);
 		
-		Set<Integer> observed = Sets.newHashSet();
-		Set<Integer> total = Sets.newHashSet(gid1, gid4);
-		Iterator<Integer> gi = db.getGraphIDIterator();
-		assertTrue(gi.hasNext());
-		observed.add(gi.next());
-		assertEquals(2, Sets.union(total, observed).size());
-		assertTrue(gi.hasNext());
-		observed.add(gi.next());
-		assertEquals(2, Sets.union(total, observed).size());
-		assertTrue(!gi.hasNext());
-
 		db.unhideGraph(gid2);
-		db.hideGraph(gid4);
+		expected = Sets.newHashSet(gid1, gid2, gid4);
+		observed = Sets.newHashSet(db.getGraphIDIterator());
+		assertEquals(expected, observed);
 		
-		observed = Sets.newHashSet();
-		total = Sets.newHashSet(gid1, gid2, gid3);
-		gi = db.getGraphIDIterator();
-		assertTrue(gi.hasNext());
-		observed.add(gi.next());
-		assertEquals(3, Sets.union(total, observed).size());
-		assertTrue(gi.hasNext());
-		observed.add(gi.next());
-		assertEquals(3, Sets.union(total, observed).size());
-		assertTrue(!gi.hasNext());
+		db.hideGraph(gid4);
+		expected = Sets.newHashSet(gid1, gid2);
+		observed = Sets.newHashSet(db.getGraphIDIterator());
+		assertEquals(expected, observed);
 	}
 	
 	@Test
@@ -375,9 +366,9 @@ public class BasicDBInterfaceTest {
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
 		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
-		int gid3 = db.addGraph(SampleGraphs.getSmallGraph2());
+		int gid3 = db.addGraph(SampleGraphs.getSmallGraph3());
 		db.deleteGraph(gid3);
-		int gid4 = db.addGraph(SampleGraphs.getSmallGraph1());
+		int gid4 = db.addGraph(SampleGraphs.getSmallGraph4());
 		db.hideGraph(gid2);
 		
 		Set<Integer> observed = Sets.newHashSet();
