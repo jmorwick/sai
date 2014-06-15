@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import sai.SAIUtil;
 import sai.comparison.compatibility.FeatureSetCompatibilityChecker;
 import sai.comparison.heuristics.GraphMatchingHeuristic;
 import sai.graph.Graph;
@@ -42,16 +43,15 @@ public class MatchingUtil {
 
 			@Override
 			public int compare(Graph g1, Graph g2) {
-				GraphMatching gm1 = apply(gen, g1, query);
-				GraphMatching gm2 = apply(gen, g2, query);
-
+				GraphMatching gm1 = apply(gen, query, g1);
+				GraphMatching gm2 = apply(gen, query, g2);
+				
 				//create an integer from the [-1,1] value below for comparisons
 				double result = (1000*(h.apply(gm1) - h.apply(gm2)));
 				if(result < 0) return (int)result - 1;
 				if(result > 0) return (int)result + 1;
 				return 0;
 			}
-
 		};
 	}
 
@@ -307,7 +307,7 @@ public class MatchingUtil {
 		return new MatchingGenerator() {
 
 			@Override
-			public GraphMatching apply(T2<Graph, Graph> args) {
+			public GraphMatching apply(final T2<Graph, Graph> args) {
 				final Graph g1 = args.a1();
 				final Graph g2 = args.a2();
 				final Multimap<Integer,Integer> possibilities = 
@@ -356,8 +356,9 @@ public class MatchingUtil {
 								int mapToNode = ii.next();
 								if(nodeMap.containsValue(mapToNode)) {
 									//don't map two g1 nodes to the same g2 node
-									nodeMap = null;
-									break;
+									//nodeMap = null;
+									//break;
+									continue;
 								}
 								nodeMap.put(nodeIDs[i], mapToNode);
 							}
@@ -379,8 +380,7 @@ public class MatchingUtil {
 					}
 
 				};
-
-				return Funcles.argmaxCollection(h, iteratorToCollection(i));
+				return Funcles.argmaxCollection(h, SAIUtil.iteratorToCollection(i));
 			}
 
 

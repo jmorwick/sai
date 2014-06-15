@@ -136,7 +136,21 @@ public class SampleGraphs {
 	      return g;
 	}
 	
-	
+
+	public static Graph getSmallSymmetricTree() {
+	      MutableGraph g = new MutableGraph();
+	      g.addNode(1);
+	      g.addNodeFeature(1, new Feature("test", "a"));
+	      g.addNode(2);
+	      g.addNodeFeature(2, new Feature("test", "b"));
+	      g.addNode(3);
+	      g.addNodeFeature(3, new Feature("test", "b"));
+	      g.addEdge(1, 1, 2);
+	      g.addEdgeFeature(1, new Feature("test", "a"));
+	      g.addEdge(2, 1, 3);
+	      g.addEdgeFeature(2, new Feature("test", "a"));
+	      return g;
+	}
 
 
 	public static Graph getSmallGraph4() {

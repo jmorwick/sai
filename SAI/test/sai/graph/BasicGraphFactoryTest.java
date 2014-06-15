@@ -23,8 +23,6 @@ public class BasicGraphFactoryTest {
 		g.addNodeFeature(3, new Feature("test", "b"));
 		g.addNodeFeature(4, new Feature("test", "c"));
 		BasicGraphFactory gf = new BasicGraphFactory();
-		System.out.println(SampleGraphs.toString(g));
-		System.out.println(SampleGraphs.toString(gf.copy(g)));
 		assertGraphsAreIdentical(g, gf.copy(g));
 	}
 

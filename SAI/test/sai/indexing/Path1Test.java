@@ -7,6 +7,14 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.google.common.collect.Sets;
+
+import sai.comparison.compatibility.CompatibilityUtil;
+import sai.comparison.heuristics.GraphMatchingHeuristic;
+import sai.comparison.heuristics.Heuristics;
+import sai.comparison.matching.MatchingGenerator;
+import sai.comparison.matching.MatchingUtil;
+import sai.db.BasicDBInterface;
 import sai.db.DBInterface;
 import sai.db.SampleDBs;
 import sai.graph.BasicGraphFactory;
@@ -14,11 +22,14 @@ import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
 import sai.graph.SampleGraphs;
+import sai.retrieval.BasicCountRetriever;
+import sai.retrieval.GraphRetriever;
+import sai.retrieval.RetrievalUtil;
 
 public class Path1Test {
 
 	@Test
-	public void testPath1() throws AccessDeniedException {
+	public void testPath1Generation() throws AccessDeniedException {
 		GraphFactory gf = new BasicGraphFactory();
 		DBInterface db = SampleDBs.getEmptyDB(gf);
 		IndexGenerator gen = new Path1IndexGenerator("test");
@@ -55,6 +66,22 @@ public class Path1Test {
 				fail("unexpected edge: " + n1f + ", " + ef + ", " + n2f);
 			}
 		}
+	}
+	
+
+	@Test
+	public void testPath1Lookup() throws AccessDeniedException {
+		GraphFactory gf = new BasicGraphFactory();
+		GraphRetriever r = new BasicPath1IndexRetriever("test");
+		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices(gf);
+		assertEquals(Sets.newHashSet(5,7,8,9),
+				Sets.newHashSet(r.retrieve(db, SampleGraphs.getSmallGraph1())));
+		assertEquals(Sets.newHashSet(5,6,7,8),
+				Sets.newHashSet(r.retrieve(db, SampleGraphs.getSmallGraph2())));
+		assertEquals(Sets.newHashSet(5),
+				Sets.newHashSet(r.retrieve(db, SampleGraphs.getSmallGraph3())));
+		assertEquals(Sets.newHashSet(5,6),
+				Sets.newHashSet(r.retrieve(db, SampleGraphs.getSmallGraph4())));
 	}
 
 }
