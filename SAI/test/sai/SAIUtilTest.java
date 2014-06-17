@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import sai.db.DBInterface;
 import sai.db.SampleDBs;
-import sai.graph.BasicGraphFactory;
 import sai.graph.Feature;
 
 import com.google.common.collect.Sets;
@@ -43,7 +42,7 @@ public class SAIUtilTest {
 
 	@Test
 	public void testFeatureRetention() throws AccessDeniedException {
-		DBInterface db = SampleDBs.getEmptyDB(null);
+		DBInterface db = SampleDBs.getEmptyDB();
 		db.connect();
 		Feature f1 = new Feature("a", "1");
 		Feature f2 = new Feature("a", "2");

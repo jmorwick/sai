@@ -17,10 +17,10 @@ import sai.comparison.matching.MatchingUtil;
 import sai.db.BasicDBInterface;
 import sai.db.DBInterface;
 import sai.db.SampleDBs;
-import sai.graph.BasicGraphFactory;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
+import sai.graph.MutableGraph;
 import sai.graph.SampleGraphs;
 import sai.retrieval.BasicCountRetriever;
 import sai.retrieval.GraphRetriever;
@@ -30,8 +30,8 @@ public class Path1Test {
 
 	@Test
 	public void testPath1Generation() throws AccessDeniedException {
-		GraphFactory gf = new BasicGraphFactory();
-		DBInterface db = SampleDBs.getEmptyDB(gf);
+		GraphFactory gf = MutableGraph.getFactory();
+		DBInterface db = SampleDBs.getEmptyDB();
 		IndexGenerator gen = new Path1IndexGenerator("test");
 		db.connect();
 		Set<Graph> indices = gen.generateIndices(db, gf, SampleGraphs.getSmallGraph1());
@@ -71,9 +71,9 @@ public class Path1Test {
 
 	@Test
 	public void testPath1Lookup() throws AccessDeniedException {
-		GraphFactory gf = new BasicGraphFactory();
+		GraphFactory gf = MutableGraph.getFactory();
 		GraphRetriever r = new BasicPath1IndexRetriever("test");
-		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices(gf);
+		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices();
 		assertEquals(Sets.newHashSet(5,7,8,9),
 				Sets.newHashSet(r.retrieve(db, SampleGraphs.getSmallGraph1())));
 		assertEquals(Sets.newHashSet(5,6,7,8),

@@ -4,27 +4,23 @@ import static org.junit.Assert.*;
 
 import java.nio.file.AccessDeniedException;
 
-import info.kendall_morwick.funcles.Pair;
-
 import org.junit.Test;
 
 import sai.comparison.matching.GraphMatching;
 import sai.comparison.matching.MatchingUtil;
 import sai.db.DBInterface;
 import sai.db.SampleDBs;
-import sai.graph.BasicGraphFactory;
 import sai.graph.Graph;
 import sai.graph.SampleGraphs;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Sets;
 
 public class HeuristicsTest {
 
 	@Test
 	public void testBasicEdgeCount() throws AccessDeniedException {
-		DBInterface db = SampleDBs.getEmptyDB(new BasicGraphFactory());
+		DBInterface db = SampleDBs.getEmptyDB();
 		db.connect();
 		
 		GraphMatchingHeuristic h = Heuristics.basicEdgeCount();

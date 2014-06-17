@@ -1,10 +1,7 @@
 package sai.graph;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
-import com.google.common.collect.Sets;
 import static sai.graph.SampleGraphs.assertGraphsAreIdentical;
 
 public class BasicGraphFactoryTest {
@@ -22,8 +19,7 @@ public class BasicGraphFactoryTest {
 		g.addNodeFeature(2, new Feature("test", "a"));
 		g.addNodeFeature(3, new Feature("test", "b"));
 		g.addNodeFeature(4, new Feature("test", "c"));
-		BasicGraphFactory gf = new BasicGraphFactory();
-		assertGraphsAreIdentical(g, gf.copy(g));
+		assertGraphsAreIdentical(g, MutableGraph.getFactory().copy(g));
 	}
 
 }

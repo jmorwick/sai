@@ -18,7 +18,7 @@ public class MutableGraphTest {
 	
 	@Before 
 	public void setUp() throws AccessDeniedException {
-		db = SampleDBs.getEmptyDB(new BasicGraphFactory());
+		db = SampleDBs.getEmptyDB();
 		db.connect();
 	}
 

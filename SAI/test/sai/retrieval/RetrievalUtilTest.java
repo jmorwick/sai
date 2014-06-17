@@ -20,9 +20,9 @@ import sai.comparison.matching.MatchingUtil;
 import sai.db.BasicDBInterface;
 import sai.db.DBInterface;
 import sai.db.SampleDBs;
-import sai.graph.BasicGraphFactory;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
+import sai.graph.MutableGraph;
 import sai.graph.SampleGraphs;
 import sai.indexing.BasicPath1IndexRetriever;
 
@@ -30,8 +30,8 @@ public class RetrievalUtilTest {
 
 	@Test
 	public void testBasicCountRetriever() throws AccessDeniedException {
-		GraphFactory gf = new BasicGraphFactory();
-		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices(gf);
+		GraphFactory gf = MutableGraph.getFactory();
+		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices();
 		IndexBasedGraphRetriever r = new BasicCountRetriever();
 		Iterator<Integer> i = r.retrieve(db, Sets.newHashSet(5, 6, 7, 9));
 		i = r.retrieve(db, Sets.newHashSet(5, 6, 7, 8));
@@ -74,7 +74,7 @@ public class RetrievalUtilTest {
 		MatchingGenerator gen = MatchingUtil.createCompleteMatchingGenerator(
 				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil.lexicalChecker()), 
 				Heuristics.basicEdgeCount());
-		DBInterface db = SampleDBs.getEmptyDB(new BasicGraphFactory());
+		DBInterface db = SampleDBs.getEmptyDB();
 		selfTest(SampleGraphs.getSmallGraph1(), gen);
 		selfTest(SampleGraphs.getSmallGraph2(), gen);
 		selfTest(SampleGraphs.getSmallGraph3(), gen);
@@ -125,8 +125,8 @@ public class RetrievalUtilTest {
 	
 	@Test
 	public void testBuildPhase1Retriever() throws AccessDeniedException {
-		GraphFactory gf = new BasicGraphFactory();
-		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices(gf);
+		GraphFactory gf = MutableGraph.getFactory();
+		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices();
 		GraphRetriever r = RetrievalUtil.createPhase1Retriever(
 				new BasicPath1IndexRetriever("test"), 
 				new BasicCountRetriever());
@@ -166,7 +166,7 @@ public class RetrievalUtilTest {
 	
 	@Test
 	public void testBuild2PhasedRetriever() throws AccessDeniedException {
-		GraphFactory gf = new BasicGraphFactory();
+		GraphFactory gf = MutableGraph.getFactory();
 		GraphMatchingHeuristic h = Heuristics.basicEdgeCount();
 		MatchingGenerator gen = MatchingUtil.createCompleteMatchingGenerator(
 				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil.lexicalChecker()), 
@@ -174,7 +174,7 @@ public class RetrievalUtilTest {
 		GraphRetriever phase1 = RetrievalUtil.createPhase1Retriever(
 				new BasicPath1IndexRetriever("test"), 
 				new BasicCountRetriever());
-		BasicDBInterface db = SampleDBs.smallGraphsDBWithIncorrectIndices(gf);
+		BasicDBInterface db = SampleDBs.smallGraphsDBWithIncorrectIndices();
 		
 		Graph query = SampleGraphs.getSmallGraph1();
 		Iterator<Graph> i = RetrievalUtil.twoPhasedRetrieval(phase1, db, gf, 

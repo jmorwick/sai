@@ -6,16 +6,14 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import sai.db.BasicDBInterface;
-import sai.graph.BasicGraphFactory;
-import sai.graph.BasicGraphWrapper;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
+import sai.graph.MutableGraph;
 import sai.retrieval.GraphRetriever;
 
 public class BasicPath1IndexRetriever implements GraphRetriever<BasicDBInterface> {
 
 	private IndexGenerator<Graph> gen;
-	private GraphFactory<BasicGraphWrapper> gf = new BasicGraphFactory();
 	
 	public BasicPath1IndexRetriever(String ... featureNames) {
 		gen = new Path1IndexGenerator<Graph>(featureNames);
@@ -24,7 +22,7 @@ public class BasicPath1IndexRetriever implements GraphRetriever<BasicDBInterface
 	@Override
 	public Iterator<Integer> retrieve(BasicDBInterface db, Graph q) {
 		Set<Integer> indexes = Sets.newHashSet();
-		for(Graph i : gen.generateIndices(db, gf, q))
+		for(Graph i : gen.generateIndices(db, MutableGraph.getFactory(), q))
 			indexes.add(db.addGraph(i));
 		return indexes.iterator();
 	}

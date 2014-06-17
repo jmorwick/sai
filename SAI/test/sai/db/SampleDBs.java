@@ -11,12 +11,12 @@ import sai.graph.GraphFactory;
 import sai.graph.SampleGraphs;
 
 public class SampleDBs {
-	public static BasicDBInterface getEmptyDB(GraphFactory<?> gf) {
-		return new BasicDBInterface(gf);
+	public static BasicDBInterface getEmptyDB() {
+		return new BasicDBInterface();
 	}
 
-	public static BasicDBInterface smallGraphsDB(GraphFactory<?> gf) {
-		BasicDBInterface db = getEmptyDB(gf);
+	public static BasicDBInterface smallGraphsDB() {
+		BasicDBInterface db = getEmptyDB();
 		db.addGraph(SampleGraphs.getSmallGraph1());
 		db.addGraph(SampleGraphs.getSmallGraph2());
 		db.addGraph(SampleGraphs.getSmallGraph3());
@@ -25,8 +25,8 @@ public class SampleDBs {
 	}
 	
 
-	public static BasicDBInterface smallGraphsDBWithCorrectIndices(GraphFactory<?> gf) throws AccessDeniedException {
-		BasicDBInterface db = getEmptyDB(gf);
+	public static BasicDBInterface smallGraphsDBWithCorrectIndices() throws AccessDeniedException {
+		BasicDBInterface db = getEmptyDB();
 		db.connect();
 		int g1 = db.addGraph(SampleGraphs.getSmallGraph1()); //1
 		int g2 = db.addGraph(SampleGraphs.getSmallGraph2()); //2
@@ -56,8 +56,8 @@ public class SampleDBs {
 		return db;
 	}
 
-	public static BasicDBInterface smallGraphsDBWithIncorrectIndices(GraphFactory<?> gf) throws AccessDeniedException {
-		BasicDBInterface db = getEmptyDB(gf);
+	public static BasicDBInterface smallGraphsDBWithIncorrectIndices() throws AccessDeniedException {
+		BasicDBInterface db = getEmptyDB();
 		db.connect();
 		int g1 = db.addGraph(SampleGraphs.getSmallGraph1());
 		int g2 = db.addGraph(SampleGraphs.getSmallGraph2());

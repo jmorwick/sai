@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import sai.db.DBInterface;
 import sai.graph.Graph;
 import sai.graph.MutableGraph;
-
+import static sai.graph.Graphs.getFeature;
 
 public class SampleGraphs {
 
@@ -75,7 +75,27 @@ public class SampleGraphs {
     }
 
 
-	public static void assertGraphsAreIdentical(Graph g1, Graph g2) {
+	public static void assertGraphsAreIdentical(Graph pg1, Graph pg2) {
+		MutableGraph g1 = new MutableGraph(pg1);
+		MutableGraph g2 = new MutableGraph(pg2);
+		if(getFeature(g1.getFeatures(), "sai-id") != null)
+			g1.removeFeature(getFeature(g1.getFeatures(), "sai-id"));
+		if(getFeature(g1.getFeatures(), "indexed-by") != null)
+			g1.removeFeature(getFeature(g1.getFeatures(), "indexed-by"));
+		if(getFeature(g1.getFeatures(), "indexes") != null)
+			g1.removeFeature(getFeature(g1.getFeatures(), "indexes"));
+		if(getFeature(g1.getFeatures(), "index") != null)
+			g1.removeFeature(getFeature(g1.getFeatures(), "index"));
+
+		if(getFeature(g2.getFeatures(), "sai-id") != null)
+			g2.removeFeature(getFeature(g2.getFeatures(), "sai-id"));
+		if(getFeature(g2.getFeatures(), "indexed-by") != null)
+			g2.removeFeature(getFeature(g2.getFeatures(), "indexed-by"));
+		if(getFeature(g2.getFeatures(), "indexes") != null)
+			g2.removeFeature(getFeature(g2.getFeatures(), "indexes"));
+		if(getFeature(g2.getFeatures(), "index") != null)
+			g2.removeFeature(getFeature(g2.getFeatures(), "index"));
+		
 		assertEquals(g1.getNodeIDs(), g2.getNodeIDs());
 		assertEquals(g1.getEdgeIDs(), g2.getEdgeIDs());
 		assertEquals(g1.getFeatures(), g2.getFeatures());

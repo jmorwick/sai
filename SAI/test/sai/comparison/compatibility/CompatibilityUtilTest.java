@@ -19,7 +19,7 @@ public class CompatibilityUtilTest {
 
 	@Test
 	public void testLexicalCompatability() throws AccessDeniedException {
-		DBInterface db = SampleDBs.getEmptyDB(null);
+		DBInterface db = SampleDBs.getEmptyDB();
 		db.connect();
 		Feature f1 = new Feature("a", "1");
 		Feature f2 = new Feature("a", "2");
@@ -74,7 +74,7 @@ public class CompatibilityUtilTest {
 	public void testGreedy1To1Checker() throws AccessDeniedException {
 		FeatureSetCompatibilityChecker c = greedy1To1Checker(p);
 		FeatureSetCompatibilityChecker c2 = greedy1To1Checker(lexicalChecker());
-		DBInterface db = SampleDBs.getEmptyDB(null);
+		DBInterface db = SampleDBs.getEmptyDB();
 		db.connect();
 		Feature f1 = new Feature("a", "1");
 		Feature f2 = new Feature("a", "2");
@@ -104,7 +104,7 @@ public class CompatibilityUtilTest {
 	public void testMany1To1Checker() throws AccessDeniedException {
 		FeatureSetCompatibilityChecker c = many1To1Checker(p);
 		FeatureSetCompatibilityChecker c2 = many1To1Checker(lexicalChecker());
-		DBInterface db = SampleDBs.getEmptyDB(null);
+		DBInterface db = SampleDBs.getEmptyDB();
 		db.connect();
 		Feature f1 = new Feature("a", "1");
 		Feature f2 = new Feature("a", "2");

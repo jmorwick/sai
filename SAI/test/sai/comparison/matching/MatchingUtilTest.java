@@ -6,13 +6,10 @@ import info.kendall_morwick.funcles.T2;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
-import java.util.Map;
-
 import org.junit.Test;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
@@ -22,16 +19,14 @@ import sai.comparison.heuristics.GraphMatchingHeuristic;
 import sai.comparison.heuristics.Heuristics;
 import sai.db.DBInterface;
 import sai.db.SampleDBs;
-import sai.graph.BasicGraphFactory;
 import sai.graph.Graph;
-import sai.graph.MutableGraph;
 import sai.graph.SampleGraphs;
 
 public class MatchingUtilTest {
 	
 	@Test
 	public void testBasicNodeMatching() throws AccessDeniedException {
-		DBInterface db = SampleDBs.getEmptyDB(new BasicGraphFactory());
+		DBInterface db = SampleDBs.getEmptyDB();
 		db.connect();
 		Graph g1 = SampleGraphs.getSmallGraph1();
 		Graph g2 = SampleGraphs.getSmallGraph3();
@@ -83,7 +78,7 @@ public class MatchingUtilTest {
 
 	@Test
 	public void testIncludeEdgeMatching1() throws AccessDeniedException {
-		DBInterface db = SampleDBs.getEmptyDB(new BasicGraphFactory());
+		DBInterface db = SampleDBs.getEmptyDB();
 		db.connect();
 		
 		Graph g1 = SampleGraphs.getSmallGraph3();
@@ -133,7 +128,7 @@ public class MatchingUtilTest {
 
 	@Test
 	public void testInduceEdgeMatching() throws AccessDeniedException {
-		DBInterface db = SampleDBs.getEmptyDB(new BasicGraphFactory());
+		DBInterface db = SampleDBs.getEmptyDB();
 		db.connect();
 		
 		Graph g1 = SampleGraphs.getSmallGraph1();
@@ -215,7 +210,7 @@ public class MatchingUtilTest {
 
 	@Test
 	public void testCreateGraphMatchOrdering() throws AccessDeniedException {
-		DBInterface db = SampleDBs.getEmptyDB(new BasicGraphFactory());
+		DBInterface db = SampleDBs.getEmptyDB();
 		GraphMatchingHeuristic h = Heuristics.basicEdgeCount();
 		db.connect();
 		MatchingGenerator fakeGen = new MatchingGenerator(){

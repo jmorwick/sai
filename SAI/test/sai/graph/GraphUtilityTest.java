@@ -24,10 +24,8 @@ import org.junit.*;
 
 import com.google.common.collect.Sets;
 
-import sai.SAIUtil;
 import sai.db.DBInterface;
 import sai.db.SampleDBs;
-import sai.db.mysql.DBInterfaceTest;
 import static org.junit.Assert.*;
 
 /**
@@ -38,18 +36,18 @@ public class GraphUtilityTest {
 
     @Test
     public void testStandardTags() throws AccessDeniedException {
-    	DBInterface db = SampleDBs.getEmptyDB(new BasicGraphFactory());
+    	DBInterface db = SampleDBs.getEmptyDB();
     	db.connect();
     }
     
     
     @Test
     public void testCopyWithoutEdge() throws AccessDeniedException {
-    	DBInterface db = SampleDBs.getEmptyDB(new BasicGraphFactory());
+    	DBInterface db = SampleDBs.getEmptyDB();
     	db.connect();
         Graph g = SampleGraphs.getSmallGraph1();
         for(int e : g.getEdgeIDs()) {
-            Graph ng = Graphs.copyWithoutEdge(g, new BasicGraphFactory(), e);
+            Graph ng = Graphs.copyWithoutEdge(g, MutableGraph.getFactory(), e);
             assertEquals(ng.getEdgeIDs().size(), g.getEdgeIDs().size()-1);
             assertEquals(ng.getNodeIDs().size(), g.getNodeIDs().size());
         }
@@ -57,11 +55,11 @@ public class GraphUtilityTest {
     
     @Test
     public void testCopyWithoutNode() throws AccessDeniedException {
-    	DBInterface db = SampleDBs.getEmptyDB(new BasicGraphFactory());
+    	DBInterface db = SampleDBs.getEmptyDB();
     	db.connect();
         Graph g = SampleGraphs.getSmallGraph1();
         for(int n : g.getNodeIDs()) {
-            Graph ng = Graphs.copyWithoutNode(g, new BasicGraphFactory(), n);
+            Graph ng = Graphs.copyWithoutNode(g, MutableGraph.getFactory(), n);
             if(n == 1)
             	assertEquals(Sets.newHashSet(2, 3, 4), ng.getEdgeIDs());
             else if(n == 2)
