@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
+import sai.SAIUtil;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
@@ -114,6 +115,16 @@ public class BasicDBInterfaceTest {
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph3(), 
 				db.retrieveGraph(gid3, gf));
 	}
+	
+	private static Set<Integer> getIndexedGraphIDs(DBInterface db, int iid) {
+		Set<Integer> gids = Sets.newHashSet();
+		for(Feature f : SAIUtil.retainOnly(
+				db.retrieveGraph(iid, MutableGraph.getFactory()).getFeatures(),
+				Graphs.INDEXES_FEATURE_NAME))
+			gids.add(Integer.parseInt(f.getValue()));
+		return gids;
+			
+	}
 
 	@Test
 	public void testAddingIndexToGraph() throws AccessDeniedException {
@@ -133,7 +144,9 @@ public class BasicDBInterfaceTest {
 		db.addIndex(gid1, gid3);
 
 		assertEquals(3, db.getDatabaseSize());
-		assertEquals(2, db.getDatabaseSizeWithoutIndices());
+		assertEquals(1, Sets.newHashSet(
+				db.retrieveGraphsWithFeatureName(
+						Graphs.INDEXES_FEATURE_NAME)).size());
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
@@ -142,14 +155,18 @@ public class BasicDBInterfaceTest {
 		rg.addFeature(Graphs.INDEX);
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid3, gf));
-		assertEquals(gid3, (int)db.getIndexIDIterator().next());
-		assertEquals(Sets.newHashSet(), db.retrieveIndexedGraphIDs(gid1));
-		assertEquals(Sets.newHashSet(), db.retrieveIndexedGraphIDs(gid2));
-		assertEquals(Sets.newHashSet(gid1), db.retrieveIndexedGraphIDs(gid3));
-		assertEquals(Sets.newHashSet(gid3), db.retrieveIndexIDs(gid1));
-		assertEquals(Sets.newHashSet(), db.retrieveIndexIDs(gid2));
-		assertEquals(Sets.newHashSet(), db.retrieveIndexIDs(gid3));
-		Iterator<Integer> ii = db.getIndexIDIterator();
+		assertEquals(gid3, (int)db.retrieveGraphsWithFeatureName(
+				Graphs.INDEXES_FEATURE_NAME).next());
+		assertEquals(Sets.newHashSet(), getIndexedGraphIDs(db, gid1));
+		assertEquals(Sets.newHashSet(), getIndexedGraphIDs(db, gid2));
+		assertEquals(Sets.newHashSet(gid1), getIndexedGraphIDs(db, gid3));
+		assertEquals(Sets.newHashSet(gid3), Sets.newHashSet(
+				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid1))));
+		assertEquals(Sets.newHashSet(), Sets.newHashSet(
+				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid2))));
+		assertEquals(Sets.newHashSet(), Sets.newHashSet(
+				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid3))));
+		Iterator<Integer> ii = db.retrieveGraphsWithFeatureName(Graphs.INDEXES_FEATURE_NAME);
 		assertTrue(ii.hasNext());
 		assertEquals(gid3, (int)ii.next());
 		assertTrue(!ii.hasNext());
@@ -160,7 +177,9 @@ public class BasicDBInterfaceTest {
 		db.setDBFile(f);
 		db.connect();
 		assertEquals(3, db.getDatabaseSize());
-		assertEquals(2, db.getDatabaseSizeWithoutIndices());
+		assertEquals(1, Sets.newHashSet(
+				db.retrieveGraphsWithFeatureName(
+						Graphs.INDEXES_FEATURE_NAME)).size());
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
@@ -169,14 +188,18 @@ public class BasicDBInterfaceTest {
 		rg.addFeature(Graphs.INDEX);
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid3, gf));
-		assertEquals(gid3, (int)db.getIndexIDIterator().next());
-		assertEquals(Sets.newHashSet(), db.retrieveIndexedGraphIDs(gid1));
-		assertEquals(Sets.newHashSet(), db.retrieveIndexedGraphIDs(gid2));
-		assertEquals(Sets.newHashSet(gid1), db.retrieveIndexedGraphIDs(gid3));
-		assertEquals(Sets.newHashSet(gid3), db.retrieveIndexIDs(gid1));
-		assertEquals(Sets.newHashSet(), db.retrieveIndexIDs(gid2));
-		assertEquals(Sets.newHashSet(), db.retrieveIndexIDs(gid3));
-		ii = db.getIndexIDIterator();
+		assertEquals(gid3, (int)db.retrieveGraphsWithFeatureName(
+				Graphs.INDEXES_FEATURE_NAME).next());
+		assertEquals(Sets.newHashSet(), getIndexedGraphIDs(db, gid1));
+		assertEquals(Sets.newHashSet(), getIndexedGraphIDs(db, gid2));
+		assertEquals(Sets.newHashSet(gid1), getIndexedGraphIDs(db, gid3));
+		assertEquals(Sets.newHashSet(gid3), Sets.newHashSet(
+				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid1))));
+		assertEquals(Sets.newHashSet(), Sets.newHashSet(
+				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid2))));
+		assertEquals(Sets.newHashSet(), Sets.newHashSet(
+				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid3))));
+		ii = db.retrieveGraphsWithFeatureName(Graphs.INDEXES_FEATURE_NAME);
 		assertTrue(ii.hasNext());
 		assertEquals(gid3, (int)ii.next());
 		assertTrue(!ii.hasNext());
@@ -205,7 +228,9 @@ public class BasicDBInterfaceTest {
 		db.addIndex(gid3, gid4);
 
 		assertEquals(4, db.getDatabaseSize());
-		assertEquals(2, db.getDatabaseSizeWithoutIndices());
+		assertEquals(2, Sets.newHashSet(
+				db.retrieveGraphsWithFeatureName(
+						Graphs.INDEXES_FEATURE_NAME)).size());
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
@@ -218,20 +243,27 @@ public class BasicDBInterfaceTest {
 		rg.addFeature(Graphs.INDEX);
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid4, gf));
-		assertEquals(Sets.newHashSet(), db.retrieveIndexedGraphIDs(gid1));
-		assertEquals(Sets.newHashSet(), db.retrieveIndexedGraphIDs(gid2));
-		assertEquals(Sets.newHashSet(gid1), db.retrieveIndexedGraphIDs(gid3));
-		assertEquals(Sets.newHashSet(gid1,gid3), db.retrieveIndexedGraphIDs(gid4));
-		assertEquals(Sets.newHashSet(gid3,gid4), db.retrieveIndexIDs(gid1));
-		assertEquals(Sets.newHashSet(), db.retrieveIndexIDs(gid2));
-		assertEquals(Sets.newHashSet(gid4), db.retrieveIndexIDs(gid3));
-		assertEquals(Sets.newHashSet(), db.retrieveIndexIDs(gid4));
-		Iterator<Integer> ii = db.getIndexIDIterator();
-		assertTrue(ii.hasNext());
-		assertEquals(gid3, (int)ii.next());
-		assertTrue(ii.hasNext());
-		assertEquals(gid4, (int)ii.next());
-		assertTrue(!ii.hasNext());
+		assertEquals(Sets.newHashSet(), SAIUtil.retainOnly(
+				db.retrieveGraph(gid1).getFeatures(), Graphs.INDEXES_FEATURE_NAME));
+		assertEquals(Sets.newHashSet(), SAIUtil.retainOnly(
+				db.retrieveGraph(gid2).getFeatures(), Graphs.INDEXES_FEATURE_NAME));
+		assertEquals(Sets.newHashSet(Graphs.getIndexesFeature(gid1)), 
+				SAIUtil.retainOnly(
+				  db.retrieveGraph(gid3).getFeatures(), Graphs.INDEXES_FEATURE_NAME));
+		assertEquals(Sets.newHashSet(
+				Graphs.getIndexesFeature(gid1),
+				Graphs.getIndexesFeature(gid3)), SAIUtil.retainOnly(
+				db.retrieveGraph(gid4).getFeatures(), Graphs.INDEXES_FEATURE_NAME));
+		assertEquals(Sets.newHashSet(gid3,gid4), Sets.newHashSet(
+				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid1))));
+		assertEquals(Sets.newHashSet(), Sets.newHashSet(
+				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid2))));
+		assertEquals(Sets.newHashSet(gid4), Sets.newHashSet(
+				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid3))));
+		assertEquals(Sets.newHashSet(), Sets.newHashSet(
+				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid4))));
+		Iterator<Integer> ii = db.retrieveGraphsWithFeatureName(Graphs.INDEXES_FEATURE_NAME);
+		assertEquals(Sets.newHashSet(gid3, gid4), Sets.newHashSet(ii));
 		db.disconnect();
 		
 
@@ -239,7 +271,9 @@ public class BasicDBInterfaceTest {
 		db.setDBFile(f);
 		db.connect();
 		assertEquals(4, db.getDatabaseSize());
-		assertEquals(2, db.getDatabaseSizeWithoutIndices());
+		assertEquals(2, Sets.newHashSet(
+				db.retrieveGraphsWithFeatureName(
+						Graphs.INDEXES_FEATURE_NAME)).size());
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph2(), 
@@ -252,14 +286,18 @@ public class BasicDBInterfaceTest {
 		rg.addFeature(Graphs.INDEX);
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid4, gf));
-		assertEquals(Sets.newHashSet(), db.retrieveIndexedGraphIDs(gid1));
-		assertEquals(Sets.newHashSet(), db.retrieveIndexedGraphIDs(gid2));
-		assertEquals(Sets.newHashSet(gid1), db.retrieveIndexedGraphIDs(gid3));
-		assertEquals(Sets.newHashSet(gid1,gid3), db.retrieveIndexedGraphIDs(gid4));
-		assertEquals(Sets.newHashSet(gid3,gid4), db.retrieveIndexIDs(gid1));
-		assertEquals(Sets.newHashSet(), db.retrieveIndexIDs(gid2));
-		assertEquals(Sets.newHashSet(gid4), db.retrieveIndexIDs(gid3));
-		assertEquals(Sets.newHashSet(), db.retrieveIndexIDs(gid4));
+		assertEquals(Sets.newHashSet(), getIndexedGraphIDs(db, gid1));
+		assertEquals(Sets.newHashSet(), getIndexedGraphIDs(db, gid2));
+		assertEquals(Sets.newHashSet(gid1), getIndexedGraphIDs(db, gid3));
+		assertEquals(Sets.newHashSet(gid1,gid3), getIndexedGraphIDs(db, gid4));
+		assertEquals(Sets.newHashSet(gid3,gid4), Sets.newHashSet(
+				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid1))));
+		assertEquals(Sets.newHashSet(), Sets.newHashSet(
+				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid2))));
+		assertEquals(Sets.newHashSet(gid4), Sets.newHashSet(
+				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid3))));
+		assertEquals(Sets.newHashSet(), Sets.newHashSet(
+				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid4))));
 	}
 
 	@Test
@@ -309,7 +347,9 @@ public class BasicDBInterfaceTest {
 		db.addIndex(gid1, gid4);
 		db.addIndex(gid3, gid4);
 		
-		Set<Integer> observed = Sets.newHashSet(db.getIndexIDIterator());
+		Set<Integer> observed = Sets.newHashSet(
+				db.retrieveGraphsWithFeatureName(
+						Graphs.INDEXES_FEATURE_NAME));
 		assertEquals(Sets.newHashSet(gid3, gid4), observed);
 	}
 

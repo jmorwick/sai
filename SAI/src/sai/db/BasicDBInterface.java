@@ -21,12 +21,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
+import sai.SAIUtil;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
 import sai.graph.Graphs;
 import sai.graph.MutableGraph;
-
 import static sai.graph.Graphs.getFeature;
 
 public class BasicDBInterface implements DBInterface {
@@ -34,10 +34,6 @@ public class BasicDBInterface implements DBInterface {
 	private File dbfile;
 	
 	private Map<Integer, Graph> db;
-	private Multimap<Integer, Integer> indexing;
-	private Multimap<Integer, Integer> indexedBy;
-	private Set<Integer> indexes;
-	private Set<Integer> residentGraphs;
 	private Multimap<String, Feature> featuresWithName;
 	private BiMap<Integer,Feature> featureIDs; 
 	private Set<Integer> hiddenGraphs;
@@ -49,6 +45,7 @@ public class BasicDBInterface implements DBInterface {
 	public BasicDBInterface(File dbfile) {
 		this.dbfile = dbfile;
 	}
+	
 	public BasicDBInterface() {
 	}
 
@@ -66,11 +63,7 @@ public class BasicDBInterface implements DBInterface {
 		featuresWithName = HashMultimap.create();
 		featureIDs = HashBiMap.create();
 		db = Maps.newHashMap();
-		indexes = Sets.newHashSet();
-		residentGraphs = Sets.newHashSet();
 		hiddenGraphs = Sets.newHashSet();
-		indexing = HashMultimap.create();
-		indexedBy = HashMultimap.create();
 		graphsWithFeatureName = HashMultimap.create();
 		graphsWithFeature = HashMultimap.create();
 		
@@ -121,10 +114,6 @@ public class BasicDBInterface implements DBInterface {
 					graphsWithFeature.put(f, gid);
 				}
 				lin.close();
-
-				if(g.getFeatures().contains(Graphs.INDEX))
-					indexes.add(gid);
-				else residentGraphs.add(gid);
 				
 				//get graph nodes
 				for(int j=0; j<numNodes; j++) {
@@ -163,21 +152,6 @@ public class BasicDBInterface implements DBInterface {
 				
 				//put complete graph in db...
 				db.put(gid, g);
-			}
-			
-			//read in indexing details
-			int numIndexes = Integer.parseInt(in.readLine());
-			for(int i=0; i<numIndexes; i++) {
-				String line = in.readLine();
-				Scanner lin = new Scanner(line);
-				lin.useDelimiter(",");
-				int iid = lin.nextInt();
-				while(lin.hasNext()) {
-					int gid = lin.nextInt();
-					indexing.put(iid, gid);
-					indexedBy.put(gid, iid);
-				}
-				lin.close();
 			}
 			in.close();
 		} catch (NumberFormatException e) {
@@ -219,9 +193,6 @@ public class BasicDBInterface implements DBInterface {
 		}
 		
 		// destroy duplicated information
-		residentGraphs = null;
-		indexes = null;
-		indexedBy = null;
 		graphsWithFeatureName = null;
 		graphsWithFeature = null;
 
@@ -265,17 +236,6 @@ public class BasicDBInterface implements DBInterface {
 			}
 		}
 		db = null;
-		
-		//write indexes to file
-		out.println(indexing.keySet().size());
-		for(int iid : indexing.keySet()) {
-			out.print(iid);
-			for(int gid : indexing.get(iid)) {
-				out.print(","+gid);
-			}
-			out.println();
-		}
-		indexing = null;
 		featureIDs = null;
 		
 		out.close();
@@ -318,7 +278,7 @@ public class BasicDBInterface implements DBInterface {
 
 	@Override
 	public Iterator<Integer> getGraphIDIterator() {
-		return Sets.difference(residentGraphs, hiddenGraphs).iterator();
+		return Sets.difference(db.keySet(), hiddenGraphs).iterator();
 	}
 
 	@Override
@@ -356,21 +316,24 @@ public class BasicDBInterface implements DBInterface {
 		int newGraphID = Integer.parseInt(getFeature(g.getFeatures(), "sai-id").getValue());
 		nextGraphID = Math.max(nextGraphID, newGraphID) + 1; // update next fresh graph id
 		
-		//handle if this is an index
-		if(g.getFeatures().contains(Graphs.INDEX))
-			indexes.add(newGraphID);
-		else residentGraphs.add(newGraphID);
+		//insert into db
 		db.put(newGraphID, g);
 		
 		//add all features
-		for(Feature f : g.getFeatures())
+		for(Feature f : g.getFeatures()) {
 			addFeature(f);
+		    graphsWithFeatureName.put(f.getName(), newGraphID);
+		}
 		for(int nid : g.getNodeIDs())
-			for(Feature f : g.getNodeFeatures(nid))
+			for(Feature f : g.getNodeFeatures(nid)) {
 				addFeature(f);
+			    graphsWithFeatureName.put(f.getName(), newGraphID);
+			}
 		for(int eid : g.getEdgeIDs())
-			for(Feature f : g.getEdgeFeatures(eid))
+			for(Feature f : g.getEdgeFeatures(eid)) {
 				addFeature(f);
+			    graphsWithFeatureName.put(f.getName(), newGraphID);
+			}
 		
 		return newGraphID;
 	}
@@ -386,56 +349,69 @@ public class BasicDBInterface implements DBInterface {
 	@Override
 	public void deleteGraph(int graphID) {
 		db.remove(graphID);
-		indexes.remove(graphID);
-		residentGraphs.remove(graphID);
-		for(int iid : indexedBy.get(graphID)) {
-			indexing.remove(iid, graphID);
-		}
-		indexedBy.removeAll(graphID);
+		
+		//TODO: update reference tags
 	}
 	
 	@Override
 	public int getDatabaseSize() {
-		return residentGraphs.size() + indexes.size();
+		return db.size();
 	}
-	
+
+	@Override
 	public Iterator<Integer> retrieveGraphsWithFeature(Feature f) {
 		return graphsWithFeature.get(f).iterator();
 	}
-	
+
+	@Override
 	public Iterator<Integer> retrieveGraphsWithFeatureName(String name) {
 		return graphsWithFeatureName.get(name).iterator();
-	}
-	
-	
-	@Override
-	public Iterator<Integer> getIndexIDIterator() {
-		return Sets.difference(indexes, hiddenGraphs).iterator();
-	}
-
-	@Override
-	public void addIndex(int gid, int iid) {
-		indexing.put(iid, gid);
-		indexedBy.put(gid, iid);
-	}
-
-	@Override
-	public Set<Integer> retrieveIndexIDs(int graphID) {
-		return Sets.newHashSet(indexedBy.get(graphID));
-	}
-
-	@Override
-	public Set<Integer> retrieveIndexedGraphIDs(int indexID) {
-		return Sets.newHashSet(indexing.get(indexID));
 	}
 
 	public Set<String> getFeatureNames() {
 		return featuresWithName.keySet();
 	}
 
-	@Override
-	public int getDatabaseSizeWithoutIndices() {
-		return residentGraphs.size();
+	public void addIndex(int graphID, int indexGraphID) {
+		if(!db.containsKey(graphID) || !db.containsKey(indexGraphID))
+			throw new IllegalArgumentException("graphid doesn't exist");
+		MutableGraph ireplace = new MutableGraph(db.get(indexGraphID));
+		ireplace.addFeature(Graphs.getIndexesFeature(graphID));
+		this.replaceGraph(indexGraphID, ireplace);
+	}
+
+	public void replaceGraph(int indexGraphID, MutableGraph g1) {
+		MutableGraph g = new MutableGraph(g1);
+		
+		nextGraphID = Math.max(nextGraphID, indexGraphID + 1); // update next fresh graph id
+		
+		//update SAI-id tag
+		for(Feature f : SAIUtil.retainOnly(g.getFeatures(), Graphs.SAI_ID_NAME))
+			g.removeFeature(f);
+		g.addFeature(Graphs.getIDFeature(indexGraphID));
+		
+		//insert into db
+		db.put(indexGraphID, g);
+		
+		//add all features
+				for(Feature f : g.getFeatures()) {
+					addFeature(f);
+				    graphsWithFeatureName.put(f.getName(), indexGraphID);
+				    graphsWithFeature.put(f, indexGraphID);
+				}
+				for(int nid : g.getNodeIDs())
+					for(Feature f : g.getNodeFeatures(nid)) {
+						addFeature(f);
+					    graphsWithFeatureName.put(f.getName(), indexGraphID);
+					    graphsWithFeature.put(f, indexGraphID);
+					}
+				for(int eid : g.getEdgeIDs())
+					for(Feature f : g.getEdgeFeatures(eid)) {
+						addFeature(f);
+					    graphsWithFeatureName.put(f.getName(), indexGraphID);
+					    graphsWithFeature.put(f, indexGraphID);
+					}
+				
 	}
 
 }

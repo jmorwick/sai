@@ -1,5 +1,7 @@
 package sai.graph;
 
+import info.kendall_morwick.funcles.Pair;
+
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -8,6 +10,9 @@ import sai.db.DBInterface;
 
 
 public class Graphs {
+
+	public static final String INDEXES_FEATURE_NAME = "indexes";
+	public static final String SAI_ID_NAME = "SAI-id";
 
 	public static final Feature INDEX = new Feature("index graph", "true");
 	public static final Feature DIRECTED = new Feature("directed graph", "true");
@@ -42,5 +47,17 @@ public class Graphs {
         return null;
     }
 	
+
+	public static Feature getFeature(String name, String value) {
+		return new Feature(name, value);
+	}
+	
+	public static Feature getIndexesFeature(int graphID) {
+		return new Feature(INDEXES_FEATURE_NAME, graphID+"");
+	}
+
+	public static Feature getIDFeature(int graphID) {
+		return new Feature(SAI_ID_NAME, graphID+"");
+	}
 
 }

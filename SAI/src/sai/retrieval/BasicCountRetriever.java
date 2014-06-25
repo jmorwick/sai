@@ -26,9 +26,12 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
 import com.google.common.collect.Sets;
 
+import sai.SAIUtil;
 import sai.db.DBInterface;
+import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
+import sai.graph.MutableGraph;
 import sai.retrieval.IndexBasedGraphRetriever;
 
 /**
@@ -44,9 +47,12 @@ public class BasicCountRetriever implements IndexBasedGraphRetriever {
 
     public Iterator<Integer> retrieve(final DBInterface db, Set<Integer> indices) {
         final Multiset<Integer> ranks = HashMultiset.create();
+        final GraphFactory<MutableGraph> gf = MutableGraph.getFactory();
         for (int iid : indices) {
-            for (Integer gid : db.retrieveIndexedGraphIDs(iid)) {
-                ranks.add(gid);
+            for (Feature f : SAIUtil.retainOnly(
+            		db.retrieveGraph(iid, gf).getFeatures(),
+            		"indexes")) {
+            	ranks.add(Integer.parseInt(f.getValue()));
             }
         }
         

@@ -1,6 +1,10 @@
 package sai.graph;
 
 import static org.junit.Assert.assertEquals;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Sets;
+
 import sai.db.DBInterface;
 import sai.graph.Graph;
 import sai.graph.MutableGraph;
@@ -98,7 +102,16 @@ public class SampleGraphs {
 		
 		assertEquals(g1.getNodeIDs(), g2.getNodeIDs());
 		assertEquals(g1.getEdgeIDs(), g2.getEdgeIDs());
-		assertEquals(g1.getFeatures(), g2.getFeatures());
+		Predicate<Feature> p = new Predicate<Feature>() {
+			@Override
+			public boolean apply(Feature f) {
+				return !f.getName().equals(Graphs.SAI_ID_NAME) &&
+					   !f.getName().equals(Graphs.INDEXES_FEATURE_NAME);
+			}};
+		assertEquals(
+				Sets.filter(g1.getFeatures(), p),
+				Sets.filter(g2.getFeatures(), p));
+		
 		for(int nodeID : g1.getNodeIDs()) {
 			assertEquals(g1.getNodeFeatures(nodeID), g2.getNodeFeatures(nodeID));
 		}
