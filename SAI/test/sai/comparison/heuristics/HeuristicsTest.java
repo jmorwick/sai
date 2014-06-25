@@ -21,7 +21,6 @@ public class HeuristicsTest {
 	@Test
 	public void testBasicEdgeCount() throws AccessDeniedException {
 		DBInterface db = SampleDBs.getEmptyDB();
-		db.connect();
 		
 		GraphMatchingHeuristic h = Heuristics.basicEdgeCount();
 		Graph g1 = SampleGraphs.getSmallGraph3();

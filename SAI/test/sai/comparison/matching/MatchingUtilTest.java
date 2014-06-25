@@ -27,7 +27,6 @@ public class MatchingUtilTest {
 	@Test
 	public void testBasicNodeMatching() throws AccessDeniedException {
 		DBInterface db = SampleDBs.getEmptyDB();
-		db.connect();
 		Graph g1 = SampleGraphs.getSmallGraph1();
 		Graph g2 = SampleGraphs.getSmallGraph3();
 		BiMap<Integer,Integer> nodeMatch = HashBiMap.create();
@@ -79,7 +78,6 @@ public class MatchingUtilTest {
 	@Test
 	public void testIncludeEdgeMatching1() throws AccessDeniedException {
 		DBInterface db = SampleDBs.getEmptyDB();
-		db.connect();
 		
 		Graph g1 = SampleGraphs.getSmallGraph3();
 		Graph g2 = SampleGraphs.getSmallGraph1();
@@ -129,7 +127,6 @@ public class MatchingUtilTest {
 	@Test
 	public void testInduceEdgeMatching() throws AccessDeniedException {
 		DBInterface db = SampleDBs.getEmptyDB();
-		db.connect();
 		
 		Graph g1 = SampleGraphs.getSmallGraph1();
 		Graph g2 = SampleGraphs.getSmallGraph1();
@@ -212,7 +209,6 @@ public class MatchingUtilTest {
 	public void testCreateGraphMatchOrdering() throws AccessDeniedException {
 		DBInterface db = SampleDBs.getEmptyDB();
 		GraphMatchingHeuristic h = Heuristics.basicEdgeCount();
-		db.connect();
 		MatchingGenerator fakeGen = new MatchingGenerator(){
 
 			@Override

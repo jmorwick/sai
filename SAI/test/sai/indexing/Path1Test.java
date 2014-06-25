@@ -33,7 +33,6 @@ public class Path1Test {
 		GraphFactory gf = MutableGraph.getFactory();
 		DBInterface db = SampleDBs.getEmptyDB();
 		IndexGenerator gen = new Path1IndexGenerator("test");
-		db.connect();
 		Set<Graph> indices = gen.generateIndices(db, gf, SampleGraphs.getSmallGraph1());
 		
 		assertEquals(4, indices.size());

@@ -34,17 +34,10 @@ import static org.junit.Assert.*;
  */
 public class GraphUtilityTest {
 
-    @Test
-    public void testStandardTags() throws AccessDeniedException {
-    	DBInterface db = SampleDBs.getEmptyDB();
-    	db.connect();
-    }
-    
     
     @Test
     public void testCopyWithoutEdge() throws AccessDeniedException {
     	DBInterface db = SampleDBs.getEmptyDB();
-    	db.connect();
         Graph g = SampleGraphs.getSmallGraph1();
         for(int e : g.getEdgeIDs()) {
             Graph ng = Graphs.copyWithoutEdge(g, MutableGraph.getFactory(), e);
@@ -56,7 +49,6 @@ public class GraphUtilityTest {
     @Test
     public void testCopyWithoutNode() throws AccessDeniedException {
     	DBInterface db = SampleDBs.getEmptyDB();
-    	db.connect();
         Graph g = SampleGraphs.getSmallGraph1();
         for(int n : g.getNodeIDs()) {
             Graph ng = Graphs.copyWithoutNode(g, MutableGraph.getFactory(), n);

@@ -43,7 +43,6 @@ public class SAIUtilTest {
 	@Test
 	public void testFeatureRetention() throws AccessDeniedException {
 		DBInterface db = SampleDBs.getEmptyDB();
-		db.connect();
 		Feature f1 = new Feature("a", "1");
 		Feature f2 = new Feature("a", "2");
 		Feature f3 = new Feature("a", "1");

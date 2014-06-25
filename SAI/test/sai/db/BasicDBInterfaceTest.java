@@ -44,11 +44,10 @@ public class BasicDBInterfaceTest {
 		File f = new File("/tmp/sai-db-test-"+Math.random());
 		tempFiles.add(f);
 		if(f.exists()) f.delete();
-		db.connect();
 		db.setDBFile(f);
 		assertEquals(0, db.getDatabaseSize());
 		db.disconnect();
-		db.connect();
+		db = new BasicDBInterface(f);
 		assertEquals(0, db.getDatabaseSize());
 	}
 	
@@ -60,7 +59,6 @@ public class BasicDBInterfaceTest {
 		File f = new File("/tmp/sai-db-test-"+Math.random());
 		tempFiles.add(f);
 		if(f.exists()) f.delete();
-		db.connect();
 		db.setDBFile(f);
 		assertEquals(0, db.getDatabaseSize());
 		int gid = db.addGraph(SampleGraphs.getSmallGraph1());
@@ -70,10 +68,7 @@ public class BasicDBInterfaceTest {
 		
 		db.disconnect();
 		
-
-		db = new BasicDBInterface();
-		db.setDBFile(f);
-		db.connect();
+		db = new BasicDBInterface(f);
 		assertEquals(1, db.getDatabaseSize());
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid, gf));
@@ -86,7 +81,6 @@ public class BasicDBInterfaceTest {
 		File f = new File("/tmp/sai-db-test-"+Math.random());
 		tempFiles.add(f);
 		if(f.exists()) f.delete();
-		db.connect();
 		db.setDBFile(f);
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
@@ -106,7 +100,7 @@ public class BasicDBInterfaceTest {
 
 		db = new BasicDBInterface();
 		db.setDBFile(f);
-		db.connect();
+		db = new BasicDBInterface(f);
 		assertEquals(3, db.getDatabaseSize());
 		assertGraphsAreIdentical(SampleGraphs.getSmallGraph1(), 
 				db.retrieveGraph(gid1, gf));
@@ -133,7 +127,6 @@ public class BasicDBInterfaceTest {
 		File f = new File("/tmp/sai-db-test-"+Math.random());
 		tempFiles.add(f);
 		if(f.exists()) f.delete();
-		db.connect();
 		db.setDBFile(f);
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
@@ -175,7 +168,8 @@ public class BasicDBInterfaceTest {
 
 		db = new BasicDBInterface();
 		db.setDBFile(f);
-		db.connect();
+
+		db = new BasicDBInterface(f);
 		assertEquals(3, db.getDatabaseSize());
 		assertEquals(1, Sets.newHashSet(
 				db.retrieveGraphsWithFeatureName(
@@ -212,7 +206,6 @@ public class BasicDBInterfaceTest {
 		File f = new File("/tmp/sai-db-test-"+Math.random());
 		tempFiles.add(f);
 		if(f.exists()) f.delete();
-		db.connect();
 		db.setDBFile(f);
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
@@ -266,10 +259,7 @@ public class BasicDBInterfaceTest {
 		assertEquals(Sets.newHashSet(gid3, gid4), Sets.newHashSet(ii));
 		db.disconnect();
 		
-
-		db = new BasicDBInterface();
-		db.setDBFile(f);
-		db.connect();
+		db = new BasicDBInterface(f);
 		assertEquals(4, db.getDatabaseSize());
 		assertEquals(2, Sets.newHashSet(
 				db.retrieveGraphsWithFeatureName(
@@ -304,7 +294,6 @@ public class BasicDBInterfaceTest {
 	public void testGraphIterator() throws AccessDeniedException {
 		GraphFactory gf = MutableGraph.getFactory();
 		BasicDBInterface db = new BasicDBInterface();
-		db.connect();
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
 		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
@@ -333,7 +322,6 @@ public class BasicDBInterfaceTest {
 	public void testIndexIterator() throws AccessDeniedException {
 		GraphFactory gf = MutableGraph.getFactory();
 		BasicDBInterface db = new BasicDBInterface();
-		db.connect();
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
 		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
@@ -357,7 +345,6 @@ public class BasicDBInterfaceTest {
 	public void testHidingGraphs() throws AccessDeniedException {
 		GraphFactory gf = MutableGraph.getFactory();
 		BasicDBInterface db = new BasicDBInterface();
-		db.connect();
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
 		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());
@@ -393,7 +380,6 @@ public class BasicDBInterfaceTest {
 	public void testDeletingGraphs() throws AccessDeniedException {
 		GraphFactory gf = MutableGraph.getFactory();
 		BasicDBInterface db = new BasicDBInterface();
-		db.connect();
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
 		int gid2 = db.addGraph(SampleGraphs.getSmallGraph2());

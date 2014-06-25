@@ -27,7 +27,6 @@ public class SampleDBs {
 
 	public static BasicDBInterface smallGraphsDBWithCorrectIndices() throws AccessDeniedException {
 		BasicDBInterface db = getEmptyDB();
-		db.connect();
 		int g1 = db.addGraph(SampleGraphs.getSmallGraph1()); //1
 		int g2 = db.addGraph(SampleGraphs.getSmallGraph2()); //2
 		int g3 = db.addGraph(SampleGraphs.getSmallGraph3()); //3
@@ -58,7 +57,6 @@ public class SampleDBs {
 
 	public static BasicDBInterface smallGraphsDBWithIncorrectIndices() throws AccessDeniedException {
 		BasicDBInterface db = getEmptyDB();
-		db.connect();
 		int g1 = db.addGraph(SampleGraphs.getSmallGraph1());
 		int g2 = db.addGraph(SampleGraphs.getSmallGraph2());
 		int g3 = db.addGraph(SampleGraphs.getSmallGraph3());
