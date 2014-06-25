@@ -50,13 +50,14 @@ public class BasicGraphIndexCount implements GraphIndexBasedRetriever {
         final Multiset<Integer> ranks = HashMultiset.create();
         final GraphFactory<MutableGraph> gf = MutableGraph.getFactory();
         for (int iid : indices) {
+        	System.out.println(db.retrieveGraph(iid, gf).getFeatures());
             for (Feature f : SAIUtil.retainOnly(
             		db.retrieveGraph(iid, gf).getFeatures(),
             		Graphs.INDEXES_FEATURE_NAME)) {
             	ranks.add(Integer.parseInt(f.getValue()));
             }
         }
-        
+
         retrievedGraphIDs = Sets.newHashSet();
 
         return new Iterator<Integer>() {

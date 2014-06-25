@@ -32,7 +32,7 @@ import static sai.graph.Graphs.getFeature;
 public class BasicDBInterface implements DBInterface {
 
 	private File dbfile;
-	
+
 	private Map<Integer, Graph> db;
 	private Multimap<String, Feature> featuresWithName;
 	private BiMap<Integer,Feature> featureIDs; 
@@ -50,20 +50,20 @@ public class BasicDBInterface implements DBInterface {
 		graphsWithFeatureName = HashMultimap.create();
 		graphsWithFeature = HashMultimap.create();
 	}
-	
+
 	public BasicDBInterface(File dbfile) throws AccessDeniedException {
 		this();
 		this.dbfile = dbfile;
-		
+
 		if(dbfile == null || !dbfile.exists() || !dbfile.canRead())
 			throw new AccessDeniedException(dbfile.getAbsolutePath());
-		
+
 		try {
 			nextFeatureID = 0;
 			nextGraphID = 0;
 			BufferedReader in = new BufferedReader(new FileReader(dbfile));
 			int numFeatureNames = Integer.parseInt(in.readLine());
-			
+
 			//read in features
 			for(int i=0; i<numFeatureNames; i++) {
 				Scanner lin = new Scanner(in.readLine());
@@ -80,7 +80,7 @@ public class BasicDBInterface implements DBInterface {
 				lin.close();
 			}
 			//read in graphs
-			
+
 			int numGraphs = Integer.parseInt(in.readLine());
 			for(int i=0; i<numGraphs; i++) {
 				//get general graph into
@@ -96,7 +96,7 @@ public class BasicDBInterface implements DBInterface {
 					g.addFeature(f);
 				}
 				lin.close();
-				
+
 				//get graph nodes
 				for(int j=0; j<numNodes; j++) {
 					line = in.readLine();
@@ -112,7 +112,7 @@ public class BasicDBInterface implements DBInterface {
 					}
 					lin.close();
 				}
-				
+
 				//get graph edges
 				for(int j=0; j<numEdges; j++) {
 					lin = new Scanner(in.readLine());
@@ -153,13 +153,13 @@ public class BasicDBInterface implements DBInterface {
 		this.dbfile = dbfile;
 		//check for write access
 		if((!dbfile.canWrite() && dbfile.exists()) ||
-	       (!dbfile.getParentFile().canWrite() && !dbfile.exists())) {
+				(!dbfile.getParentFile().canWrite() && !dbfile.exists())) {
 			throw new AccessDeniedException(dbfile.getAbsolutePath());
 		}
 	}
-	
+
 	public File getDBFile() { return dbfile; }
-	
+
 	/** saves database details completely to the db file 
 	 * provided to the constructor.
 	 * @throws FileNotFoundException 
@@ -172,12 +172,12 @@ public class BasicDBInterface implements DBInterface {
 		} catch (FileNotFoundException e) {
 			// use exception here?
 		}
-		
+
 		// destroy duplicated information
 		graphsWithFeatureName = null;
 		graphsWithFeature = null;
 
-		
+
 		//write features to file
 		out.println(featuresWithName.keySet().size()); // start with number of features
 		for(String name : featuresWithName.keySet()) {
@@ -189,7 +189,7 @@ public class BasicDBInterface implements DBInterface {
 			out.print("\n");
 		}
 		featuresWithName = null; 
-		
+
 		//write graphs to file
 		out.print(db.keySet().size() + "\n");
 		for(int gid : db.keySet()) {
@@ -218,10 +218,10 @@ public class BasicDBInterface implements DBInterface {
 		}
 		db = null;
 		featureIDs = null;
-		
+
 		out.close();
 	}
-	
+
 	private int lookupID(Feature f) {
 		if(featureIDs.values().contains(f))
 			return featureIDs.inverse().get(f);
@@ -241,19 +241,19 @@ public class BasicDBInterface implements DBInterface {
 	public <G extends Graph> G retrieveGraph(int graphID, GraphFactory<G> f) {
 		if(hiddenGraphs.contains(graphID) || !db.containsKey(graphID))
 			return null;
-		
+
 		//otherwise, rebuild it...
 		G g =  f.copy(db.get(graphID));
 		db.put(graphID, g);
 		return g;
 	}
-	
+
 
 	@SuppressWarnings("unchecked")
 	public <G extends Graph> G retrieveGraph(int graphID) {
 		if(hiddenGraphs.contains(graphID) || !db.containsKey(graphID))
 			return null;
-		
+
 		return (G) db.get(graphID);
 	}
 
@@ -276,7 +276,7 @@ public class BasicDBInterface implements DBInterface {
 	public void unhideGraph(int graphID) {
 		hiddenGraphs.remove(graphID);
 	}
-	
+
 	private void addFeature(Feature f) {
 		if(!featureIDs.containsValue(f)) {
 			featureIDs.put(nextFeatureID,  f);
@@ -288,10 +288,10 @@ public class BasicDBInterface implements DBInterface {
 	@Override
 	public void deleteGraph(int graphID) {
 		db.remove(graphID);
-		
+
 		//TODO: update reference tags
 	}
-	
+
 	@Override
 	public int getDatabaseSize() {
 		return db.size();
@@ -319,61 +319,68 @@ public class BasicDBInterface implements DBInterface {
 		this.replaceGraph(indexGraphID, ireplace);
 	}
 
-
-	
 	/** assigns a fresh id to the graph and adds it to the database
 	 * 
 	 * @param g the graph to be added to the database
-	 * @return 
 	 * @return the id of the graph after it was added to the database
 	 */
 	@Override
-	public int addGraph(Graph g) {
+	public int addGraph(Graph g1) {
+		MutableGraph g = new MutableGraph(g1);
 		int newGraphID;
-		if(getFeature(g.getFeatures(), "sai-id") != null)
-			newGraphID = Integer.parseInt(getFeature(g.getFeatures(), "sai-id").getValue());
-		else 
-			newGraphID = nextGraphID;
-		
+		if(getFeature(g.getFeatures(), Graphs.SAI_ID_NAME) != null) {
+			newGraphID = Integer.parseInt(getFeature(g.getFeatures(), 
+					Graphs.SAI_ID_NAME).getValue());
+			if(db.containsKey(newGraphID)) {
+				newGraphID = nextGraphID;
+				System.out.println("!!!");
+			}
+		} else newGraphID = nextGraphID;
+
+
 		nextGraphID = Math.max(nextGraphID, newGraphID) + 1; // update next fresh graph id
-		
-		replaceGraph(newGraphID, g);
-		
+
+		//update SAI-id tag
+		for(Feature f : SAIUtil.retainOnly(g.getFeatures(), Graphs.SAI_ID_NAME))
+			g.removeFeature(f);
+		g.addFeature(Graphs.getIDFeature(newGraphID));
+
+		//insert into db
+		db.put(newGraphID, g);
+
+		//add all features
+		for(Feature f : g.getFeatures()) {
+			addFeature(f);
+			graphsWithFeatureName.put(f.getName(), newGraphID);
+			graphsWithFeature.put(f, newGraphID);
+		}
+		for(int nid : g.getNodeIDs())
+			for(Feature f : g.getNodeFeatures(nid)) {
+				addFeature(f);
+				graphsWithFeatureName.put(f.getName(), newGraphID);
+				graphsWithFeature.put(f, newGraphID);
+			}
+		for(int eid : g.getEdgeIDs())
+			for(Feature f : g.getEdgeFeatures(eid)) {
+				addFeature(f);
+				graphsWithFeatureName.put(f.getName(), newGraphID);
+				graphsWithFeature.put(f, newGraphID);
+			}
+
+
 		return newGraphID;
 	}
-	
+
 	public void replaceGraph(int indexGraphID, Graph g2) {
 		MutableGraph g = new MutableGraph(g2);
-		
-		nextGraphID = Math.max(nextGraphID, indexGraphID + 1); // update next fresh graph id
-		
+
 		//update SAI-id tag
 		for(Feature f : SAIUtil.retainOnly(g.getFeatures(), Graphs.SAI_ID_NAME))
 			g.removeFeature(f);
 		g.addFeature(Graphs.getIDFeature(indexGraphID));
-		
-		//insert into db
-		db.put(indexGraphID, g);
-		
-		//add all features
-				for(Feature f : g.getFeatures()) {
-					addFeature(f);
-				    graphsWithFeatureName.put(f.getName(), indexGraphID);
-				    graphsWithFeature.put(f, indexGraphID);
-				}
-				for(int nid : g.getNodeIDs())
-					for(Feature f : g.getNodeFeatures(nid)) {
-						addFeature(f);
-					    graphsWithFeatureName.put(f.getName(), indexGraphID);
-					    graphsWithFeature.put(f, indexGraphID);
-					}
-				for(int eid : g.getEdgeIDs())
-					for(Feature f : g.getEdgeFeatures(eid)) {
-						addFeature(f);
-					    graphsWithFeatureName.put(f.getName(), indexGraphID);
-					    graphsWithFeature.put(f, indexGraphID);
-					}
-				
+		if(db.containsKey(indexGraphID))
+			db.remove(indexGraphID);
+		addGraph(g);
 	}
 
 }
