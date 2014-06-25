@@ -17,23 +17,22 @@
 
  */
 
-package sai.indexing;
+package sai.retrieval;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import sai.db.DBInterface;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
 
-/**
- * Implementations of this class are tasked with generating (or retrieving)
- * indices for a stored graph.
- *
+/** This class is used to provide custom algorithms for ordering and retrieving
+ * graphs from the database in accordance with a set of Indices.  The algorithm
+ * will select graphs as a function of which of the indicated indices are
+ * associated with each graph.
  * @version 0.2.0
  * @author Joseph Kendall-Morwick
  */
-public interface IndexGenerator<G extends Graph> {
-
-    public Set<G> generateIndices(DBInterface db, GraphFactory<? extends G> gf, Graph s);
-
+public abstract interface GraphIndexBasedRetriever {
+    public abstract Iterator<Integer> retrieve(DBInterface db, Set<Integer> indices);
 }

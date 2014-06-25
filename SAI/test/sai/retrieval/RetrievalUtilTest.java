@@ -24,7 +24,6 @@ import sai.graph.Graph;
 import sai.graph.GraphFactory;
 import sai.graph.MutableGraph;
 import sai.graph.SampleGraphs;
-import sai.indexing.BasicPath1IndexRetriever;
 
 public class RetrievalUtilTest {
 
@@ -32,7 +31,7 @@ public class RetrievalUtilTest {
 	public void testBasicCountRetriever() throws AccessDeniedException {
 		GraphFactory gf = MutableGraph.getFactory();
 		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices();
-		IndexBasedGraphRetriever r = new BasicCountRetriever();
+		GraphIndexBasedRetriever r = new BasicGraphIndexCount();
 		Iterator<Integer> i = r.retrieve(db, Sets.newHashSet(5, 6, 7, 9));
 		i = r.retrieve(db, Sets.newHashSet(5, 6, 7, 8));
 		assertTrue(i.hasNext());
@@ -123,13 +122,16 @@ public class RetrievalUtilTest {
 		assertEquals(4, m.getMatchedEdgeInGraph2(4));
 	}
 	
+	/* bring these tests back with a graph-index based indexing system, such as GIndex, 
+	 * since path1 is now done with features instead of graphs
+	 *
 	@Test
 	public void testBuildPhase1Retriever() throws AccessDeniedException {
 		GraphFactory gf = MutableGraph.getFactory();
 		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices();
 		GraphRetriever r = RetrievalUtil.createPhase1Retriever(
 				new BasicPath1IndexRetriever("test"), 
-				new BasicCountRetriever());
+				new BasicGraphIndexCount());
 		Iterator<Integer> i = r.retrieve(db, SampleGraphs.getSmallGraph1());
 		assertTrue(i.hasNext());
 		assertEquals(1, (int)i.next());
@@ -173,7 +175,7 @@ public class RetrievalUtilTest {
 				h);
 		GraphRetriever phase1 = RetrievalUtil.createPhase1Retriever(
 				new BasicPath1IndexRetriever("test"), 
-				new BasicCountRetriever());
+				new BasicGraphIndexCount());
 		BasicDBInterface db = SampleDBs.smallGraphsDBWithIncorrectIndices();
 		
 		Graph query = SampleGraphs.getSmallGraph1();
@@ -271,5 +273,5 @@ public class RetrievalUtilTest {
 		assertEquals(Sets.newHashSet(1,3), results);
 
 	}
-	
+	*/
 }

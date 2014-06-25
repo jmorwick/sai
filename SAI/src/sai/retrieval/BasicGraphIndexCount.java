@@ -31,8 +31,9 @@ import sai.db.DBInterface;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
+import sai.graph.Graphs;
 import sai.graph.MutableGraph;
-import sai.retrieval.IndexBasedGraphRetriever;
+import sai.retrieval.GraphIndexBasedRetriever;
 
 /**
  * A retriever which ranks graphs by the number of specified indices they are
@@ -41,7 +42,7 @@ import sai.retrieval.IndexBasedGraphRetriever;
  * @version 0.2.0
  * @author Joseph Kendall-Morwick
  */
-public class BasicCountRetriever implements IndexBasedGraphRetriever {
+public class BasicGraphIndexCount implements GraphIndexBasedRetriever {
 
     private Set<Integer> retrievedGraphIDs = Sets.newHashSet();
 
@@ -51,16 +52,13 @@ public class BasicCountRetriever implements IndexBasedGraphRetriever {
         for (int iid : indices) {
             for (Feature f : SAIUtil.retainOnly(
             		db.retrieveGraph(iid, gf).getFeatures(),
-            		"indexes")) {
+            		Graphs.INDEXES_FEATURE_NAME)) {
             	ranks.add(Integer.parseInt(f.getValue()));
             }
         }
         
         retrievedGraphIDs = Sets.newHashSet();
 
-        for (Integer id : db.getHiddenGraphs()) {
-            ranks.remove(id);
-        }
         return new Iterator<Integer>() {
 
             public boolean hasNext() {

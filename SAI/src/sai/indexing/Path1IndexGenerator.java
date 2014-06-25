@@ -1,55 +1,37 @@
-/* Copyright 2011 Joseph Kendall-Morwick
-
-     This file is part of SAI: The Structure Access Interface.
-
-    SAI is free software: you can redistribute it and/or modify
-    it under the terms of the Lesser GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    SAI is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
-
-    You should have received a copy of the Lesser GNU General Public License
-    along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
-
- */
-
 package sai.indexing;
 
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import com.google.common.collect.Sets;
 
 import sai.SAIUtil;
-import sai.db.DBInterface;
 import sai.graph.Feature;
 import sai.graph.Graph;
-import sai.graph.GraphFactory;
-import sai.graph.Graphs;
-import sai.graph.MutableGraph;
 
-/**
- * An index generator which generates sub-structure indices for each single 
- * edge path in a graph with the specified feature types.
- *
- * @version 2.0.0
- * @author Joseph Kendall-Morwick
- */
-public class Path1IndexGenerator<G extends Graph> implements IndexGenerator<G> {
-
+public class Path1IndexGenerator implements FeatureIndexGenerator {
+    public static final String PATH1NAME = "path1-index";
+    
     private final String[] featureNames;
-
-    public Path1IndexGenerator(String ... featureTypes) {
-        this.featureNames = featureTypes;
+    
+    public Path1IndexGenerator(String ... featureNames) {
+    	this.featureNames = featureNames;
     }
 
-    @Override
-    public Set<G> generateIndices(DBInterface db, GraphFactory<? extends G> gf, Graph s) {
-        Set<G> indices = Sets.newHashSet();
-        for(int e : s.getEdgeIDs()) {
+    public static Set<Feature> generatePath1IndexFeatures(Graph s, String ... featureNames) {
+    	Set<Feature> ret = Sets.newHashSet();
+    	for(int e : s.getEdgeIDs()) {
+    		ret.addAll(generatePath1IndexFeature(s, e, featureNames));
+    	}
+    	return ret;
+    }
+    
+    private static Pattern replacementPattern = Pattern.compile("(,|:|\\\\)");
+    public static String encodeValue(String v) {
+    	return replacementPattern.matcher(v).replaceAll("\\\\$1");
+    }
+    private static Set<Feature> generatePath1IndexFeature(Graph s, int e, String ... featureNames) {
+    	    Set<Feature> ret = Sets.newHashSet();
             Set<Feature> fromNodeFeatures = Sets.newHashSet();
             Set<Feature> toNodeFeatures = Sets.newHashSet();
             Set<Feature> edgeFeatures = Sets.newHashSet();
@@ -61,23 +43,26 @@ public class Path1IndexGenerator<G extends Graph> implements IndexGenerator<G> {
             toNodeFeatures.addAll(
                     SAIUtil.retainOnly(s.getNodeFeatures(s.getEdgeTargetNodeID(e)),
                     featureNames));
-            
-            for(Feature n1f : fromNodeFeatures)
-                for(Feature n2f : toNodeFeatures)
+            for(Feature n1f : fromNodeFeatures) {
+                for(Feature n2f : toNodeFeatures) {
                     for(Feature ef : edgeFeatures) {
-                    	MutableGraph i = new MutableGraph();
-                    	i.addNode(1);
-                    	i.addNode(2);
-                    	i.addEdge(1, 1, 2);
-                    	i.addNodeFeature(1, n1f);
-                    	i.addNodeFeature(2, n2f);
-                    	i.addEdgeFeature(1, ef);
-                    	i.addFeature(Graphs.INDEX);
-                    	indices.add(gf.copy(i));
+                    	ret.add(new Feature(PATH1NAME, 
+                    			encodeValue(n1f.getName()) + "," + 
+                            	encodeValue(n1f.getValue()) +
+                            	(ef != null ? ":" + 
+                    			encodeValue(ef.getName()) + "," + 
+                            	encodeValue(ef.getValue()) : "") + ":" + 
+                    			encodeValue(n2f.getName()) + "," + 
+                            	encodeValue(n2f.getValue())));
+                    }
+                }
             }
-        }
-        return indices;
+            return ret;
     }
 
+	@Override
+	public Set<Feature> apply(Graph g) {
+		return generatePath1IndexFeatures(g, featureNames);
+	}
 
 }
