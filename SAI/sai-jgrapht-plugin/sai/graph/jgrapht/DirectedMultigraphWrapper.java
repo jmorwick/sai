@@ -1,5 +1,6 @@
 package sai.graph.jgrapht;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.jgrapht.EdgeFactory;
@@ -82,7 +83,80 @@ public class DirectedMultigraphWrapper<N, E> extends DirectedMultigraph<N, E>
 		return success;
 	}
 
-	// TODO: track removal of edges and create ID's. 
+	@Override
+	public boolean removeAllVertices(Collection<? extends N> nodes) {
+		boolean success = super.removeAllVertices(nodes);
+		if(success) {
+			for(N n : nodes) {
+				int nid = nodeIDs.get(n);
+				nodeFeatures.removeAll(nid);
+				nodeIDs.remove(n);
+			}
+		}
+		return success;
+	}
+
+	@Override
+	public boolean removeAllEdges(Collection<? extends E> edges) {
+		boolean success = super.removeAllEdges(edges);
+		if(success) {
+			for(E e : edges) {
+				int eid = edgeIDs.get(e);
+				edgeFeatures.removeAll(eid);
+				edgeIDs.remove(e);
+			}
+		}
+		return success;
+	}
+	
+	@Override
+	public boolean removeAllEdges(E[] edges) {
+		boolean success = super.removeAllEdges(edges);
+		if(success) {
+			for(E e : edges) {
+				int eid = edgeIDs.get(e);
+				edgeFeatures.removeAll(eid);
+				edgeIDs.remove(e);
+			}
+		}
+		return success;
+	}
+	
+
+	@Override
+	public Set<E> removeAllEdges(N n1, N n2) {
+		Set<E> edges = super.removeAllEdges(n1, n2);
+		for(E e : edges) {
+			int eid = edgeIDs.get(e);
+			edgeFeatures.removeAll(eid);
+			edgeIDs.remove(e);
+		}
+		return edges;
+	}
+	
+
+	@Override
+	public boolean removeEdge(E e) {
+		boolean success = super.removeEdge(e);
+		if(success) {
+			int eid = edgeIDs.get(e);
+			edgeFeatures.removeAll(eid);
+			edgeIDs.remove(e);
+		}
+		return success;
+	}
+	
+
+	@Override
+	public E removeEdge(N n1, N n2) {
+		E e = super.removeEdge(n1, n2);
+		if(e != null) {
+			int eid = edgeIDs.get(e);
+			edgeFeatures.removeAll(eid);
+			edgeIDs.remove(e);
+		}
+		return e;
+	}
 	
 	// TODO: create tests using SAI graph and checking consistency w/ wrapper
 
