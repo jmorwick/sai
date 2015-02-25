@@ -19,6 +19,7 @@ import sai.graph.Graph;
 import sai.graph.GraphFactory;
 import sai.graph.Graphs;
 import sai.graph.MutableGraph;
+import sai.graph.MutableGraphFactory;
 import sai.graph.SampleGraphs;
 import static sai.graph.SampleGraphs.assertGraphsAreIdentical;
 
@@ -54,7 +55,7 @@ public class BasicDBInterfaceTest {
 
 	@Test
 	public void testSavingToAndLoadingFromFileOneGraph() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph.getFactory();
+		GraphFactory gf = new MutableGraphFactory();
 		BasicDBInterface db = new BasicDBInterface();
 		File f = new File("/tmp/sai-db-test-"+Math.random());
 		tempFiles.add(f);
@@ -76,7 +77,7 @@ public class BasicDBInterfaceTest {
 
 	@Test
 	public void testSavingAndLoadingMultipleGraphs() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph.getFactory();
+		GraphFactory gf = new MutableGraphFactory();
 		BasicDBInterface db = new BasicDBInterface();
 		File f = new File("/tmp/sai-db-test-"+Math.random());
 		tempFiles.add(f);
@@ -113,7 +114,7 @@ public class BasicDBInterfaceTest {
 	private static Set<Integer> getIndexedGraphIDs(DBInterface db, int iid) {
 		Set<Integer> gids = Sets.newHashSet();
 		for(Feature f : SAIUtil.retainOnly(
-				db.retrieveGraph(iid, MutableGraph.getFactory()).getFeatures(),
+				db.retrieveGraph(iid, new MutableGraphFactory()).getFeatures(),
 				Graphs.INDEXES_FEATURE_NAME))
 			gids.add(Integer.parseInt(f.getValue()));
 		return gids;
@@ -122,7 +123,7 @@ public class BasicDBInterfaceTest {
 
 	@Test
 	public void testAddingIndexToGraph() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph.getFactory();
+		GraphFactory gf = new MutableGraphFactory();
 		BasicDBInterface db = new BasicDBInterface();
 		File f = new File("/tmp/sai-db-test-"+Math.random());
 		tempFiles.add(f);
@@ -201,7 +202,7 @@ public class BasicDBInterfaceTest {
 
 	@Test
 	public void testAddingIndexToMultipleGraphs() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph.getFactory();
+		GraphFactory gf = new MutableGraphFactory();
 		BasicDBInterface db = new BasicDBInterface();
 		File f = new File("/tmp/sai-db-test-"+Math.random());
 		tempFiles.add(f);
@@ -292,7 +293,7 @@ public class BasicDBInterfaceTest {
 
 	@Test
 	public void testGraphIterator() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph.getFactory();
+		GraphFactory gf = new MutableGraphFactory();
 		BasicDBInterface db = new BasicDBInterface();
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
@@ -320,7 +321,7 @@ public class BasicDBInterfaceTest {
 	
 	@Test
 	public void testIndexIterator() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph.getFactory();
+		GraphFactory gf = new MutableGraphFactory();
 		BasicDBInterface db = new BasicDBInterface();
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
@@ -343,7 +344,7 @@ public class BasicDBInterfaceTest {
 
 	@Test
 	public void testHidingGraphs() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph.getFactory();
+		GraphFactory gf = new MutableGraphFactory();
 		BasicDBInterface db = new BasicDBInterface();
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
@@ -378,7 +379,7 @@ public class BasicDBInterfaceTest {
 	
 	@Test
 	public void testDeletingGraphs() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph.getFactory();
+		GraphFactory gf = new MutableGraphFactory();
 		BasicDBInterface db = new BasicDBInterface();
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());

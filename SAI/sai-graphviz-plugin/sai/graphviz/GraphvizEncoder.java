@@ -28,15 +28,12 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import sai.graph.Feature;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import db.mysql.MySQLDBInterface;
-import sai.graph.jgrapht.Edge;
-import sai.graph.jgrapht.Feature;
-import sai.graph.jgrapht.Graph;
-import sai.graph.jgrapht.Node;
 
 /**
  * Produces textual and png image visualizations of graphs using the 

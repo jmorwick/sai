@@ -27,6 +27,7 @@ import sai.graph.Graph;
 import sai.graph.GraphFactory;
 import sai.graph.Graphs;
 import sai.graph.MutableGraph;
+import sai.graph.MutableGraphFactory;
 import static sai.graph.Graphs.getFeature;
 
 public class BasicDBInterface implements DBInterface {
@@ -193,7 +194,7 @@ public class BasicDBInterface implements DBInterface {
 		//write graphs to file
 		out.print(db.keySet().size() + "\n");
 		for(int gid : db.keySet()) {
-			Graph g = retrieveGraph(gid, MutableGraph.getFactory());
+			Graph g = retrieveGraph(gid, new MutableGraphFactory());
 			//print out general graph info on one line
 			out.print(gid+",");
 			out.print(g.getNodeIDs().size()+",");

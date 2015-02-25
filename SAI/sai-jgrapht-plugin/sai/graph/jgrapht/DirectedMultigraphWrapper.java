@@ -31,6 +31,7 @@ public class DirectedMultigraphWrapper<N, E> extends DirectedMultigraph<N, E>
 		nodeIDs = HashBiMap.create();
 		nodeFeatures = HashMultimap.create();
 		edgeFeatures = HashMultimap.create();
+		features = Sets.newHashSet();
 	}
 
 	public DirectedMultigraphWrapper(EdgeFactory<N, E> ef) {
@@ -39,6 +40,7 @@ public class DirectedMultigraphWrapper<N, E> extends DirectedMultigraph<N, E>
 		nodeIDs = HashBiMap.create();
 		nodeFeatures = HashMultimap.create();
 		edgeFeatures = HashMultimap.create();
+		features = Sets.newHashSet();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -162,11 +164,31 @@ public class DirectedMultigraphWrapper<N, E> extends DirectedMultigraph<N, E>
 
 	////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////
-	// SAI interface implementation....
+	// SAI feature modification methods....
 	////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////
 
+	public void addFeature(Feature f) {
+		features.add(f);
+	}
+
+	public void addNodeFeature(int nid, Feature f) {
+		if(!nodeIDs.containsValue(nid))
+			throw new IllegalArgumentException("No such node with id #"+nid);
+		nodeFeatures.put(nid, f);
+	}
 	
+	public void addEdgeFeature(int eid, Feature f) {
+		if(!edgeIDs.containsValue(eid))
+			throw new IllegalArgumentException("No such edge with id #"+eid);
+		nodeFeatures.put(eid, f);
+	}
+
+	////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////
+	// SAI interface implementation....
+	////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////
 	
 	@Override
 	public Set<Integer> getEdgeIDs() {

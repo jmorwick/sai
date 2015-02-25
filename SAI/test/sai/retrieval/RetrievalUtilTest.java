@@ -23,13 +23,14 @@ import sai.db.SampleDBs;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
 import sai.graph.MutableGraph;
+import sai.graph.MutableGraphFactory;
 import sai.graph.SampleGraphs;
 
 public class RetrievalUtilTest {
 
 	@Test
 	public void testBasicCountRetriever() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph.getFactory();
+		GraphFactory gf = new MutableGraphFactory();
 		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices();
 		GraphIndexBasedRetriever r = new BasicGraphIndexCount();
 		Iterator<Integer> i = r.retrieve(db, Sets.newHashSet(5, 6, 7, 9));
@@ -127,7 +128,7 @@ public class RetrievalUtilTest {
 	 *
 	@Test
 	public void testBuildPhase1Retriever() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph.getFactory();
+		GraphFactory gf = new MutableGraphFactory();
 		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices();
 		GraphRetriever r = RetrievalUtil.createPhase1Retriever(
 				new BasicPath1IndexRetriever("test"), 
@@ -168,7 +169,7 @@ public class RetrievalUtilTest {
 	
 	@Test
 	public void testBuild2PhasedRetriever() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph.getFactory();
+		GraphFactory gf = new MutableGraphFactory();
 		GraphMatchingHeuristic h = Heuristics.basicEdgeCount();
 		MatchingGenerator gen = MatchingUtil.createCompleteMatchingGenerator(
 				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil.lexicalChecker()), 

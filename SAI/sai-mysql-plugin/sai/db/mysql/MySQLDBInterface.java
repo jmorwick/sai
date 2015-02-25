@@ -49,6 +49,7 @@ import com.google.common.collect.Sets;
 import sai.comparison.compatibility.ManyTo1;
 import sai.db.DBInterface;
 import sai.graph.BasicGraphFactory;
+import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
 import sai.test.graph.Edge;
@@ -811,6 +812,15 @@ public class MySQLDBInterface implements DBInterface {
         return ret;
 	}
 	
+	
+	
+	
+	
+	/////////////////////// new stuff
+	
+	
+	
+	
 	@Override
 	public Set<Integer> retrieveIndexedGraphIDs(int indexID) {
 		// TODO Auto-generated method stub
@@ -853,6 +863,22 @@ public class MySQLDBInterface implements DBInterface {
 	}
 	@Override
 	public int getDatabaseSizeWithoutIndices() {
+        return Integer.parseInt(
+                getQueryResults("SELECT COUNT(*) FROM graph_instances").get(0).get("COUNT(*)"))
+                - ignoreIDs.size();
+	}
+	@Override
+	public Iterator<Integer> retrieveGraphsWithFeature(Feature f) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Iterator<Integer> retrieveGraphsWithFeatureName(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public int addGraph(Graph g) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

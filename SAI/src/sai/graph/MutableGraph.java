@@ -32,16 +32,6 @@ public class MutableGraph implements Graph {
 			return o1.getName().compareTo(o2.getName());
 		}});
 	
-	
-	public static GraphFactory<MutableGraph> getFactory() {
-		return new GraphFactory<MutableGraph>() {
-
-			@Override
-			public MutableGraph copy(Graph g) {
-				return new MutableGraph(g);
-			}
-		};
-	}
 
 	public MutableGraph() {
 		

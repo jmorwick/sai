@@ -33,6 +33,7 @@ import sai.graph.Graph;
 import sai.graph.GraphFactory;
 import sai.graph.Graphs;
 import sai.graph.MutableGraph;
+import sai.graph.MutableGraphFactory;
 import sai.retrieval.GraphIndexBasedRetriever;
 
 /**
@@ -48,7 +49,7 @@ public class BasicGraphIndexCount implements GraphIndexBasedRetriever {
 
     public Iterator<Integer> retrieve(final DBInterface db, Set<Integer> indices) {
         final Multiset<Integer> ranks = HashMultiset.create();
-        final GraphFactory<MutableGraph> gf = MutableGraph.getFactory();
+        final GraphFactory<MutableGraph> gf = new MutableGraphFactory();
         for (int iid : indices) {
         	System.out.println(db.retrieveGraph(iid, gf).getFeatures());
             for (Feature f : SAIUtil.retainOnly(
