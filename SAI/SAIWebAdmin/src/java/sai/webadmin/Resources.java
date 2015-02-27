@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
-import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,11 +21,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspWriter;
-import sai.db.DBInterface;
-import sai.graph.GraphFactory;
 
 /** instantiates resource and plugin classes and manages instances
  *
+ * TODO: only basic testing performed -- unit tests and more extensive testing needed
+ * 
  * @author jmorwick
  */
 @WebServlet(name = "Resources", urlPatterns = {"/Resources"})
@@ -121,19 +120,19 @@ public class Resources extends HttpServlet {
                 
                 
                 String name = Resources.addResource(newinstance);
-                if(newinstance instanceof DBInterface) {
-                    Databases.CONNECTIONS.put(name, (DBInterface)newinstance);
-                    response.sendRedirect(".");
-                    return;
-                }
-                if(newinstance instanceof GraphFactory)
-                    Graphs.FACTORIES.put(name, (GraphFactory)newinstance);
                 
                 response.sendRedirect("plugins.jsp");
                 return;
             } else if(action.equals("remove")) {
-                //TODO: this
-                response.sendRedirect(".");
+                if(params.containsKey("resources")) {
+                    for(String resourceID : params.get("resources")) {
+                        System.out.println(resourceID);
+                        System.out.println(RESOURCES.containsKey(resourceID));
+                        System.out.println(RESOURCES.keySet());
+                        RESOURCES.remove(resourceID);
+                    }
+                }
+                response.sendRedirect("plugins.jsp");
                 return;
             } 
                 
@@ -142,39 +141,6 @@ public class Resources extends HttpServlet {
         
     }
     
-    /** creates forms for instantiating any of the supplied classes.
-     * 
-     * Each such form is created by getInstantiationForm. 
-     * 
-     * @param request the current servlet request
-     * @param out output stream to print the HTML form to
-     * @param formName base name applied to each form
-     * @param action URL of this web service
-     * @param method method of transferring arguments -- should be POST
-     * @param classes the collection of classes which can be instantiated (should be Plugins.PLUGINS)
-     * @throws IOException 
-     */
-    public static void getMultiform(HttpServletRequest request, 
-            JspWriter out, String formName, String action, 
-            String method, List<? extends Class> classes) throws IOException {
-            out.println("<div class='selectcreateobject' ID='select_"+
-                    formName+"'>");
-            out.println("  <select name='"+formName+"select' ID='select_"+
-                    formName+"_choice'>");
-            for(Class c : classes) 
-                out.println("    <option value='"+c.getCanonicalName()
-                +"'>"+c.getCanonicalName()+"</option>");
-            out.println("  </select>");
-            out.println("  <input type='submit' name='action' value='create' "+
-                    "onClick='showCreationForm(\""+
-                    formName+"\", select_"+
-                    formName+"_choice.options[select_"+
-                    formName+"_choice.selectedIndex].value)'>");
-            out.println("</div>");
-            for(Class c : classes) 
-                getInstantiationForm(request, out, formName, 
-                        action, method, c);
-    }
     
     // helper which determines if a parameter could possibly be satisified by 
     // arguments supplied to instantiate. 

@@ -6,33 +6,30 @@
 
 package sai.webadmin;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import sai.graph.GraphFactory;
 
-/** instantiates, visualizes, and manages graph instances and factories
+/** manages graph factory and visualization plugins.
+ * 
+ * TODO: more extensive testing, including unit tests, needed
+ * TODO: add management of visualization plugins
+ * TODO: add graph visualization service
+ * TODO: add map visualization service
+ * TODO: add caching options for graph and map visualizations
  *
  * @author jmorwick
  */
 @WebServlet(name = "Graphs", urlPatterns = {"/Graphs"})
 public class Graphs extends HttpServlet {
 
-    public static final Map<String,GraphFactory> FACTORIES = 
-            Maps.newConcurrentMap();
-    public static final List<Class<? extends GraphFactory>> INTERFACES = 
-            Lists.newCopyOnWriteArrayList();
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * currently does nothing.
+     * 
+     * see "TODO" items above
      *
      * @param request servlet request
      * @param response servlet response
@@ -41,19 +38,9 @@ public class Graphs extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Graphs</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Graphs at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
+        
+        response.sendError(400, "invalid arguments");
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

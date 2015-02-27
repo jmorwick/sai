@@ -23,8 +23,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import sai.db.DBInterface;
-import sai.graph.Graph;
-import sai.graph.GraphFactory;
 
 /** This class is used to provide custom algorithms for ordering and retrieving
  * graphs from the database in accordance with a set of Indices.  The algorithm

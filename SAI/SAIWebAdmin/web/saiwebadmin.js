@@ -1,10 +1,16 @@
 
+
+visibleForm = null;
+
 function showCreationForm(name, type) {
-    document.getElementById("select_"+name).style.display="none";
-    document.getElementById("create_"+name+"_"+type).style.display="block";
+    hideCreationForm();
+    visibleForm = "create_"+name+"_"+type;
+    document.getElementById(visibleForm).style.display="block";
 }
 
-function hideCreationForm(name, type) {
-    document.getElementById("select_"+name).style.display="block";
-    document.getElementById("create_"+name+"_"+type).style.display="none";
+function hideCreationForm() {
+    if(visibleForm != null) { // hide currently active form
+        document.getElementById(visibleForm).style.display="none";
+    }
+    visibleForm = null;
 }

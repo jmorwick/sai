@@ -6,21 +6,20 @@
 
 package sai.webadmin;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import sai.db.DBInterface;
-import sai.graph.GraphFactory;
 
-/** manages all plugin classes
- *
+/** manages all plugin classes.
+ * 
+ * TODO: basic testing performed -- more extensive testing and unit tests needed.
  * @author jmorwick
  */
 @WebServlet(name = "Plugins", urlPatterns = {"/Plugins"})
@@ -40,13 +39,21 @@ public class Plugins extends HttpServlet {
             };
     
     
-    public static final List<Class<?>> PLUGINS = 
-            Lists.newCopyOnWriteArrayList(); //thread safe
+    /** collection of all classes which can be instantiated as plugins.
+     * This may include classes which are not technically "plugins", such
+     * as java.util.File, but are used as resources for instantiating 
+     * plugins. Classes may only be instantiated by this webapp if they are 
+     * registered in this collection. 
+     */
+    public static final Set<Class<?>> PLUGINS = 
+            Sets.newCopyOnWriteArraySet(); //thread safe
     
     
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Processes POST requests for registering plugin classes.
+     * 
+     * the "plugin" parameter must be specified and must be a valid 
+     * name of a java class which is loadable in the server's context. 
      *
      * @param request servlet request
      * @param response servlet response
@@ -59,14 +66,16 @@ public class Plugins extends HttpServlet {
             //validate the request
             //
             
-            // make sure an action was set
-            Map<String,String[]> params = request.getParameterMap();
-            if(!params.containsKey("plugin") || 
-                    params.get("plugin").length != 1) {
+            // make sure the proper POST params are set
+            Map<String,String[]> args = request.getParameterMap();
+            if(!args.containsKey("plugin") || 
+                    args.get("plugin").length != 1) {
                 response.sendError(400, "no plugin indicated");
                 return;
             }
-            String classname = params.get("plugin")[0];
+            
+            // validate the class name provided
+            String classname = args.get("plugin")[0];
             Class<?> plugin = null;
             try {
                 plugin = Class.forName(classname); // load the class
@@ -75,12 +84,13 @@ public class Plugins extends HttpServlet {
                 return;
             }
             
-            // TODO: ensure the plugin class is concrete
+            // ensure the plugin class is concrete
             if(Modifier.isAbstract(plugin.getModifiers())) {
                 response.sendError(400, "plugin class must be instantiable");
                 return;
             }
             
+            // ensure we're alloed to use this plugin 
             boolean allowed = false;
             for(Class c : ALLOWED_SUPERCLASSES) {
                 if(c.isAssignableFrom(plugin)) {
@@ -93,15 +103,10 @@ public class Plugins extends HttpServlet {
             }
             
             //
-            // request is valid, process it
+            // request is valid, process it by adding to the appropriate collections
             //
             
             PLUGINS.add(plugin);
-            if(DBInterface.class.isAssignableFrom(plugin)) {
-                Databases.INTERFACES.add((Class<? extends DBInterface>)plugin);
-            } else if(GraphFactory.class.isAssignableFrom(plugin)) {
-                Graphs.INTERFACES.add((Class<? extends GraphFactory>)plugin);
-            }
             
             response.sendRedirect("plugins.jsp");
     }
