@@ -18,16 +18,13 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sai;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import sai.graph.Feature;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -40,6 +37,8 @@ public class SAIUtil {
     /** creates a collection from an iterator to allow for-each over iterators. Only
      * the isEmpty() and iterator() methods are supported, so this is mostly only 
      * intended to shorten for-each loop syntax */
+	// TODO: eliminate this -- streams API provides better mechanisms
+	@Deprecated
     public static <A> Collection<A> iteratorToCollection(final Iterator<A> i) {
         return new Collection<A>() {
 
@@ -104,6 +103,8 @@ public class SAIUtil {
 	 * @param names the names of features to keep
 	 * @return a predicate which identifies features whose names match 'names'.
 	 */
+	// TODO: eliminate this -- streams API provides better mechanisms
+	@Deprecated
     public static Predicate<Feature> featureWhiteListFilter(final Set<String> names) {
     	return new Predicate<Feature>() {
 			@Override
@@ -119,6 +120,8 @@ public class SAIUtil {
 	 * @param names the names of features to keep
 	 * @return a predicate which identifies features whose names match 'names'.
 	 */
+	// TODO: eliminate this -- streams API provides better mechanisms
+	@Deprecated
     public static Predicate<Feature> featureWhiteListFilter(String ... names) {
     	Set<String> sNames = Sets.newHashSet();
     	for(String name : names) sNames.add(name);
@@ -132,6 +135,8 @@ public class SAIUtil {
      * @param names names of features to retain
      * @return only features whose names match
      */
+	// TODO: eliminate this -- streams API provides better mechanisms
+	@Deprecated
     public static Set<Feature> retainOnly(Set<Feature> features, 
     		Set<String> names) {
     	return Sets.filter(features, featureWhiteListFilter(names));
@@ -144,6 +149,8 @@ public class SAIUtil {
      * @param names names of features to retain
      * @return only features whose names match
      */
+	// TODO: eliminate this -- streams API provides better mechanisms
+	@Deprecated
     public static Set<Feature> retainOnly(Set<Feature> features, 
     		String ... names) {
     	return Sets.filter(features, featureWhiteListFilter(names));
