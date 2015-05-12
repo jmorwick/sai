@@ -29,11 +29,9 @@ import com.google.common.collect.Sets;
 import sai.SAIUtil;
 import sai.db.DBInterface;
 import sai.graph.Feature;
-import sai.graph.Graph;
 import sai.graph.GraphFactory;
 import sai.graph.Graphs;
 import sai.graph.MutableGraph;
-import sai.graph.MutableGraphFactory;
 import sai.retrieval.GraphIndexBasedRetriever;
 
 /**
@@ -49,7 +47,7 @@ public class BasicGraphIndexCount implements GraphIndexBasedRetriever {
 
     public Iterator<Integer> retrieve(final DBInterface db, Set<Integer> indices) {
         final Multiset<Integer> ranks = HashMultiset.create();
-        final GraphFactory<MutableGraph> gf = new MutableGraphFactory();
+        final GraphFactory<MutableGraph> gf = MutableGraph::new;
         for (int iid : indices) {
         	System.out.println(db.retrieveGraph(iid, gf).getFeatures());
             for (Feature f : SAIUtil.retainOnly(

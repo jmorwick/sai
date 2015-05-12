@@ -40,7 +40,7 @@ public class GraphUtilityTest {
     	DBInterface db = SampleDBs.getEmptyDB();
         Graph g = SampleGraphs.getSmallGraph1();
         for(int e : g.getEdgeIDs()) {
-            Graph ng = Graphs.copyWithoutEdge(g, new MutableGraphFactory(), e);
+            Graph ng = Graphs.copyWithoutEdge(g, MutableGraph::new, e);
             assertEquals(ng.getEdgeIDs().size(), g.getEdgeIDs().size()-1);
             assertEquals(ng.getNodeIDs().size(), g.getNodeIDs().size());
         }
@@ -51,7 +51,7 @@ public class GraphUtilityTest {
     	DBInterface db = SampleDBs.getEmptyDB();
         Graph g = SampleGraphs.getSmallGraph1();
         for(int n : g.getNodeIDs()) {
-            Graph ng = Graphs.copyWithoutNode(g, new MutableGraphFactory(), n);
+            Graph ng = Graphs.copyWithoutNode(g, MutableGraph::new, n);
             if(n == 1)
             	assertEquals(Sets.newHashSet(2, 3, 4), ng.getEdgeIDs());
             else if(n == 2)

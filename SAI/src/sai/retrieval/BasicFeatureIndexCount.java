@@ -31,7 +31,6 @@ import sai.db.DBInterface;
 import sai.graph.Feature;
 import sai.graph.GraphFactory;
 import sai.graph.MutableGraph;
-import sai.graph.MutableGraphFactory;
 
 /**
  * A retriever which ranks graphs by the number of specified indices they are
@@ -46,7 +45,7 @@ public class BasicFeatureIndexCount implements FeatureIndexBasedRetriever {
 
     public Iterator<Integer> retrieve(final DBInterface db, Set<Feature> indices) {
         final Multiset<Integer> ranks = HashMultiset.create();
-        final GraphFactory<MutableGraph> gf = new MutableGraphFactory();
+        final GraphFactory<MutableGraph> gf = MutableGraph::new;
         for (Feature f : indices) {
             for (int gid : SAIUtil.iteratorToCollection(db.retrieveGraphsWithFeature(f)))
             	ranks.add(gid);

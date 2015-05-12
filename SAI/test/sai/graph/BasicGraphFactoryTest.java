@@ -19,7 +19,7 @@ public class BasicGraphFactoryTest {
 		g.addNodeFeature(2, new Feature("test", "a"));
 		g.addNodeFeature(3, new Feature("test", "b"));
 		g.addNodeFeature(4, new Feature("test", "c"));
-		assertGraphsAreIdentical(g, new MutableGraphFactory().copy(g));
+		assertGraphsAreIdentical(g, new MutableGraph(g));
 	}
 
 }
