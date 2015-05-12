@@ -4,6 +4,9 @@ import static org.junit.Assert.*;
 
 import java.nio.file.AccessDeniedException;
 import java.util.Iterator;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 
 import com.google.common.collect.Sets;
@@ -25,7 +28,9 @@ public class RetrievalUtilTest {
 	public void testBasicCountRetriever() throws AccessDeniedException {
 		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices();
 		GraphIndexBasedRetriever r = GraphIndexBasedRetriever::retrieveByBasicGraphIndexCount;
-		Iterator<Integer> i = r.retrieve(db, Sets.newHashSet(5, 6, 7, 9).stream()).iterator();
+		Iterator<Integer> i;
+		System.out.println("failing test: ");
+		r.retrieve(db, Sets.newHashSet(5, 6, 7, 8).stream()).forEach(x->System.out.println("("+x+")"));
 		i = r.retrieve(db, Sets.newHashSet(5, 6, 7, 8).stream()).iterator();
 		assertTrue(i.hasNext());
 		assertEquals(2, (int)i.next());

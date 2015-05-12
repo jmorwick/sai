@@ -58,8 +58,8 @@ public abstract interface GraphIndexBasedRetriever {
         // combine allgraph id's in to a multiset
         .collect(Collectors.toCollection(ConcurrentHashMultiset::create))
         .entrySet().stream() // stream this multiset
-		//sort by multiplicity
-		.sorted((l,r) -> l.getCount() > r.getCount() ? l.getElement() : r.getElement())
+		//sort by multiplicity (negated for descending order)
+		.sorted((l,r) -> -Integer.compare(l.getCount(), r.getCount()))
 		// convert from multiset entries to graph id's
 		.map(e -> e.getElement());
     	

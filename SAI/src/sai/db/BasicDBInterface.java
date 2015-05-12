@@ -260,7 +260,7 @@ public class BasicDBInterface implements DBInterface {
 
 	@Override
 	public Stream<Integer> getGraphIDStream() {
-		return db.keySet().stream().filter(id -> hiddenGraphs.contains(id));
+		return db.keySet().stream().filter(id -> !hiddenGraphs.contains(id));
 	}
 
 	@Override
