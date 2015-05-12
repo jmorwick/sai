@@ -8,7 +8,7 @@ import com.google.common.collect.Sets;
 import sai.SAIUtil;
 import sai.graph.Feature;
 import sai.graph.Graph;
-
+//TODO: update to use streams, move in to FeatureIndexGenerator file
 public class Path1IndexGenerator implements FeatureIndexGenerator {
     public static final String PATH1NAME = "path1-index";
     

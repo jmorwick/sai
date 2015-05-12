@@ -1,7 +1,6 @@
 package sai.comparison.compatibility;
 
 import static org.junit.Assert.*;
-import info.kendall_morwick.funcles.Pair;
 
 import java.nio.file.AccessDeniedException;
 
@@ -40,7 +39,7 @@ public class CompatibilityUtilTest {
 		assertTrue(!areLexicallyCompatible(f4, f2));
 		assertTrue(!areLexicallyCompatible(f4, f3));
 
-		FeatureCompatibilityChecker c = lexicalChecker();
+		FeatureCompatibilityChecker c = CompatibilityUtil::areLexicallyCompatible;
 		assertTrue(apply(c, f1, f1));
 		assertTrue(!apply(c, f1, f2));
 		assertTrue(apply(c, f1, f3));
@@ -58,21 +57,16 @@ public class CompatibilityUtilTest {
 	}
 	
 	private static FeatureCompatibilityChecker p = 
-			new FeatureCompatibilityChecker() {
-
-				@Override
-				public boolean apply(Pair<Feature> args) {
-					if(args.a1().getName().equals("b") && args.a2().getName().equals("a"))
-						return args.a1().getValue().equals(args.a2().getValue());
-					return areLexicallyCompatible(args.a1(), args.a2());
-				}
-		
-	};
+			(a1, a2) -> {
+					if(a1.getName().equals("b") && a2.getName().equals("a"))
+						return a1.getValue().equals(a2.getValue());
+					return areLexicallyCompatible(a1, a2);
+			};
 	
 	@Test
 	public void testGreedy1To1Checker() throws AccessDeniedException {
 		FeatureSetCompatibilityChecker c = greedy1To1Checker(p);
-		FeatureSetCompatibilityChecker c2 = greedy1To1Checker(lexicalChecker());
+		FeatureSetCompatibilityChecker c2 = greedy1To1Checker(CompatibilityUtil::areLexicallyCompatible);
 		DBInterface db = SampleDBs.getEmptyDB();
 		Feature f1 = new Feature("a", "1");
 		Feature f2 = new Feature("a", "2");
@@ -101,7 +95,7 @@ public class CompatibilityUtilTest {
 	@Test
 	public void testMany1To1Checker() throws AccessDeniedException {
 		FeatureSetCompatibilityChecker c = many1To1Checker(p);
-		FeatureSetCompatibilityChecker c2 = many1To1Checker(lexicalChecker());
+		FeatureSetCompatibilityChecker c2 = many1To1Checker(CompatibilityUtil::areLexicallyCompatible);
 		DBInterface db = SampleDBs.getEmptyDB();
 		Feature f1 = new Feature("a", "1");
 		Feature f2 = new Feature("a", "2");

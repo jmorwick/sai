@@ -1,7 +1,7 @@
 package sai.indexing;
 
-import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import sai.db.DBInterface;
 import sai.graph.Feature;
@@ -37,17 +37,17 @@ public class FeatureIndexingDBWrapper implements DBInterface {
 	}
 
 	@Override
-	public Iterator<Integer> getGraphIDIterator() {
-		return db.getGraphIDIterator();
+	public Stream<Integer> getGraphIDStream() {
+		return db.getGraphIDStream();
 	}
 
 	@Override
-	public Iterator<Integer> retrieveGraphsWithFeature(Feature f) {
+	public Stream<Integer> retrieveGraphsWithFeature(Feature f) {
 		return db.retrieveGraphsWithFeature(f);
 	}
 
 	@Override
-	public Iterator<Integer> retrieveGraphsWithFeatureName(String name) {
+	public Stream<Integer> retrieveGraphsWithFeatureName(String name) {
 		return db.retrieveGraphsWithFeatureName(name);
 	}
 

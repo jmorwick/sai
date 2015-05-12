@@ -2,47 +2,37 @@ package sai.comparison.matching;
 
 import static info.kendall_morwick.funcles.Funcles.apply;
 import info.kendall_morwick.funcles.Funcles;
-import info.kendall_morwick.funcles.Pair;
-import info.kendall_morwick.funcles.T2;
+import info.kendall_morwick.funcles.tuple.Pair;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-import sai.SAIUtil;
 import sai.comparison.compatibility.FeatureSetCompatibilityChecker;
 import sai.comparison.heuristics.GraphMatchingHeuristic;
 import sai.graph.Graph;
 import sai.graph.Graphs;
-import static sai.SAIUtil.iteratorToCollection;
 
-import com.google.common.base.Function;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
 public class MatchingUtil {
 
-	public static Ordering<Graph> createGraphMatchOrdering(
+	public static Comparator<Graph> createGraphMatchOrdering(
 			final Graph query,
 			final MatchingGenerator gen, 
 			final GraphMatchingHeuristic h) {
-		return new Ordering<Graph>() {
-
-			@Override
-			public int compare(Graph g1, Graph g2) {
+		return (g1, g2) -> {
 				GraphMatching gm1 = apply(gen, query, g1);
 				GraphMatching gm2 = apply(gen, query, g2);
 				
@@ -51,7 +41,6 @@ public class MatchingUtil {
 				if(result < 0) return (int)result - 1;
 				if(result > 0) return (int)result + 1;
 				return 0;
-			}
 		};
 	}
 
@@ -61,16 +50,10 @@ public class MatchingUtil {
 				ImmutableBiMap.copyOf(nodeMatch);
 
 		// transform Map.Entry to Pair instances
-		final ImmutableSet<Pair<Integer>> matchedNode = ImmutableSet.copyOf(
-				Iterables.transform(copyNodeMatch.entrySet(), 
-						new Function<Map.Entry<Integer,Integer>,Pair<Integer>>() {
-					@Override
-					public Pair<Integer> apply(
-							Entry<Integer, Integer> arg) {
-						return Pair.makeImmutablePair(
-								arg.getKey(), arg.getValue());
-					}
-				}));
+		final ImmutableSet<Pair<Integer>> matchedNode = 
+				ImmutableSet.copyOf(copyNodeMatch.entrySet().stream()
+					.map((arg) -> Pair.makePair(arg.getKey(), arg.getValue()))
+					.collect(Collectors.toSet()));
 		return new GraphMatching() {
 
 			@Override
@@ -127,16 +110,10 @@ public class MatchingUtil {
 				ImmutableBiMap.copyOf(edgeMatch);
 
 		// transform Map.Entry to Pair instances
-		final ImmutableSet<Pair<Integer>> matchedEdges = ImmutableSet.copyOf(
-				Iterables.transform(edgeMatch.entrySet(), 
-						new Function<Map.Entry<Integer,Integer>,Pair<Integer>>() {
-					@Override
-					public Pair<Integer> apply(
-							Entry<Integer, Integer> arg) {
-						return Pair.makeImmutablePair(
-								arg.getKey(), arg.getValue());
-					}
-				}));
+		final ImmutableSet<Pair<Integer>> matchedEdges = 
+				ImmutableSet.copyOf(edgeMatch.entrySet().stream()
+					.map((arg) -> Pair.makePair(arg.getKey(), arg.getValue()))
+					.collect(Collectors.toSet()));
 		return new GraphMatching() {
 
 			@Override
@@ -210,7 +187,7 @@ public class MatchingUtil {
 		Multimap<Pair<Integer>, Integer> g2Edges = HashMultimap.create();
 		for(int g2e : g2.getEdgeIDs()) 
 			g2Edges.put( 
-					Pair.makeImmutablePair(
+					Pair.makePair(
 							g2.getEdgeSourceNodeID(g2e), 
 							g2.getEdgeTargetNodeID(g2e)), g2e);
 
@@ -300,16 +277,12 @@ public class MatchingUtil {
 
 
 
+	@SuppressWarnings("unchecked")
 	public static MatchingGenerator createCompleteMatchingGenerator(
 			final FeatureSetCompatibilityChecker fscc,
 			final GraphMatchingHeuristic h
 			) {
-		return new MatchingGenerator() {
-
-			@Override
-			public GraphMatching apply(final T2<Graph, Graph> args) {
-				final Graph g1 = args.a1();
-				final Graph g2 = args.a2();
+		return (g1, g2) -> {
 				final Multimap<Integer,Integer> possibilities = 
 						getNodeMatchingPossibilities(fscc, g1, g2);
 
@@ -380,10 +353,12 @@ public class MatchingUtil {
 					}
 
 				};
-				return Funcles.argmaxCollection(h, SAIUtil.iteratorToCollection(i));
-			}
-
-
-		};
+				Iterable<GraphMatching> iterable = () -> i;
+				Stream<GraphMatching> s = StreamSupport.stream(iterable.spliterator(), false);
+				// TODO: determine why there is a syntax error without the reference below
+				// h extends Function<GraphMatching,Double>, but isn't recognized as such
+				// this is also corrected with a cast, but this is shorter
+				return Funcles.argmax(h::apply, s);
+			};
 	}
 }

@@ -17,30 +17,6 @@ import com.google.common.collect.Sets;
 public class SAIUtilTest {
 
 	@Test
-	public void testIteratorToCollection() {
-		Set<Integer> test1 = Sets.newHashSet();
-		for(int x : SAIUtil.iteratorToCollection(new Iterator<Integer>() {
-					private int i = 0;
-					@Override
-					public boolean hasNext() {
-						return i < 5;
-					}
-
-					@Override
-					public Integer next() {
-						return ++i;
-					}
-				}))
-			test1.add(x);
-		Set<Integer> test2 = Sets.newHashSet();
-		for(int x : SAIUtil.iteratorToCollection(Sets.newHashSet(1, 2, 3, 4, 5).iterator()))
-			test2.add(x);
-
-		assertEquals(Sets.newHashSet(1, 2, 3, 4, 5), test1);
-		assertEquals(Sets.newHashSet(1, 2, 3, 4, 5), test2);
-	}
-
-	@Test
 	public void testFeatureRetention() throws AccessDeniedException {
 		DBInterface db = SampleDBs.getEmptyDB();
 		Feature f1 = new Feature("a", "1");
@@ -48,31 +24,31 @@ public class SAIUtilTest {
 		Feature f3 = new Feature("a", "1");
 		Feature f4 = new Feature("b", "1");
 
-		assertTrue(SAIUtil.featureWhiteListFilter("a", "b").apply(f1));
-		assertTrue(SAIUtil.featureWhiteListFilter("a", "b").apply(f2));
-		assertTrue(SAIUtil.featureWhiteListFilter("a", "b").apply(f3));
-		assertTrue(SAIUtil.featureWhiteListFilter("a", "b").apply(f4));
-		assertTrue(SAIUtil.featureWhiteListFilter("a").apply(f1));
-		assertTrue(SAIUtil.featureWhiteListFilter("a").apply(f2));
-		assertTrue(SAIUtil.featureWhiteListFilter("a").apply(f3));
-		assertTrue(!SAIUtil.featureWhiteListFilter("a").apply(f4));
-		assertTrue(!SAIUtil.featureWhiteListFilter("b").apply(f1));
-		assertTrue(!SAIUtil.featureWhiteListFilter("b").apply(f2));
-		assertTrue(!SAIUtil.featureWhiteListFilter("b").apply(f3));
-		assertTrue(SAIUtil.featureWhiteListFilter("b").apply(f4));
+		assertTrue(SAIUtil.featureWhiteListFilter("a", "b").test(f1));
+		assertTrue(SAIUtil.featureWhiteListFilter("a", "b").test(f2));
+		assertTrue(SAIUtil.featureWhiteListFilter("a", "b").test(f3));
+		assertTrue(SAIUtil.featureWhiteListFilter("a", "b").test(f4));
+		assertTrue(SAIUtil.featureWhiteListFilter("a").test(f1));
+		assertTrue(SAIUtil.featureWhiteListFilter("a").test(f2));
+		assertTrue(SAIUtil.featureWhiteListFilter("a").test(f3));
+		assertTrue(!SAIUtil.featureWhiteListFilter("a").test(f4));
+		assertTrue(!SAIUtil.featureWhiteListFilter("b").test(f1));
+		assertTrue(!SAIUtil.featureWhiteListFilter("b").test(f2));
+		assertTrue(!SAIUtil.featureWhiteListFilter("b").test(f3));
+		assertTrue(SAIUtil.featureWhiteListFilter("b").test(f4));
 		
-		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("a","b")).apply(f1));
-		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("a","b")).apply(f2));
-		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("a","b")).apply(f3));
-		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("a","b")).apply(f4));
-		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("a")).apply(f1));
-		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("a")).apply(f2));
-		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("a")).apply(f3));
-		assertTrue(!SAIUtil.featureWhiteListFilter(Sets.newHashSet("a")).apply(f4));
-		assertTrue(!SAIUtil.featureWhiteListFilter(Sets.newHashSet("b")).apply(f1));
-		assertTrue(!SAIUtil.featureWhiteListFilter(Sets.newHashSet("b")).apply(f2));
-		assertTrue(!SAIUtil.featureWhiteListFilter(Sets.newHashSet("b")).apply(f3));
-		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("b")).apply(f4));
+		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("a","b")).test(f1));
+		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("a","b")).test(f2));
+		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("a","b")).test(f3));
+		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("a","b")).test(f4));
+		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("a")).test(f1));
+		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("a")).test(f2));
+		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("a")).test(f3));
+		assertTrue(!SAIUtil.featureWhiteListFilter(Sets.newHashSet("a")).test(f4));
+		assertTrue(!SAIUtil.featureWhiteListFilter(Sets.newHashSet("b")).test(f1));
+		assertTrue(!SAIUtil.featureWhiteListFilter(Sets.newHashSet("b")).test(f2));
+		assertTrue(!SAIUtil.featureWhiteListFilter(Sets.newHashSet("b")).test(f3));
+		assertTrue(SAIUtil.featureWhiteListFilter(Sets.newHashSet("b")).test(f4));
 		
 		Set<Feature> all = Sets.newHashSet(f1, f2, f3, f4);
 		Set<Feature> as = Sets.newHashSet(f1, f2, f3);

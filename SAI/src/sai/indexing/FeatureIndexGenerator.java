@@ -7,6 +7,7 @@ import sai.graph.Graph;
 
 import com.google.common.base.Function;
 
+@FunctionalInterface
 public interface FeatureIndexGenerator extends Function<Graph,Set<Feature>> {
 
 }

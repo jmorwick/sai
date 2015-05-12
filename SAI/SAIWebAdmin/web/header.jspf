@@ -12,6 +12,7 @@
         <div ID="navbar">
             <ul>
                 <li><a href="index.jsp">databases</a></li>
+                <li><a href="tasks.jsp">tasks</a></li>
                 <li><a href="reports.jsp">reports</a></li>
                 <li><a href="plugins.jsp">plugins</a></li>
             </ul>

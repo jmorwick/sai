@@ -1,6 +1,6 @@
 package sai.graph;
 
-import info.kendall_morwick.funcles.Pair;
+import info.kendall_morwick.funcles.tuple.Pair;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -93,7 +93,7 @@ public class MutableGraph implements Graph {
 		if(edges.contains(eid))
 			throw new IllegalArgumentException(eid + " is already an edge id");
 		edges.add(eid);
-		Pair<Integer> p = Pair.makeImmutablePair(n1, n2);
+		Pair<Integer> p = Pair.makePair(n1, n2);
 		edgeContents.put(eid, p);
 	}
 	

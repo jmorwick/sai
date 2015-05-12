@@ -1,6 +1,6 @@
 package sai.comparison.matching;
 
-import info.kendall_morwick.funcles.Pair;
+import info.kendall_morwick.funcles.tuple.Pair;
 
 import java.util.Set;
 

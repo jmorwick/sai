@@ -1,7 +1,7 @@
 package sai.comparison.compatibility;
 
 import info.kendall_morwick.funcles.Funcles;
-import info.kendall_morwick.funcles.Pair;
+import info.kendall_morwick.funcles.tuple.Pair;
 
 import java.util.Set;
 
@@ -17,32 +17,13 @@ public class CompatibilityUtil {
 						a.getValue().equals(b.getValue());
 	}
 	
-	/** returns a compatibility checker which simply checks to see if 
-	 * two features share a name and value.
-	 * @return
-	 */
-	public static FeatureCompatibilityChecker lexicalChecker() {
-		return new FeatureCompatibilityChecker() {
-
-			@Override
-			public boolean apply(Pair<Feature> args) {
-				return areLexicallyCompatible(args.a1(), args.a2());
-			}
-			
-		};
-	}
-	
 	
     /** checks if each feature in set 1 is compatible with at least one
      * feature in set 2, allowing repeats.
      */
 	public static FeatureSetCompatibilityChecker greedy1To1Checker(
 			final FeatureCompatibilityChecker featureComp) {
-		return new FeatureSetCompatibilityChecker() {
-
-	    public boolean apply(Pair<Set<Feature>> args) {
-	    	Set<Feature> t1s = args.a1();
-	    	Set<Feature> t2s = args.a2();
+		return (t1s, t2s) -> { // TODO: use streams below
 	        t2s = Sets.newHashSet(t2s);
 	        for(Feature t1 : t1s) {
 	            boolean foundMatch = false;
@@ -56,9 +37,7 @@ public class CompatibilityUtil {
 	            if(!foundMatch) return false;
 	        }
 	        return true;
-	    }
-
-		};
+	    };
 	}
 	
 
@@ -68,11 +47,7 @@ public class CompatibilityUtil {
      */
 	public static FeatureSetCompatibilityChecker many1To1Checker(
 			final FeatureCompatibilityChecker featureComp) {
-		return new FeatureSetCompatibilityChecker() {
-
-	    public boolean apply(Pair<Set<Feature>> args) {
-	    	Set<Feature> t1s = args.a1();
-	    	Set<Feature> t2s = args.a2();
+		return (t1s, t2s) -> { // TODO: use streams below
 	        for(Feature t1 : t1s) {
 	            boolean foundMatch = false;
 	            for(Feature t2 : t2s) {
@@ -84,8 +59,6 @@ public class CompatibilityUtil {
 	            if(!foundMatch) return false;
 	        }
 	        return true;
-
-		}
-	    };
+		};
 	}
 }

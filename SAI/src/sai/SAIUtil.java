@@ -18,14 +18,12 @@ along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sai;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import sai.graph.Feature;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Sets;
 
 /**
  * @version 0.2.0
@@ -34,85 +32,13 @@ import com.google.common.collect.Sets;
 
 public class SAIUtil {	
 
-    /** creates a collection from an iterator to allow for-each over iterators. Only
-     * the isEmpty() and iterator() methods are supported, so this is mostly only 
-     * intended to shorten for-each loop syntax */
-	// TODO: eliminate this -- streams API provides better mechanisms
-	@Deprecated
-    public static <A> Collection<A> iteratorToCollection(final Iterator<A> i) {
-        return new Collection<A>() {
-
-            public int size() {
-                throw new UnsupportedOperationException("Not supported.");
-            }
-
-            public boolean isEmpty() {
-                return i.hasNext();
-            }
-
-            public boolean contains(Object o) {
-                throw new UnsupportedOperationException("Not supported.");
-            }
-
-            public Iterator<A> iterator() {
-                return i;
-            }
-
-            public Object[] toArray() {
-                throw new UnsupportedOperationException("Not supported.");
-            }
-
-            public <T> T[] toArray(T[] a) {
-                throw new UnsupportedOperationException("Not supported.");
-            }
-
-            public boolean add(A e) {
-                throw new UnsupportedOperationException("Not supported.");
-            }
-
-            public boolean remove(Object o) {
-                throw new UnsupportedOperationException("Not supported.");
-            }
-
-            public boolean containsAll(Collection<?> c) {
-                throw new UnsupportedOperationException("Not supported.");
-            }
-
-            public boolean addAll(Collection<? extends A> c) {
-                throw new UnsupportedOperationException("Not supported.");
-            }
-
-            public boolean removeAll(Collection<?> c) {
-                throw new UnsupportedOperationException("Not supported.");
-            }
-
-            public boolean retainAll(Collection<?> c) {
-                throw new UnsupportedOperationException("Not supported.");
-            }
-
-            public void clear() {
-                throw new UnsupportedOperationException("Not supported.");
-            }
-
-        };
-    }
-
-
 	/** returns a predicate which identifies features whose names match 'names'.
 	 * 
 	 * @param names the names of features to keep
 	 * @return a predicate which identifies features whose names match 'names'.
 	 */
-	// TODO: eliminate this -- streams API provides better mechanisms
-	@Deprecated
     public static Predicate<Feature> featureWhiteListFilter(final Set<String> names) {
-    	return new Predicate<Feature>() {
-			@Override
-			public boolean apply(Feature f) {
-				return (names.contains(f.getName()));		
-			}
-    		
-    	};
+    	return f -> (names.contains(f.getName()));
     }
     
 	/** returns a predicate which identifies features whose names match 'names'.
@@ -120,12 +46,8 @@ public class SAIUtil {
 	 * @param names the names of features to keep
 	 * @return a predicate which identifies features whose names match 'names'.
 	 */
-	// TODO: eliminate this -- streams API provides better mechanisms
-	@Deprecated
     public static Predicate<Feature> featureWhiteListFilter(String ... names) {
-    	Set<String> sNames = Sets.newHashSet();
-    	for(String name : names) sNames.add(name);
-    	return featureWhiteListFilter(sNames);
+    	return featureWhiteListFilter(Arrays.stream(names).collect(Collectors.toSet()));
     }
 	    	
     
@@ -135,11 +57,9 @@ public class SAIUtil {
      * @param names names of features to retain
      * @return only features whose names match
      */
-	// TODO: eliminate this -- streams API provides better mechanisms
-	@Deprecated
     public static Set<Feature> retainOnly(Set<Feature> features, 
     		Set<String> names) {
-    	return Sets.filter(features, featureWhiteListFilter(names));
+		return features.stream().filter(featureWhiteListFilter(names)).collect(Collectors.toSet());
     }  
     
 
@@ -149,11 +69,9 @@ public class SAIUtil {
      * @param names names of features to retain
      * @return only features whose names match
      */
-	// TODO: eliminate this -- streams API provides better mechanisms
-	@Deprecated
     public static Set<Feature> retainOnly(Set<Feature> features, 
     		String ... names) {
-    	return Sets.filter(features, featureWhiteListFilter(names));
+    	return retainOnly(features, Arrays.stream(names).collect(Collectors.toSet()));
     }
 
 }

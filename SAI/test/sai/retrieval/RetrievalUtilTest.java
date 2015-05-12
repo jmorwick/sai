@@ -4,8 +4,6 @@ import static org.junit.Assert.*;
 
 import java.nio.file.AccessDeniedException;
 import java.util.Iterator;
-import java.util.Set;
-
 import org.junit.Test;
 
 import com.google.common.collect.Sets;
@@ -13,27 +11,22 @@ import com.google.common.collect.Sets;
 import static info.kendall_morwick.funcles.Funcles.apply;
 import sai.comparison.compatibility.CompatibilityUtil;
 import sai.comparison.heuristics.GraphMatchingHeuristic;
-import sai.comparison.heuristics.Heuristics;
 import sai.comparison.matching.GraphMatching;
 import sai.comparison.matching.MatchingGenerator;
 import sai.comparison.matching.MatchingUtil;
 import sai.db.BasicDBInterface;
-import sai.db.DBInterface;
 import sai.db.SampleDBs;
 import sai.graph.Graph;
-import sai.graph.GraphFactory;
-import sai.graph.MutableGraph;
 import sai.graph.SampleGraphs;
 
 public class RetrievalUtilTest {
 
 	@Test
 	public void testBasicCountRetriever() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph::new;
 		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices();
-		GraphIndexBasedRetriever r = new BasicGraphIndexCount();
-		Iterator<Integer> i = r.retrieve(db, Sets.newHashSet(5, 6, 7, 9));
-		i = r.retrieve(db, Sets.newHashSet(5, 6, 7, 8));
+		GraphIndexBasedRetriever r = GraphIndexBasedRetriever::retrieveByBasicGraphIndexCount;
+		Iterator<Integer> i = r.retrieve(db, Sets.newHashSet(5, 6, 7, 9).stream()).iterator();
+		i = r.retrieve(db, Sets.newHashSet(5, 6, 7, 8).stream()).iterator();
 		assertTrue(i.hasNext());
 		assertEquals(2, (int)i.next());
 		assertTrue(i.hasNext());
@@ -44,7 +37,7 @@ public class RetrievalUtilTest {
 		assertTrue(Sets.newHashSet(3, 4).contains((int)i.next()));
 		assertTrue(!i.hasNext());
 		
-		i = r.retrieve(db, Sets.newHashSet(5, 6, 7));
+		i = r.retrieve(db, Sets.newHashSet(5, 6, 7).stream()).iterator();
 		assertTrue(i.hasNext());
 		assertTrue(Sets.newHashSet(1, 2).contains((int)i.next()));
 		assertTrue(i.hasNext());
@@ -71,9 +64,8 @@ public class RetrievalUtilTest {
 	@Test
 	public void testCompleteMatchingGeneratorAgainstSelf() {
 		MatchingGenerator gen = MatchingUtil.createCompleteMatchingGenerator(
-				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil.lexicalChecker()), 
-				Heuristics.basicEdgeCount());
-		DBInterface db = SampleDBs.getEmptyDB();
+				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil::areLexicallyCompatible), 
+				GraphMatchingHeuristic::basicEdgeCount);
 		selfTest(SampleGraphs.getSmallGraph1(), gen);
 		selfTest(SampleGraphs.getSmallGraph2(), gen);
 		selfTest(SampleGraphs.getSmallGraph3(), gen);
@@ -84,8 +76,8 @@ public class RetrievalUtilTest {
 	@Test
 	public void testCompleteMatchingGeneratorAgainstSelfNonUnique() {
 		MatchingGenerator gen = MatchingUtil.createCompleteMatchingGenerator(
-				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil.lexicalChecker()), 
-				Heuristics.basicEdgeCount());
+				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil::areLexicallyCompatible), 
+				GraphMatchingHeuristic::basicEdgeCount);
 		Graph g = SampleGraphs.getSmallSymmetricTree();
 		GraphMatching m = apply(gen, g, g);
 		
@@ -105,8 +97,8 @@ public class RetrievalUtilTest {
 	@Test
 	public void testCompleteMatchingGeneratorAgainstSimilar() {
 		MatchingGenerator gen = MatchingUtil.createCompleteMatchingGenerator(
-				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil.lexicalChecker()), 
-				Heuristics.basicEdgeCount());
+				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil::areLexicallyCompatible), 
+				GraphMatchingHeuristic::basicEdgeCount);
 		GraphMatching m = apply(gen, 
 				SampleGraphs.getSmallGraph1(),
 				SampleGraphs.getSmallGraph2());

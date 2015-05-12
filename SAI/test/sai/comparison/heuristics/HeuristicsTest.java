@@ -22,7 +22,7 @@ public class HeuristicsTest {
 	public void testBasicEdgeCount() throws AccessDeniedException {
 		DBInterface db = SampleDBs.getEmptyDB();
 		
-		GraphMatchingHeuristic h = Heuristics.basicEdgeCount();
+		GraphMatchingHeuristic h = GraphMatchingHeuristic::basicEdgeCount;
 		Graph g1 = SampleGraphs.getSmallGraph3();
 		Graph g2 = SampleGraphs.getSmallGraph1();
 		BiMap<Integer,Integer> nodeMatch = HashBiMap.create();

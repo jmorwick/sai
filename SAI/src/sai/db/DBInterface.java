@@ -1,7 +1,7 @@
 package sai.db;
 
-import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import sai.graph.Feature;
 import sai.graph.Graph;
@@ -16,10 +16,9 @@ public interface DBInterface {
     public void deleteGraph(int graphID);
 	public int getDatabaseSize();
 	
-	//TODO: replace iterators with streams
-    public Iterator<Integer> getGraphIDIterator();
-	public Iterator<Integer> retrieveGraphsWithFeature(Feature f);
-	public Iterator<Integer> retrieveGraphsWithFeatureName(String name);
+    public Stream<Integer> getGraphIDStream();
+	public Stream<Integer> retrieveGraphsWithFeature(Feature f);
+	public Stream<Integer> retrieveGraphsWithFeatureName(String name);
 	
 	//TODO: remove these and create a wrapper which deals with the issue
     public Set<Integer> getHiddenGraphs(); 

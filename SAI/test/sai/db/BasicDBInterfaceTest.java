@@ -6,6 +6,7 @@ import java.io.File;
 import java.nio.file.AccessDeniedException;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Before;
@@ -15,7 +16,6 @@ import com.google.common.collect.Sets;
 
 import sai.SAIUtil;
 import sai.graph.Feature;
-import sai.graph.Graph;
 import sai.graph.GraphFactory;
 import sai.graph.Graphs;
 import sai.graph.MutableGraph;
@@ -149,7 +149,7 @@ public class BasicDBInterfaceTest {
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid3, gf));
 		assertEquals(gid3, (int)db.retrieveGraphsWithFeatureName(
-				Graphs.INDEXES_FEATURE_NAME).next());
+				Graphs.INDEXES_FEATURE_NAME).iterator().next());
 		assertEquals(Sets.newHashSet(), getIndexedGraphIDs(db, gid1));
 		assertEquals(Sets.newHashSet(), getIndexedGraphIDs(db, gid2));
 		assertEquals(Sets.newHashSet(gid1), getIndexedGraphIDs(db, gid3));
@@ -159,7 +159,7 @@ public class BasicDBInterfaceTest {
 				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid2))));
 		assertEquals(Sets.newHashSet(), Sets.newHashSet(
 				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid3))));
-		Iterator<Integer> ii = db.retrieveGraphsWithFeatureName(Graphs.INDEXES_FEATURE_NAME);
+		Iterator<Integer> ii = db.retrieveGraphsWithFeatureName(Graphs.INDEXES_FEATURE_NAME).iterator();
 		assertTrue(ii.hasNext());
 		assertEquals(gid3, (int)ii.next());
 		assertTrue(!ii.hasNext());
@@ -183,7 +183,7 @@ public class BasicDBInterfaceTest {
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid3, gf));
 		assertEquals(gid3, (int)db.retrieveGraphsWithFeatureName(
-				Graphs.INDEXES_FEATURE_NAME).next());
+				Graphs.INDEXES_FEATURE_NAME).iterator().next());
 		assertEquals(Sets.newHashSet(), getIndexedGraphIDs(db, gid1));
 		assertEquals(Sets.newHashSet(), getIndexedGraphIDs(db, gid2));
 		assertEquals(Sets.newHashSet(gid1), getIndexedGraphIDs(db, gid3));
@@ -193,7 +193,7 @@ public class BasicDBInterfaceTest {
 				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid2))));
 		assertEquals(Sets.newHashSet(), Sets.newHashSet(
 				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid3))));
-		ii = db.retrieveGraphsWithFeatureName(Graphs.INDEXES_FEATURE_NAME);
+		ii = db.retrieveGraphsWithFeatureName(Graphs.INDEXES_FEATURE_NAME).iterator();
 		assertTrue(ii.hasNext());
 		assertEquals(gid3, (int)ii.next());
 		assertTrue(!ii.hasNext());
@@ -255,7 +255,7 @@ public class BasicDBInterfaceTest {
 				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid3))));
 		assertEquals(Sets.newHashSet(), Sets.newHashSet(
 				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid4))));
-		Iterator<Integer> ii = db.retrieveGraphsWithFeatureName(Graphs.INDEXES_FEATURE_NAME);
+		Iterator<Integer> ii = db.retrieveGraphsWithFeatureName(Graphs.INDEXES_FEATURE_NAME).iterator();
 		assertEquals(Sets.newHashSet(gid3, gid4), Sets.newHashSet(ii));
 		db.disconnect();
 		
@@ -302,7 +302,7 @@ public class BasicDBInterfaceTest {
 		
 		Set<Integer> observed = Sets.newHashSet();
 		Set<Integer> total = Sets.newHashSet(gid1, gid2, gid3, gid4);
-		Iterator<Integer> gi = db.getGraphIDIterator();
+		Iterator<Integer> gi = db.getGraphIDStream().iterator();
 		assertTrue(gi.hasNext());
 		observed.add(gi.next());
 		assertEquals(4, Sets.union(total, observed).size());
@@ -335,15 +335,13 @@ public class BasicDBInterfaceTest {
 		db.addIndex(gid1, gid4);
 		db.addIndex(gid3, gid4);
 		
-		Set<Integer> observed = Sets.newHashSet(
-				db.retrieveGraphsWithFeatureName(
-						Graphs.INDEXES_FEATURE_NAME));
+		Set<Integer> observed = db.retrieveGraphsWithFeatureName(
+						Graphs.INDEXES_FEATURE_NAME).collect(Collectors.toSet());
 		assertEquals(Sets.newHashSet(gid3, gid4), observed);
 	}
 
 	@Test
 	public void testHidingGraphs() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph::new;
 		BasicDBInterface db = new BasicDBInterface();
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
@@ -351,34 +349,33 @@ public class BasicDBInterfaceTest {
 		int gid3 = db.addGraph(SampleGraphs.getSmallGraph3());
 		int gid4 = db.addGraph(SampleGraphs.getSmallGraph4());
 
-		Set<Integer> observed = Sets.newHashSet(db.getGraphIDIterator());
+		Set<Integer> observed = Sets.newHashSet(db.getGraphIDStream().iterator());
 		Set<Integer> expected = Sets.newHashSet(gid1, gid2, gid3, gid4);
 		assertEquals(expected, observed);
 
 		db.hideGraph(gid2);
 		expected = Sets.newHashSet(gid1, gid3, gid4);
-		observed = Sets.newHashSet(db.getGraphIDIterator());
+		observed = Sets.newHashSet(db.getGraphIDStream().iterator());
 		assertEquals(expected, observed);
 		
 		db.hideGraph(gid3);
 		expected = Sets.newHashSet(gid1, gid4);
-		observed = Sets.newHashSet(db.getGraphIDIterator());
+		observed = Sets.newHashSet(db.getGraphIDStream().iterator());
 		assertEquals(expected, observed);
 		
 		db.unhideGraph(gid2);
 		expected = Sets.newHashSet(gid1, gid2, gid4);
-		observed = Sets.newHashSet(db.getGraphIDIterator());
+		observed = Sets.newHashSet(db.getGraphIDStream().iterator());
 		assertEquals(expected, observed);
 		
 		db.hideGraph(gid4);
 		expected = Sets.newHashSet(gid1, gid2);
-		observed = Sets.newHashSet(db.getGraphIDIterator());
+		observed = Sets.newHashSet(db.getGraphIDStream().iterator());
 		assertEquals(expected, observed);
 	}
 	
 	@Test
 	public void testDeletingGraphs() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph::new;
 		BasicDBInterface db = new BasicDBInterface();
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(SampleGraphs.getSmallGraph1());
@@ -390,7 +387,7 @@ public class BasicDBInterfaceTest {
 		
 		Set<Integer> observed = Sets.newHashSet();
 		Set<Integer> total = Sets.newHashSet(gid1, gid4);
-		Iterator<Integer> gi = db.getGraphIDIterator();
+		Iterator<Integer> gi = db.getGraphIDStream().iterator();
 		assertTrue(gi.hasNext());
 		observed.add(gi.next());
 		assertEquals(2, Sets.union(total, observed).size());

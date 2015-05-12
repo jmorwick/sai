@@ -19,18 +19,49 @@
 
 package sai.retrieval;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import com.google.common.collect.ConcurrentHashMultiset;
 
 import sai.db.DBInterface;
+import sai.graph.Feature;
+import sai.graph.Graphs;
+import sai.graph.MutableGraph;
 
 /** This class is used to provide custom algorithms for ordering and retrieving
  * graphs from the database in accordance with a set of Indices.  The algorithm
  * will select graphs as a function of which of the indicated indices are
  * associated with each graph.
- * @version 0.2.0
+ * @version 2.0
  * @author Joseph Kendall-Morwick
  */
 public abstract interface GraphIndexBasedRetriever {
-    public abstract Iterator<Integer> retrieve(DBInterface db, Set<Integer> indices);
+    public abstract Stream<Integer> retrieve(DBInterface db, Stream<Integer> indices);
+    
+
+    /**
+     * A retriever which ranks graphs by the number of specified indices they are
+     * related with.
+     */
+    public static Stream<Integer> retrieveByBasicGraphIndexCount(
+    		DBInterface db, Stream<Integer> indices) {
+    	return indices.map(index -> // retrieve the index graphs with specified id's
+    		db.retrieveGraph(index, MutableGraph::new).getFeatures().stream().
+    		// find the features indicating what graphs they index
+    		filter(f -> f.getName().equals(Graphs.INDEXES_FEATURE_NAME))
+    		// get the id's of the graphs they index out of the features
+    		//TODO: figure out why I need a cast below
+    		.map((Function<Feature,Integer>) f -> Integer.parseInt(f.getValue())))
+    	.reduce(Stream::concat).get() //concatenate streams of graph id's together
+        // combine allgraph id's in to a multiset
+        .collect(Collectors.toCollection(ConcurrentHashMultiset::create))
+        .entrySet().stream() // stream this multiset
+		//sort by multiplicity
+		.sorted((l,r) -> l.getCount() > r.getCount() ? l.getElement() : r.getElement())
+		// convert from multiset entries to graph id's
+		.map(e -> e.getElement());
+    	
+    }
 }

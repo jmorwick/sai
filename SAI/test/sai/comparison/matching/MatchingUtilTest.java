@@ -1,11 +1,14 @@
 package sai.comparison.matching;
 
 import static org.junit.Assert.*;
-import info.kendall_morwick.funcles.Pair;
-import info.kendall_morwick.funcles.T2;
+import info.kendall_morwick.funcles.tuple.Pair;
+import info.kendall_morwick.funcles.tuple.Tuple2;
 
 import java.nio.file.AccessDeniedException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 
 import com.google.common.collect.BiMap;
@@ -16,7 +19,6 @@ import com.google.common.collect.Sets;
 import sai.comparison.compatibility.CompatibilityUtil;
 import sai.comparison.compatibility.FeatureSetCompatibilityChecker;
 import sai.comparison.heuristics.GraphMatchingHeuristic;
-import sai.comparison.heuristics.Heuristics;
 import sai.db.DBInterface;
 import sai.db.SampleDBs;
 import sai.graph.Graph;
@@ -133,7 +135,7 @@ public class MatchingUtilTest {
 		BiMap<Integer,Integer> nodeMatch = HashBiMap.create();
 		GraphMatching m;
 		FeatureSetCompatibilityChecker fscc = 
-				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil.lexicalChecker());
+				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil::areLexicallyCompatible);
 
 		nodeMatch.put(1,1);
 		m = MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch);
@@ -208,30 +210,29 @@ public class MatchingUtilTest {
 	@Test
 	public void testCreateGraphMatchOrdering() throws AccessDeniedException {
 		DBInterface db = SampleDBs.getEmptyDB();
-		GraphMatchingHeuristic h = Heuristics.basicEdgeCount();
-		MatchingGenerator fakeGen = new MatchingGenerator(){
-
-			@Override
-			public GraphMatching apply(T2<Graph, Graph> args) {
+		GraphMatchingHeuristic h = GraphMatchingHeuristic::basicEdgeCount;
+		MatchingGenerator fakeGen = 
+			(g1, g2) -> {
 				FeatureSetCompatibilityChecker fscc = 
-						CompatibilityUtil.greedy1To1Checker(CompatibilityUtil.lexicalChecker());
+						CompatibilityUtil.greedy1To1Checker(CompatibilityUtil::areLexicallyCompatible);
 				BiMap<Integer,Integer> nodeMatch = HashBiMap.create();
-				for(int nid : args.a1().getNodeIDs()) {
-					if(args.a2().getNodeIDs().contains(nid))
+				for(int nid : g1.getNodeIDs()) {
+					if(g2.getNodeIDs().contains(nid))
 						nodeMatch.put(nid, nid);  //this is complete BS...
 					  //...but works for the examples since the ID's match
 				}
 				return MatchingUtil.induceEdgeMatching(
-						MatchingUtil.createBasicNodeMatching(args.a1(), args.a2(), nodeMatch),
+						MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch),
 						fscc);
-			}};
-		Ordering<Graph> o = 
+		};
+		Comparator<Graph> o = 
 				MatchingUtil.createGraphMatchOrdering(SampleGraphs.getSmallGraph1(), fakeGen, h); 
 		Graph g1 = SampleGraphs.getSmallGraph1();
 		Graph g2 = SampleGraphs.getSmallGraph2();
 		Graph g3 = SampleGraphs.getSmallGraph4();
-		List<Graph> ls = o.reverse() //descending instead of ascending order
-				.sortedCopy(Sets.newHashSet(g3, g1, g2));
+		List<Graph> ls = Sets.newHashSet(g3, g1, g2).stream()
+				.sorted((x,y) -> -o.compare(x,y)) //reverse order of comparator
+				.collect(Collectors.toList()); //collect in to an ordered list
 		assertTrue(ls.get(0) == g1);
 		assertTrue(ls.get(1) == g2);
 		assertTrue(ls.get(2) == g3);

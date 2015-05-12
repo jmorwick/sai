@@ -30,6 +30,11 @@ import com.google.common.base.Function;
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
+@FunctionalInterface
 public interface GraphMatchingHeuristic extends Function<GraphMatching,Double> {
 
+	public static Double basicEdgeCount(GraphMatching m) {
+		return (double)m.getAllEdgeMatches().size() / 
+				(double)m.getGraph1().getEdgeIDs().size();
+	}
 }

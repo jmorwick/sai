@@ -20,9 +20,7 @@
 package sai.comparison.matching;
 
 import sai.graph.Graph;
-import info.kendall_morwick.funcles.T2;
-
-import com.google.common.base.Function;
+import info.kendall_morwick.function.Function2;
 
 /**
  * A shortcut type for a function generating matchings between two graphs
@@ -30,6 +28,7 @@ import com.google.common.base.Function;
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
+@FunctionalInterface
 public abstract interface MatchingGenerator extends 
-		Function<T2<Graph,Graph>,GraphMatching> {
+		Function2<Graph, Graph,GraphMatching> {
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.stream.Stream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -258,8 +259,8 @@ public class BasicDBInterface implements DBInterface {
 	}
 
 	@Override
-	public Iterator<Integer> getGraphIDIterator() {
-		return Sets.difference(db.keySet(), hiddenGraphs).iterator();
+	public Stream<Integer> getGraphIDStream() {
+		return db.keySet().stream().filter(id -> hiddenGraphs.contains(id));
 	}
 
 	@Override
@@ -298,13 +299,13 @@ public class BasicDBInterface implements DBInterface {
 	}
 
 	@Override
-	public Iterator<Integer> retrieveGraphsWithFeature(Feature f) {
-		return graphsWithFeature.get(f).iterator();
+	public Stream<Integer> retrieveGraphsWithFeature(Feature f) {
+		return graphsWithFeature.get(f).stream();
 	}
 
 	@Override
-	public Iterator<Integer> retrieveGraphsWithFeatureName(String name) {
-		return graphsWithFeatureName.get(name).iterator();
+	public Stream<Integer> retrieveGraphsWithFeatureName(String name) {
+		return graphsWithFeatureName.get(name).stream();
 	}
 
 	public Set<String> getFeatureNames() {
