@@ -11,11 +11,11 @@
 	<classpathentry kind="src" path="oldcode"/>
 	<classpathentry kind="src" path="sai-web-admin"/>
 	<classpathentry kind="src" path="sai-jgrapht-plugin-test"/>
-	<classpathentry kind="lib" path="lib/guava.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/jgrapht-core-0.9.0.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.0.8-bin.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JBKM Functions and Tuples"/>
+	<classpathentry kind="lib" path="lib/guava-18.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
