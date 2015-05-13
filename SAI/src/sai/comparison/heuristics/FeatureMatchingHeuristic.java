@@ -1,11 +1,11 @@
 package sai.comparison.heuristics;
 
-import java.util.function.Function;
-
-import info.kendall_morwick.funcles.tuple.Pair;
+import info.kendall_morwick.function.Function2;
 import sai.graph.Feature;
 
+// TODO: not referenced anywhere yet -- consider eliminating?
 
-public interface FeatureMatchingHeuristic extends Function<Pair<Feature>,Double> {
+@FunctionalInterface
+public interface FeatureMatchingHeuristic extends Function2<Feature, Feature, Double> {
 
 }
