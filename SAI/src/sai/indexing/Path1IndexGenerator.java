@@ -1,11 +1,12 @@
 package sai.indexing;
 
+import java.util.Arrays;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 
-import sai.SAIUtil;
 import sai.graph.Feature;
 import sai.graph.Graph;
 //TODO: update to use streams, move in to FeatureIndexGenerator file
@@ -35,14 +36,21 @@ public class Path1IndexGenerator implements FeatureIndexGenerator {
             Set<Feature> fromNodeFeatures = Sets.newHashSet();
             Set<Feature> toNodeFeatures = Sets.newHashSet();
             Set<Feature> edgeFeatures = Sets.newHashSet();
-            edgeFeatures.addAll(SAIUtil.retainOnly(s.getEdgeFeatures(e), featureNames));
+            Set<String> featureNamesSet = Arrays.stream(featureNames)
+            		.collect(Collectors.toSet());
+            s.getEdgeFeatures(e).stream()
+            		.filter(f -> featureNamesSet.contains(f.getName()))
+            		.forEach(f -> edgeFeatures.add(f));
             if(edgeFeatures.size() == 0) edgeFeatures.add(null); //make links without edge features
-            fromNodeFeatures.addAll(
-                    SAIUtil.retainOnly(s.getNodeFeatures(s.getEdgeSourceNodeID(e)),
-                    featureNames));
-            toNodeFeatures.addAll(
-                    SAIUtil.retainOnly(s.getNodeFeatures(s.getEdgeTargetNodeID(e)),
-                    featureNames));
+
+            s.getNodeFeatures(s.getEdgeSourceNodeID(e)).stream()
+    		.filter(f -> featureNamesSet.contains(f.getName()))
+    		.forEach(f -> fromNodeFeatures.add(f));
+            
+            s.getNodeFeatures(s.getEdgeTargetNodeID(e)).stream()
+    		.filter(f -> featureNamesSet.contains(f.getName()))
+    		.forEach(f -> toNodeFeatures.add(f));
+            
             for(Feature n1f : fromNodeFeatures) {
                 for(Feature n2f : toNodeFeatures) {
                     for(Feature ef : edgeFeatures) {

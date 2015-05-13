@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
-import sai.SAIUtil;
 import sai.graph.Feature;
 import sai.graph.GraphFactory;
 import sai.graph.Graphs;
@@ -111,13 +110,12 @@ public class BasicDBInterfaceTest {
 	}
 	
 	private static Set<Integer> getIndexedGraphIDs(DBInterface db, int iid) {
-		Set<Integer> gids = Sets.newHashSet();
-		for(Feature f : SAIUtil.retainOnly(
-				db.retrieveGraph(iid, MutableGraph::new).getFeatures(),
-				Graphs.INDEXES_FEATURE_NAME))
-			gids.add(Integer.parseInt(f.getValue()));
-		return gids;
-			
+		return db.retrieveGraph(iid, MutableGraph::new).getFeatures().stream()
+				// only keep index features
+				.filter(f -> f.getName().equals(Graphs.INDEXES_FEATURE_NAME))
+				// get the id's of the indexed graphs
+				.map(f -> Integer.parseInt(f.getValue()))
+				.collect(Collectors.toSet()); // return them as a set of graph id's
 	}
 
 	@Test
@@ -241,17 +239,24 @@ public class BasicDBInterfaceTest {
 		rg.addFeature(Graphs.INDEX);
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid4, gf));
-		assertEquals(Sets.newHashSet(), SAIUtil.retainOnly(
-				db.retrieveGraph(gid1).getFeatures(), Graphs.INDEXES_FEATURE_NAME));
-		assertEquals(Sets.newHashSet(), SAIUtil.retainOnly(
-				db.retrieveGraph(gid2).getFeatures(), Graphs.INDEXES_FEATURE_NAME));
+		assertEquals(Sets.newHashSet(), 
+				db.retrieveGraph(gid1).getFeatures().stream()
+				.filter(feature -> feature.getName().equals(Graphs.INDEXES_FEATURE_NAME))
+				.collect(Collectors.toSet()));
+		assertEquals(Sets.newHashSet(),
+				db.retrieveGraph(gid2).getFeatures().stream()
+				.filter(feature -> feature.getName().equals(Graphs.INDEXES_FEATURE_NAME))
+				.collect(Collectors.toSet()));
 		assertEquals(Sets.newHashSet(Graphs.getIndexesFeature(gid1)), 
-				SAIUtil.retainOnly(
-				  db.retrieveGraph(gid3).getFeatures(), Graphs.INDEXES_FEATURE_NAME));
+				  db.retrieveGraph(gid3).getFeatures().stream()
+					.filter(feature -> feature.getName().equals(Graphs.INDEXES_FEATURE_NAME))
+					.collect(Collectors.toSet()));
 		assertEquals(Sets.newHashSet(
 				Graphs.getIndexesFeature(gid1),
-				Graphs.getIndexesFeature(gid3)), SAIUtil.retainOnly(
-				db.retrieveGraph(gid4).getFeatures(), Graphs.INDEXES_FEATURE_NAME));
+				Graphs.getIndexesFeature(gid3)),
+				db.retrieveGraph(gid4).getFeatures().stream()
+				.filter(feature -> feature.getName().equals(Graphs.INDEXES_FEATURE_NAME))
+				.collect(Collectors.toSet()));
 		assertEquals(Sets.newHashSet(gid3,gid4), 
 				db.retrieveGraphsWithFeature(Graphs.getIndexesFeature(gid1))
 				.collect(Collectors.toSet()));

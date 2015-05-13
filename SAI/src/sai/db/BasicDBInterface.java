@@ -4,6 +4,7 @@ import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -22,7 +23,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import sai.SAIUtil;
 import sai.graph.Feature;
 import sai.graph.Graph;
 import sai.graph.GraphFactory;
@@ -342,9 +342,12 @@ public class BasicDBInterface implements DBInterface {
 		nextGraphID = Math.max(nextGraphID, newGraphID) + 1; // update next fresh graph id
 
 		//update SAI-id tag
-		for(Feature f : SAIUtil.retainOnly(g.getFeatures(), Graphs.SAI_ID_NAME))
-			g.removeFeature(f);
-		g.addFeature(Graphs.getIDFeature(newGraphID));
+		Optional<Feature> saiID = 
+				g.getFeatures().stream()
+				.filter(f -> f.getName().equals(Graphs.SAI_ID_NAME))
+				.findFirst();
+		if(saiID.isPresent()) g.removeFeature(saiID.get()); // remove the old one
+		g.addFeature(Graphs.getIDFeature(newGraphID)); // add the new one
 
 		//insert into db
 		db.put(newGraphID, g);
@@ -376,9 +379,13 @@ public class BasicDBInterface implements DBInterface {
 		MutableGraph g = new MutableGraph(g2);
 
 		//update SAI-id tag
-		for(Feature f : SAIUtil.retainOnly(g.getFeatures(), Graphs.SAI_ID_NAME))
-			g.removeFeature(f);
-		g.addFeature(Graphs.getIDFeature(indexGraphID));
+		Optional<Feature> saiID = 
+				g.getFeatures().stream()
+				.filter(f -> f.getName().equals(Graphs.SAI_ID_NAME))
+				.findFirst();
+		if(saiID.isPresent()) g.removeFeature(saiID.get()); // remove the old one
+		g.addFeature(Graphs.getIDFeature(indexGraphID)); // add the new one
+		
 		if(db.containsKey(indexGraphID))
 			db.remove(indexGraphID);
 		addGraph(g);
