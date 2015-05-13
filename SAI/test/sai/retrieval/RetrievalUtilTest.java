@@ -4,15 +4,13 @@ import static org.junit.Assert.*;
 
 import java.nio.file.AccessDeniedException;
 import java.util.Iterator;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
 import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
 import static info.kendall_morwick.funcles.Funcles.apply;
-import sai.comparison.compatibility.CompatibilityUtil;
+import static sai.comparison.compatibility.FeatureSetCompatibilityChecker.greedy1To1Checker;
+import sai.comparison.compatibility.FeatureCompatibilityChecker;
 import sai.comparison.heuristics.GraphMatchingHeuristic;
 import sai.comparison.matching.GraphMatching;
 import sai.comparison.matching.MatchingGenerator;
@@ -67,7 +65,7 @@ public class RetrievalUtilTest {
 	@Test
 	public void testCompleteMatchingGeneratorAgainstSelf() {
 		MatchingGenerator gen = MatchingUtil.createCompleteMatchingGenerator(
-				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil::areLexicallyCompatible), 
+				greedy1To1Checker(FeatureCompatibilityChecker::areLexicallyCompatible), 
 				GraphMatchingHeuristic::basicEdgeCount);
 		selfTest(SampleGraphs.getSmallGraph1(), gen);
 		selfTest(SampleGraphs.getSmallGraph2(), gen);
@@ -79,7 +77,7 @@ public class RetrievalUtilTest {
 	@Test
 	public void testCompleteMatchingGeneratorAgainstSelfNonUnique() {
 		MatchingGenerator gen = MatchingUtil.createCompleteMatchingGenerator(
-				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil::areLexicallyCompatible), 
+				greedy1To1Checker(FeatureCompatibilityChecker::areLexicallyCompatible), 
 				GraphMatchingHeuristic::basicEdgeCount);
 		Graph g = SampleGraphs.getSmallSymmetricTree();
 		GraphMatching m = apply(gen, g, g);
@@ -100,7 +98,7 @@ public class RetrievalUtilTest {
 	@Test
 	public void testCompleteMatchingGeneratorAgainstSimilar() {
 		MatchingGenerator gen = MatchingUtil.createCompleteMatchingGenerator(
-				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil::areLexicallyCompatible), 
+				greedy1To1Checker(FeatureCompatibilityChecker::areLexicallyCompatible), 
 				GraphMatchingHeuristic::basicEdgeCount);
 		GraphMatching m = apply(gen, 
 				SampleGraphs.getSmallGraph1(),

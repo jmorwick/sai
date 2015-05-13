@@ -1,8 +1,8 @@
 package sai.comparison.matching;
 
 import static org.junit.Assert.*;
+import static sai.comparison.compatibility.FeatureSetCompatibilityChecker.greedy1To1Checker;
 import info.kendall_morwick.funcles.tuple.Pair;
-import info.kendall_morwick.funcles.tuple.Tuple2;
 
 import java.nio.file.AccessDeniedException;
 import java.util.Comparator;
@@ -13,10 +13,9 @@ import org.junit.Test;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
-import sai.comparison.compatibility.CompatibilityUtil;
+import sai.comparison.compatibility.FeatureCompatibilityChecker;
 import sai.comparison.compatibility.FeatureSetCompatibilityChecker;
 import sai.comparison.heuristics.GraphMatchingHeuristic;
 import sai.db.DBInterface;
@@ -135,7 +134,7 @@ public class MatchingUtilTest {
 		BiMap<Integer,Integer> nodeMatch = HashBiMap.create();
 		GraphMatching m;
 		FeatureSetCompatibilityChecker fscc = 
-				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil::areLexicallyCompatible);
+				greedy1To1Checker(FeatureCompatibilityChecker::areLexicallyCompatible);
 
 		nodeMatch.put(1,1);
 		m = MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch);
@@ -214,7 +213,8 @@ public class MatchingUtilTest {
 		MatchingGenerator fakeGen = 
 			(g1, g2) -> {
 				FeatureSetCompatibilityChecker fscc = 
-						CompatibilityUtil.greedy1To1Checker(CompatibilityUtil::areLexicallyCompatible);
+						greedy1To1Checker(
+								FeatureCompatibilityChecker::areLexicallyCompatible);
 				BiMap<Integer,Integer> nodeMatch = HashBiMap.create();
 				for(int nid : g1.getNodeIDs()) {
 					if(g2.getNodeIDs().contains(nid))

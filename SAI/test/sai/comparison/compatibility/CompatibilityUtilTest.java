@@ -11,7 +11,9 @@ import com.google.common.collect.Sets;
 import sai.db.DBInterface;
 import sai.db.SampleDBs;
 import sai.graph.Feature;
-import static sai.comparison.compatibility.CompatibilityUtil.*;
+import static sai.comparison.compatibility.FeatureSetCompatibilityChecker.greedy1To1Checker;
+import static sai.comparison.compatibility.FeatureSetCompatibilityChecker.many1To1Checker;
+import static sai.comparison.compatibility.FeatureCompatibilityChecker.areLexicallyCompatible;
 import static info.kendall_morwick.funcles.Funcles.apply;
 
 public class CompatibilityUtilTest {
@@ -39,7 +41,7 @@ public class CompatibilityUtilTest {
 		assertTrue(!areLexicallyCompatible(f4, f2));
 		assertTrue(!areLexicallyCompatible(f4, f3));
 
-		FeatureCompatibilityChecker c = CompatibilityUtil::areLexicallyCompatible;
+		FeatureCompatibilityChecker c = FeatureCompatibilityChecker::areLexicallyCompatible;
 		assertTrue(apply(c, f1, f1));
 		assertTrue(!apply(c, f1, f2));
 		assertTrue(apply(c, f1, f3));
@@ -66,7 +68,8 @@ public class CompatibilityUtilTest {
 	@Test
 	public void testGreedy1To1Checker() throws AccessDeniedException {
 		FeatureSetCompatibilityChecker c = greedy1To1Checker(p);
-		FeatureSetCompatibilityChecker c2 = greedy1To1Checker(CompatibilityUtil::areLexicallyCompatible);
+		FeatureSetCompatibilityChecker c2 = greedy1To1Checker(
+				FeatureCompatibilityChecker::areLexicallyCompatible);
 		DBInterface db = SampleDBs.getEmptyDB();
 		Feature f1 = new Feature("a", "1");
 		Feature f2 = new Feature("a", "2");
@@ -95,7 +98,8 @@ public class CompatibilityUtilTest {
 	@Test
 	public void testMany1To1Checker() throws AccessDeniedException {
 		FeatureSetCompatibilityChecker c = many1To1Checker(p);
-		FeatureSetCompatibilityChecker c2 = many1To1Checker(CompatibilityUtil::areLexicallyCompatible);
+		FeatureSetCompatibilityChecker c2 = many1To1Checker(
+				FeatureCompatibilityChecker::areLexicallyCompatible);
 		DBInterface db = SampleDBs.getEmptyDB();
 		Feature f1 = new Feature("a", "1");
 		Feature f2 = new Feature("a", "2");
