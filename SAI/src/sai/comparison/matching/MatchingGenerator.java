@@ -18,7 +18,6 @@
  */
 
 package sai.comparison.matching;
-import static info.kendall_morwick.funcles.Funcles.apply;
 import info.kendall_morwick.funcles.Funcles;
 import info.kendall_morwick.funcles.tuple.Pair;
 import info.kendall_morwick.function.Function2;
@@ -50,6 +49,9 @@ import com.google.common.collect.Sets;
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
+
+// TODO: take another pass over this file looking for 1.8 updates to make
+
 @FunctionalInterface
 public abstract interface MatchingGenerator extends 
 		Function2<Graph, Graph,GraphMatching> {

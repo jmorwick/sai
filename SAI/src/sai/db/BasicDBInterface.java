@@ -1,7 +1,6 @@
 package sai.db;
 
 import java.util.InputMismatchException;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -29,6 +28,8 @@ import sai.graph.GraphFactory;
 import sai.graph.Graphs;
 import sai.graph.MutableGraph;
 import static sai.graph.Graphs.getFeature;
+
+// TODO: go over and look for more potential 1.8 updates
 
 public class BasicDBInterface implements DBInterface {
 

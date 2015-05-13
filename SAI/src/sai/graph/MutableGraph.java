@@ -4,15 +4,12 @@ import info.kendall_morwick.funcles.tuple.Pair;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
 public class MutableGraph implements Graph {
@@ -23,16 +20,7 @@ public class MutableGraph implements Graph {
 	private Map<Integer,Pair<Integer>> edgeContents = Maps.newHashMap();
 	private Multimap<Integer,Feature> nodeFeatures = HashMultimap.create();
 	private Multimap<Integer,Feature> edgeFeatures = HashMultimap.create();
-	private Ordering<Feature> featureOrdering = Ordering.from(new Comparator<Feature>() {
-
-		@Override
-		public int compare(Feature o1, Feature o2) {
-			if(o1.getName().compareTo(o2.getName()) == 0)
-				return o1.getValue().compareTo(o2.getValue());
-			return o1.getName().compareTo(o2.getName());
-		}});
 	
-
 	public MutableGraph() {
 		
 	}
@@ -147,28 +135,24 @@ public class MutableGraph implements Graph {
 		edgeFeatures.remove(e, f);
 	}
 	
-
 	@Override
 	public String toString() {
 		StringWriter sout = new StringWriter();
 		PrintWriter out = new PrintWriter(sout);
 		out.print(getNodeIDs().size()+",");
 		out.print(getEdgeIDs().size());
-		for(Feature f : featureOrdering.sortedCopy(getFeatures()))
-			out.print("," + f);
+		getFeatures().stream().sorted().forEach( f->out.print("," + f));
 		out.print("\n");
 		//print a line for each node
 		for(int n : getNodeIDs()) {
 			out.print(n);
-			for(Feature f : featureOrdering.sortedCopy(getNodeFeatures(n)))
-				out.print("," + f);
+			getNodeFeatures(n).stream().sorted().forEach( f->out.print("," + f));
 			out.print("\n");
 		}
 		//print a line for each edge
 		for(int e : getEdgeIDs()) {
 			out.print(e+","+getEdgeSourceNodeID(e)+","+getEdgeTargetNodeID(e));
-			for(Feature f : featureOrdering.sortedCopy(getEdgeFeatures(e)))
-				out.print("," + f);
+			getEdgeFeatures(e).stream().sorted().forEach(f->out.print("," + f));
 			out.print("\n");
 		}
 		return sout.toString();

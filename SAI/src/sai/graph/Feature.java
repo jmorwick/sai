@@ -1,7 +1,7 @@
 package sai.graph;
 
 
-public final class Feature {
+public final class Feature implements Comparable<Feature> {
 	private String value;
 	private String name;
 	
@@ -24,9 +24,17 @@ public final class Feature {
 	public int hashCode() {
 		return toString().hashCode();
 	}
-	
+
+	@Override
 	public String toString() { 
 		return "("+name + ": " + value+")";
+	}
+
+	@Override
+	public int compareTo(Feature f) {
+		return getName().equals(f.getName()) ? 
+				getValue().compareTo(f.getValue()) :
+				getName().compareTo(f.getName());
 	}
 	
 }

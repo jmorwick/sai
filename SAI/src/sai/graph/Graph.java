@@ -3,6 +3,7 @@ package sai.graph;
 import java.util.Set;
 
 public interface Graph {
+	// TODO: consider making all Sets into Streams
 	public Set<Integer> getEdgeIDs();
 	public Set<Integer> getNodeIDs();
 	public Set<Feature> getFeatures();
