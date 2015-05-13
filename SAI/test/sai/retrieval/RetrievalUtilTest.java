@@ -29,8 +29,6 @@ public class RetrievalUtilTest {
 		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices();
 		GraphIndexBasedRetriever r = GraphIndexBasedRetriever::retrieveByBasicGraphIndexCount;
 		Iterator<Integer> i;
-		System.out.println("failing test: ");
-		r.retrieve(db, Sets.newHashSet(5, 6, 7, 8).stream()).forEach(x->System.out.println("("+x+")"));
 		i = r.retrieve(db, Sets.newHashSet(5, 6, 7, 8).stream()).iterator();
 		assertTrue(i.hasNext());
 		assertEquals(2, (int)i.next());
