@@ -10,11 +10,11 @@ import com.google.common.collect.Sets;
 
 import static info.kendall_morwick.funcles.Funcles.apply;
 import static sai.comparison.compatibility.FeatureSetCompatibilityChecker.greedy1To1Checker;
+import static sai.comparison.matching.MatchingGenerator.createCompleteMatchingGenerator;
 import sai.comparison.compatibility.FeatureCompatibilityChecker;
 import sai.comparison.heuristics.GraphMatchingHeuristic;
 import sai.comparison.matching.GraphMatching;
 import sai.comparison.matching.MatchingGenerator;
-import sai.comparison.matching.MatchingUtil;
 import sai.db.BasicDBInterface;
 import sai.db.SampleDBs;
 import sai.graph.Graph;
@@ -64,7 +64,7 @@ public class RetrievalUtilTest {
 	
 	@Test
 	public void testCompleteMatchingGeneratorAgainstSelf() {
-		MatchingGenerator gen = MatchingUtil.createCompleteMatchingGenerator(
+		MatchingGenerator gen = createCompleteMatchingGenerator(
 				greedy1To1Checker(FeatureCompatibilityChecker::areLexicallyCompatible), 
 				GraphMatchingHeuristic::basicEdgeCount);
 		selfTest(SampleGraphs.getSmallGraph1(), gen);
@@ -76,7 +76,7 @@ public class RetrievalUtilTest {
 
 	@Test
 	public void testCompleteMatchingGeneratorAgainstSelfNonUnique() {
-		MatchingGenerator gen = MatchingUtil.createCompleteMatchingGenerator(
+		MatchingGenerator gen = createCompleteMatchingGenerator(
 				greedy1To1Checker(FeatureCompatibilityChecker::areLexicallyCompatible), 
 				GraphMatchingHeuristic::basicEdgeCount);
 		Graph g = SampleGraphs.getSmallSymmetricTree();
@@ -97,7 +97,7 @@ public class RetrievalUtilTest {
 
 	@Test
 	public void testCompleteMatchingGeneratorAgainstSimilar() {
-		MatchingGenerator gen = MatchingUtil.createCompleteMatchingGenerator(
+		MatchingGenerator gen = createCompleteMatchingGenerator(
 				greedy1To1Checker(FeatureCompatibilityChecker::areLexicallyCompatible), 
 				GraphMatchingHeuristic::basicEdgeCount);
 		GraphMatching m = apply(gen, 

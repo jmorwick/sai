@@ -2,6 +2,10 @@ package sai.comparison.matching;
 
 import static org.junit.Assert.*;
 import static sai.comparison.compatibility.FeatureSetCompatibilityChecker.greedy1To1Checker;
+import static sai.comparison.matching.MatchingGenerator.createBasicNodeMatching;
+import static sai.comparison.matching.MatchingGenerator.createGraphMatchOrdering;
+import static sai.comparison.matching.MatchingGenerator.includeEdgeMatching;
+import static sai.comparison.matching.MatchingGenerator.induceEdgeMatching;
 import info.kendall_morwick.funcles.tuple.Pair;
 
 import java.nio.file.AccessDeniedException;
@@ -32,7 +36,7 @@ public class MatchingUtilTest {
 		Graph g2 = SampleGraphs.getSmallGraph3();
 		BiMap<Integer,Integer> nodeMatch = HashBiMap.create();
 
-		GraphMatching m = MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch);
+		GraphMatching m = createBasicNodeMatching(g1, g2, nodeMatch);
 		assertTrue(m.getGraph1() == g1);
 		assertTrue(m.getGraph2() == g2);
 		assertEquals(0, m.getAllNodeMatches().size());
@@ -45,7 +49,7 @@ public class MatchingUtilTest {
 		assertEquals(-1, m.getMatchedEdgeInGraph2(1));
 		
 		nodeMatch.put(1,2);
-		m = MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch);
+		m = createBasicNodeMatching(g1, g2, nodeMatch);
 		assertTrue(m.getGraph1() == g1);
 		assertTrue(m.getGraph2() == g2);
 		assertEquals(1, m.getAllNodeMatches().size());
@@ -59,7 +63,7 @@ public class MatchingUtilTest {
 		assertEquals(-1, m.getMatchedEdgeInGraph2(1));
 		
 		nodeMatch.put(2,1);
-		m = MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch);
+		m = createBasicNodeMatching(g1, g2, nodeMatch);
 		assertTrue(m.getGraph1() == g1);
 		assertTrue(m.getGraph2() == g2);
 		assertEquals(2, m.getAllNodeMatches().size());
@@ -88,8 +92,8 @@ public class MatchingUtilTest {
 
 		nodeMatch.put(1,1);
 		nodeMatch.put(2,2);
-		m = MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch);
-		m = MatchingUtil.includeEdgeMatching(m, edgeMatch);
+		m = createBasicNodeMatching(g1, g2, nodeMatch);
+		m = includeEdgeMatching(m, edgeMatch);
 		assertEquals(0, m.getAllEdgeMatches().size());
 		assertTrue(m.getGraph1() == g1);
 		assertTrue(m.getGraph2() == g2);
@@ -106,16 +110,16 @@ public class MatchingUtilTest {
 		
 		
 		edgeMatch.put(1, 1);
-		m = MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch);
-		m = MatchingUtil.includeEdgeMatching(m, edgeMatch);
+		m = createBasicNodeMatching(g1, g2, nodeMatch);
+		m = includeEdgeMatching(m, edgeMatch);
 		assertEquals(1, m.getMatchedEdgeInGraph1(1));
 		assertEquals(1, m.getMatchedEdgeInGraph2(1));
 		assertEquals(Sets.newHashSet(Pair.makePair(1, 1)), m.getAllEdgeMatches());
 		
 		
 		edgeMatch.put(2, 2);
-		m = MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch);
-		m = MatchingUtil.includeEdgeMatching(m, edgeMatch);
+		m = createBasicNodeMatching(g1, g2, nodeMatch);
+		m = includeEdgeMatching(m, edgeMatch);
 		assertEquals(1, m.getMatchedEdgeInGraph1(1));
 		assertEquals(1, m.getMatchedEdgeInGraph2(1));
 		assertEquals(2, m.getMatchedEdgeInGraph1(2));
@@ -137,8 +141,8 @@ public class MatchingUtilTest {
 				greedy1To1Checker(FeatureCompatibilityChecker::areLexicallyCompatible);
 
 		nodeMatch.put(1,1);
-		m = MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch);
-		m = MatchingUtil.induceEdgeMatching(m, fscc);
+		m = createBasicNodeMatching(g1, g2, nodeMatch);
+		m = induceEdgeMatching(m, fscc);
 		assertEquals(0, m.getAllEdgeMatches().size());
 		assertTrue(m.getGraph1() == g1);
 		assertTrue(m.getGraph2() == g2);
@@ -155,8 +159,8 @@ public class MatchingUtilTest {
 		
 
 		nodeMatch.put(2,2);
-		m = MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch);
-		m = MatchingUtil.induceEdgeMatching(m, fscc);
+		m = createBasicNodeMatching(g1, g2, nodeMatch);
+		m = induceEdgeMatching(m, fscc);
 		assertTrue(m.getGraph1() == g1);
 		assertTrue(m.getGraph2() == g2);
 		assertEquals(Sets.newHashSet(Pair.makePair(1, 1),
@@ -173,8 +177,8 @@ public class MatchingUtilTest {
 		
 
 		nodeMatch.put(3,3);
-		m = MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch);
-		m = MatchingUtil.induceEdgeMatching(m, fscc);
+		m = createBasicNodeMatching(g1, g2, nodeMatch);
+		m = induceEdgeMatching(m, fscc);
 		assertEquals(Sets.newHashSet(
 				Pair.makePair(1, 1),
 				Pair.makePair(2, 2)
@@ -188,8 +192,8 @@ public class MatchingUtilTest {
 		
 
 		nodeMatch.put(4,4);
-		m = MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch);
-		m = MatchingUtil.induceEdgeMatching(m, fscc);
+		m = createBasicNodeMatching(g1, g2, nodeMatch);
+		m = induceEdgeMatching(m, fscc);
 		assertEquals(Sets.newHashSet(
 				Pair.makePair(1, 1),
 				Pair.makePair(3, 3),
@@ -221,12 +225,12 @@ public class MatchingUtilTest {
 						nodeMatch.put(nid, nid);  //this is complete BS...
 					  //...but works for the examples since the ID's match
 				}
-				return MatchingUtil.induceEdgeMatching(
-						MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch),
+				return induceEdgeMatching(
+						createBasicNodeMatching(g1, g2, nodeMatch),
 						fscc);
 		};
 		Comparator<Graph> o = 
-				MatchingUtil.createGraphMatchOrdering(SampleGraphs.getSmallGraph1(), fakeGen, h); 
+				createGraphMatchOrdering(SampleGraphs.getSmallGraph1(), fakeGen, h); 
 		Graph g1 = SampleGraphs.getSmallGraph1();
 		Graph g2 = SampleGraphs.getSmallGraph2();
 		Graph g3 = SampleGraphs.getSmallGraph4();

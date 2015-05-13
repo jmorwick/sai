@@ -7,7 +7,8 @@ import java.nio.file.AccessDeniedException;
 import org.junit.Test;
 
 import sai.comparison.matching.GraphMatching;
-import sai.comparison.matching.MatchingUtil;
+import static sai.comparison.matching.MatchingGenerator.createBasicNodeMatching;
+import static sai.comparison.matching.MatchingGenerator.includeEdgeMatching;
 import sai.db.DBInterface;
 import sai.db.SampleDBs;
 import sai.graph.Graph;
@@ -31,17 +32,17 @@ public class HeuristicsTest {
 
 		nodeMatch.put(1,1);
 		nodeMatch.put(2,2);
-		m = MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch);
+		m = createBasicNodeMatching(g1, g2, nodeMatch);
 		assertEquals(0.0, h.apply(m), 0.0000000001);
-		m = MatchingUtil.createBasicNodeMatching(g2, g1, nodeMatch.inverse());
+		m = createBasicNodeMatching(g2, g1, nodeMatch.inverse());
 		assertEquals(0.0, h.apply(m), 0.0000000001);
 		
 		edgeMatch.put(1, 1);
-		m = MatchingUtil.createBasicNodeMatching(g1, g2, nodeMatch);
-		m = MatchingUtil.includeEdgeMatching(m, edgeMatch);
+		m = createBasicNodeMatching(g1, g2, nodeMatch);
+		m = includeEdgeMatching(m, edgeMatch);
 		assertEquals(1.0, h.apply(m), 0.0000000001);
-		m = MatchingUtil.createBasicNodeMatching(g2, g1, nodeMatch.inverse());
-		m = MatchingUtil.includeEdgeMatching(m, edgeMatch);
+		m = createBasicNodeMatching(g2, g1, nodeMatch.inverse());
+		m = includeEdgeMatching(m, edgeMatch);
 		assertEquals(0.25, h.apply(m), 0.0000000001);
 	}
 
