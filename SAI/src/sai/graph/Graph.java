@@ -1,14 +1,14 @@
 package sai.graph;
 
-import java.util.Set;
+import java.util.stream.Stream;
 
 public interface Graph {
 	// TODO: consider making all Sets into Streams
-	public Set<Integer> getEdgeIDs();
-	public Set<Integer> getNodeIDs();
-	public Set<Feature> getFeatures();
-	public Set<Feature> getNodeFeatures(int n);
-	public Set<Feature> getEdgeFeatures(int e);
+	public Stream<Integer> getEdgeIDs();
+	public Stream<Integer> getNodeIDs();
+	public Stream<Feature> getFeatures();
+	public Stream<Feature> getNodeFeatures(int n);
+	public Stream<Feature> getEdgeFeatures(int e);
 	public int getEdgeSourceNodeID(int edgeID);
 	public int getEdgeTargetNodeID(int edgeID);
 }

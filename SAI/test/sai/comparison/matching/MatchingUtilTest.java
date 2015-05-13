@@ -220,11 +220,11 @@ public class MatchingUtilTest {
 						greedy1To1Checker(
 								FeatureCompatibilityChecker::areLexicallyCompatible);
 				BiMap<Integer,Integer> nodeMatch = HashBiMap.create();
-				for(int nid : g1.getNodeIDs()) {
-					if(g2.getNodeIDs().contains(nid))
+				g1.getNodeIDs().forEach(nid-> {
+					if(g2.getNodeIDs().anyMatch(n->n==nid))
 						nodeMatch.put(nid, nid);  //this is complete BS...
 					  //...but works for the examples since the ID's match
-				}
+				});
 				return induceEdgeMatching(
 						createBasicNodeMatching(g1, g2, nodeMatch),
 						fscc);

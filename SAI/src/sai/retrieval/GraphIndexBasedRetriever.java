@@ -48,7 +48,7 @@ public abstract interface GraphIndexBasedRetriever {
     public static Stream<Integer> retrieveByBasicGraphIndexCount(
     		DBInterface db, Stream<Integer> indices) {
     	return indices.map(index -> // retrieve the index graphs with specified id's
-    		db.retrieveGraph(index, MutableGraph::new).getFeatures().stream().
+    		db.retrieveGraph(index, MutableGraph::new).getFeatures().
     		// find the features indicating what graphs they index
     		filter(f -> f.getName().equals(Graphs.INDEXES_FEATURE_NAME))
     		// get the id's of the graphs they index out of the features

@@ -110,7 +110,7 @@ public class BasicDBInterfaceTest {
 	}
 	
 	private static Set<Integer> getIndexedGraphIDs(DBInterface db, int iid) {
-		return db.retrieveGraph(iid, MutableGraph::new).getFeatures().stream()
+		return db.retrieveGraph(iid, MutableGraph::new).getFeatures()
 				// only keep index features
 				.filter(f -> f.getName().equals(Graphs.INDEXES_FEATURE_NAME))
 				// get the id's of the indexed graphs
@@ -240,21 +240,21 @@ public class BasicDBInterfaceTest {
 		assertGraphsAreIdentical(rg, 
 				db.retrieveGraph(gid4, gf));
 		assertEquals(Sets.newHashSet(), 
-				db.retrieveGraph(gid1).getFeatures().stream()
+				db.retrieveGraph(gid1).getFeatures()
 				.filter(feature -> feature.getName().equals(Graphs.INDEXES_FEATURE_NAME))
 				.collect(Collectors.toSet()));
 		assertEquals(Sets.newHashSet(),
-				db.retrieveGraph(gid2).getFeatures().stream()
+				db.retrieveGraph(gid2).getFeatures()
 				.filter(feature -> feature.getName().equals(Graphs.INDEXES_FEATURE_NAME))
 				.collect(Collectors.toSet()));
 		assertEquals(Sets.newHashSet(Graphs.getIndexesFeature(gid1)), 
-				  db.retrieveGraph(gid3).getFeatures().stream()
+				  db.retrieveGraph(gid3).getFeatures()
 					.filter(feature -> feature.getName().equals(Graphs.INDEXES_FEATURE_NAME))
 					.collect(Collectors.toSet()));
 		assertEquals(Sets.newHashSet(
 				Graphs.getIndexesFeature(gid1),
 				Graphs.getIndexesFeature(gid3)),
-				db.retrieveGraph(gid4).getFeatures().stream()
+				db.retrieveGraph(gid4).getFeatures()
 				.filter(feature -> feature.getName().equals(Graphs.INDEXES_FEATURE_NAME))
 				.collect(Collectors.toSet()));
 		assertEquals(Sets.newHashSet(gid3,gid4), 

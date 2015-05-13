@@ -35,6 +35,6 @@ public interface GraphMatchingHeuristic extends Function<GraphMatching,Double> {
 
 	public static Double basicEdgeCount(GraphMatching m) {
 		return (double)m.getAllEdgeMatches().size() / 
-				(double)m.getGraph1().getEdgeIDs().size();
+				(double)m.getGraph1().getEdgeIDs().count();
 	}
 }

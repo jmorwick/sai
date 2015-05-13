@@ -26,6 +26,7 @@ import com.google.common.collect.Sets;
 
 import sai.db.DBInterface;
 import sai.db.SampleDBs;
+import static java.util.stream.Collectors.toSet;
 import static org.junit.Assert.*;
 
 /**
@@ -39,29 +40,29 @@ public class GraphUtilityTest {
     public void testCopyWithoutEdge() throws AccessDeniedException {
     	DBInterface db = SampleDBs.getEmptyDB();
         Graph g = SampleGraphs.getSmallGraph1();
-        for(int e : g.getEdgeIDs()) {
+        g.getEdgeIDs().forEach(e-> {
             Graph ng = Graphs.copyWithoutEdge(g, MutableGraph::new, e);
-            assertEquals(ng.getEdgeIDs().size(), g.getEdgeIDs().size()-1);
-            assertEquals(ng.getNodeIDs().size(), g.getNodeIDs().size());
-        }
+            assertEquals(ng.getEdgeIDs().count(), g.getEdgeIDs().count()-1);
+            assertEquals(ng.getNodeIDs().count(), g.getNodeIDs().count());
+        });
     }
     
     @Test
     public void testCopyWithoutNode() throws AccessDeniedException {
     	DBInterface db = SampleDBs.getEmptyDB();
         Graph g = SampleGraphs.getSmallGraph1();
-        for(int n : g.getNodeIDs()) {
+        g.getNodeIDs().forEach(n-> {
             Graph ng = Graphs.copyWithoutNode(g, MutableGraph::new, n);
             if(n == 1)
-            	assertEquals(Sets.newHashSet(2, 3, 4), ng.getEdgeIDs());
+            	assertEquals(Sets.newHashSet(2, 3, 4), ng.getEdgeIDs().collect(toSet()));
             else if(n == 2)
-            	assertEquals(Sets.newHashSet(3), ng.getEdgeIDs());
+            	assertEquals(Sets.newHashSet(3), ng.getEdgeIDs().collect(toSet()));
             else if(n == 3)
-            	assertEquals(Sets.newHashSet(1, 4), ng.getEdgeIDs());
+            	assertEquals(Sets.newHashSet(1, 4), ng.getEdgeIDs().collect(toSet()));
             else // node 4
-            	assertEquals(Sets.newHashSet(1, 2), ng.getEdgeIDs());
-            assertEquals(ng.getNodeIDs().size(), g.getNodeIDs().size()-1);
-        }
+            	assertEquals(Sets.newHashSet(1, 2), ng.getEdgeIDs().collect(toSet()));
+            assertEquals(ng.getNodeIDs().count(), g.getNodeIDs().count()-1);
+        });
     }
     
 }

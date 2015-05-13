@@ -1,6 +1,8 @@
 package sai.graph;
 
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 
 public class Graphs {
@@ -14,14 +16,14 @@ public class Graphs {
 
 	public static <G extends Graph> G copyWithoutEdge(Graph g, GraphFactory<G> gf, int edgeID) {
         MutableGraph t = new MutableGraph(g);
-        if(t.getEdgeIDs().contains(edgeID))
+        if(t.getEdgeIDs().anyMatch(eid -> eid == edgeID))
         	t.removeEdge(edgeID);
         return gf.copy(t);
 	}
 	
 	public static <G extends Graph> G copyWithoutNode(Graph g, GraphFactory<G> gf, int nodeID) {
         MutableGraph t = new MutableGraph(g);
-        if(t.getNodeIDs().contains(nodeID))
+        if(t.getNodeIDs().anyMatch(nid -> nid == nodeID))
         	t.removeNode(nodeID);
         return gf.copy(t);
 	}
@@ -39,6 +41,18 @@ public class Graphs {
                 return f;
         }
         return null;
+    }
+    
+    /** returns the feature of the given feature-class associated with this feature set.
+     * If more than one such feature exists, an arbitrary selection is returned.
+     * If no such feature exists, null is returned.
+     * @param features the set of features to search
+     * @return the feature with the matching name (if any)
+     */
+    public static Feature getFeature(Stream<Feature> features, String featureName) {
+        Optional<Feature> optional =
+        		features.filter(f -> f.getName().equals(featureName)).findFirst();
+        return optional.isPresent() ? optional.get() : null;
     }
 	
 

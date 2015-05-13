@@ -21,9 +21,9 @@ public class Path1IndexGenerator implements FeatureIndexGenerator {
 
     public static Set<Feature> generatePath1IndexFeatures(Graph s, String ... featureNames) {
     	Set<Feature> ret = Sets.newHashSet();
-    	for(int e : s.getEdgeIDs()) {
-    		ret.addAll(generatePath1IndexFeature(s, e, featureNames));
-    	}
+    	s.getEdgeIDs().forEach(e -> 
+    		ret.addAll(generatePath1IndexFeature(s, e, featureNames)));
+    	
     	return ret;
     }
     
@@ -38,16 +38,16 @@ public class Path1IndexGenerator implements FeatureIndexGenerator {
             Set<Feature> edgeFeatures = Sets.newHashSet();
             Set<String> featureNamesSet = Arrays.stream(featureNames)
             		.collect(Collectors.toSet());
-            s.getEdgeFeatures(e).stream()
+            s.getEdgeFeatures(e)
             		.filter(f -> featureNamesSet.contains(f.getName()))
             		.forEach(f -> edgeFeatures.add(f));
             if(edgeFeatures.size() == 0) edgeFeatures.add(null); //make links without edge features
 
-            s.getNodeFeatures(s.getEdgeSourceNodeID(e)).stream()
+            s.getNodeFeatures(s.getEdgeSourceNodeID(e))
     		.filter(f -> featureNamesSet.contains(f.getName()))
     		.forEach(f -> fromNodeFeatures.add(f));
             
-            s.getNodeFeatures(s.getEdgeTargetNodeID(e)).stream()
+            s.getNodeFeatures(s.getEdgeTargetNodeID(e))
     		.filter(f -> featureNamesSet.contains(f.getName()))
     		.forEach(f -> toNodeFeatures.add(f));
             

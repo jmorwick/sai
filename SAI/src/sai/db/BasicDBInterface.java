@@ -168,12 +168,8 @@ public class BasicDBInterface implements DBInterface {
 	 */
 	@Override
 	public void disconnect() {
-		PrintWriter out = null;
 		try {
-			out = new PrintWriter(dbfile);
-		} catch (FileNotFoundException e) {
-			// use exception here?
-		}
+		PrintWriter out = new PrintWriter(dbfile);
 
 		// destroy duplicated information
 		graphsWithFeatureName = null;
@@ -198,30 +194,30 @@ public class BasicDBInterface implements DBInterface {
 			Graph g = retrieveGraph(gid, MutableGraph::new);
 			//print out general graph info on one line
 			out.print(gid+",");
-			out.print(g.getNodeIDs().size()+",");
-			out.print(g.getEdgeIDs().size());
-			for(Feature f : g.getFeatures()) 
-				out.print("," + lookupID(f));
+			out.print(g.getNodeIDs().count()+",");
+			out.print(g.getEdgeIDs().count());
+			g.getFeatures().forEach(f -> out.print("," + lookupID(f)));
 			out.print("\n");
 			//print a line for each node
-			for(int n : g.getNodeIDs()) {
+			g.getNodeIDs().forEach(n -> {
 				out.print(n);
-				for(Feature f : g.getNodeFeatures(n)) 
-					out.print("," + lookupID(f));
+				g.getNodeFeatures(n).forEach(f -> out.print("," + lookupID(f)));
 				out.print("\n");
-			}
+			});
 			//print a line for each edge
-			for(int e : g.getEdgeIDs()) {
+			g.getEdgeIDs().forEach(e -> {
 				out.print(e+","+g.getEdgeSourceNodeID(e)+","+g.getEdgeTargetNodeID(e));
-				for(Feature f : g.getEdgeFeatures(e)) 
-					out.print("," + lookupID(f));
+				g.getEdgeFeatures(e).forEach(f -> out.print("," + lookupID(f)));
 				out.print("\n");
-			}
+			});
 		}
 		db = null;
 		featureIDs = null;
 
 		out.close();
+		} catch (FileNotFoundException e) {
+			// TODO: use exception here?
+		}
 	}
 
 	private int lookupID(Feature f) {
@@ -329,22 +325,23 @@ public class BasicDBInterface implements DBInterface {
 	@Override
 	public int addGraph(Graph g1) {
 		MutableGraph g = new MutableGraph(g1);
-		int newGraphID;
+		int newGraphIDtemp;
 		if(getFeature(g.getFeatures(), Graphs.SAI_ID_NAME) != null) {
-			newGraphID = Integer.parseInt(getFeature(g.getFeatures(), 
+			newGraphIDtemp = Integer.parseInt(getFeature(g.getFeatures(), 
 					Graphs.SAI_ID_NAME).getValue());
-			if(db.containsKey(newGraphID)) {
-				newGraphID = nextGraphID;
+			if(db.containsKey(newGraphIDtemp)) {
+				newGraphIDtemp = nextGraphID;
 				System.out.println("!!!");
 			}
-		} else newGraphID = nextGraphID;
+		} else newGraphIDtemp = nextGraphID;
+		final int newGraphID = newGraphIDtemp;
 
 
 		nextGraphID = Math.max(nextGraphID, newGraphID) + 1; // update next fresh graph id
 
 		//update SAI-id tag
 		Optional<Feature> saiID = 
-				g.getFeatures().stream()
+				g.getFeatures()
 				.filter(f -> f.getName().equals(Graphs.SAI_ID_NAME))
 				.findFirst();
 		if(saiID.isPresent()) g.removeFeature(saiID.get()); // remove the old one
@@ -354,23 +351,25 @@ public class BasicDBInterface implements DBInterface {
 		db.put(newGraphID, g);
 
 		//add all features
-		for(Feature f : g.getFeatures()) {
+		g.getFeatures().forEach(f -> {
 			addFeature(f);
 			graphsWithFeatureName.put(f.getName(), newGraphID);
 			graphsWithFeature.put(f, newGraphID);
-		}
-		for(int nid : g.getNodeIDs())
-			for(Feature f : g.getNodeFeatures(nid)) {
+		});
+		g.getNodeIDs().forEach(nid -> {
+			g.getNodeFeatures(nid).forEach(f -> {
 				addFeature(f);
 				graphsWithFeatureName.put(f.getName(), newGraphID);
 				graphsWithFeature.put(f, newGraphID);
-			}
-		for(int eid : g.getEdgeIDs())
-			for(Feature f : g.getEdgeFeatures(eid)) {
+			});
+		});
+		g.getNodeIDs().forEach(eid -> {
+			g.getEdgeFeatures(eid).forEach(f -> {
 				addFeature(f);
 				graphsWithFeatureName.put(f.getName(), newGraphID);
 				graphsWithFeature.put(f, newGraphID);
-			}
+			});
+		});
 
 
 		return newGraphID;
@@ -381,7 +380,7 @@ public class BasicDBInterface implements DBInterface {
 
 		//update SAI-id tag
 		Optional<Feature> saiID = 
-				g.getFeatures().stream()
+				g.getFeatures()
 				.filter(f -> f.getName().equals(Graphs.SAI_ID_NAME))
 				.findFirst();
 		if(saiID.isPresent()) g.removeFeature(saiID.get()); // remove the old one

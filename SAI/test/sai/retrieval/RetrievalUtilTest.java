@@ -54,12 +54,12 @@ public class RetrievalUtilTest {
 	private void selfTest(Graph g, MatchingGenerator gen) {
 		GraphMatching m = apply(gen, g, g);
 		
-		assertEquals(g.getNodeIDs().size(), m.getAllNodeMatches().size());
-		assertEquals(g.getEdgeIDs().size(), m.getAllEdgeMatches().size());
-		for(int nid : g.getNodeIDs())
-			assertEquals(nid, m.getMatchedNodeInGraph2(nid));
-		for(int eid : g.getEdgeIDs())
-			assertEquals(eid, m.getMatchedEdgeInGraph2(eid));
+		assertEquals(g.getNodeIDs().count(), m.getAllNodeMatches().size());
+		assertEquals(g.getEdgeIDs().count(), m.getAllEdgeMatches().size());
+		g.getNodeIDs().forEach(nid ->
+			assertEquals(nid, (Integer)m.getMatchedNodeInGraph2(nid)));
+		g.getEdgeIDs().forEach(eid ->
+			assertEquals(eid, (Integer)m.getMatchedEdgeInGraph2(eid)));
 	}
 	
 	@Test
@@ -82,8 +82,8 @@ public class RetrievalUtilTest {
 		Graph g = SampleGraphs.getSmallSymmetricTree();
 		GraphMatching m = apply(gen, g, g);
 		
-		assertEquals(g.getNodeIDs().size(), m.getAllNodeMatches().size());
-		assertEquals(g.getEdgeIDs().size(), m.getAllEdgeMatches().size());
+		assertEquals(g.getNodeIDs().count(), m.getAllNodeMatches().size());
+		assertEquals(g.getEdgeIDs().count(), m.getAllEdgeMatches().size());
 		assertEquals(1, m.getMatchedNodeInGraph2(1));
 		assertEquals(Sets.newHashSet(2,3),
 				Sets.newHashSet(

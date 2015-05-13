@@ -2,13 +2,15 @@ package sai.graph;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
+
 import com.google.common.collect.Sets;
 
 import sai.db.DBInterface;
 import sai.graph.Graph;
 import sai.graph.MutableGraph;
 import static sai.graph.Graphs.getFeature;
+import static java.util.stream.Collectors.toSet;
 
 public class SampleGraphs {
 
@@ -100,44 +102,48 @@ public class SampleGraphs {
 		if(getFeature(g2.getFeatures(), "index") != null)
 			g2.removeFeature(getFeature(g2.getFeatures(), "index"));
 		
-		assertEquals(g1.getNodeIDs(), g2.getNodeIDs());
-		assertEquals(g1.getEdgeIDs(), g2.getEdgeIDs());
-		Predicate<Feature> p = new Predicate<Feature>() {
-			@Override
-			public boolean apply(Feature f) {
-				return !f.getName().equals(Graphs.SAI_ID_NAME) &&
-					   !f.getName().equals(Graphs.INDEXES_FEATURE_NAME);
-			}};
 		assertEquals(
-				Sets.filter(g1.getFeatures(), p),
-				Sets.filter(g2.getFeatures(), p));
+				g1.getNodeIDs().collect(toSet()), 
+				g2.getNodeIDs().collect(toSet()));
+		assertEquals(
+				g1.getEdgeIDs().collect(toSet()), 
+				g2.getEdgeIDs().collect(toSet()));
+		Predicate<Feature> p = 
+				f -> 
+					!f.getName().equals(Graphs.SAI_ID_NAME) &&
+					!f.getName().equals(Graphs.INDEXES_FEATURE_NAME);
+		assertEquals(
+				g1.getFeatures().filter(p).collect(toSet()),
+				g2.getFeatures().filter(p).collect(toSet()));
 		
-		for(int nodeID : g1.getNodeIDs()) {
-			assertEquals(g1.getNodeFeatures(nodeID), g2.getNodeFeatures(nodeID));
-		}
-		for(int edgeID : g1.getEdgeIDs()) {
-			assertEquals(g1.getNodeFeatures(edgeID), g2.getNodeFeatures(edgeID));
+		g1.getNodeIDs().forEach(nodeID -> 
+			assertEquals(g1.getNodeFeatures(nodeID).collect(toSet()),
+					g2.getNodeFeatures(nodeID).collect(toSet())));
+		
+		g1.getEdgeIDs().forEach(edgeID-> {
+			assertEquals(g1.getNodeFeatures(edgeID).collect(toSet()), 
+					g2.getNodeFeatures(edgeID).collect(toSet()));
 			assertEquals(g1.getEdgeSourceNodeID(edgeID), 
 				     g2.getEdgeSourceNodeID(edgeID));
 			assertEquals(g1.getEdgeTargetNodeID(edgeID), 
 				     g2.getEdgeTargetNodeID(edgeID));
-		}
+		});
 	}
 	
 
 	public static String toString(Graph g1) {
-		String ret = "nodes: " + g1.getNodeIDs() + "\n";
-		ret += "edges: " + g1.getEdgeIDs() + "\n";
-		ret += "features: " + g1.getFeatures() + "\n";
-		for(int nodeID : g1.getNodeIDs()) {
-			ret += "node #" + nodeID + ": " + g1.getNodeFeatures(nodeID);
-		}
-		for(int edgeID : g1.getEdgeIDs()) {
-			ret += "edge #" + edgeID + "(" + g1.getEdgeSourceNodeID(edgeID) + 
+		StringBuilder ret = new StringBuilder();
+		ret.append("nodes: " + g1.getNodeIDs() + "\n");
+		ret.append("edges: " + g1.getEdgeIDs() + "\n");
+		ret.append("features: " + g1.getFeatures() + "\n");
+		g1.getNodeIDs().forEach(nodeID-> 
+			ret.append("node #" + nodeID + ": " + g1.getNodeFeatures(nodeID)));
+
+		g1.getNodeIDs().forEach(edgeID-> 
+			ret.append("edge #" + edgeID + "(" + g1.getEdgeSourceNodeID(edgeID) + 
 					"," + g1.getEdgeTargetNodeID(edgeID) +"): " + 
-					g1.getNodeFeatures(edgeID);
-		}
-		return ret;
+					g1.getNodeFeatures(edgeID)));
+		return ret.toString();
 	}
 
 	public static Graph getSmallGraph3() {

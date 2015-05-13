@@ -18,6 +18,7 @@
  */
 
 package sai.comparison.matching;
+import static java.util.stream.Collectors.toSet;
 import info.kendall_morwick.funcles.Funcles;
 import info.kendall_morwick.funcles.tuple.Pair;
 import info.kendall_morwick.function.Function2;
@@ -26,7 +27,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -81,7 +81,7 @@ public abstract interface MatchingGenerator extends
 		final ImmutableSet<Pair<Integer>> matchedNode = 
 				ImmutableSet.copyOf(copyNodeMatch.entrySet().stream()
 					.map((arg) -> Pair.makePair(arg.getKey(), arg.getValue()))
-					.collect(Collectors.toSet()));
+					.collect(toSet()));
 		return new GraphMatching() {
 
 			@Override
@@ -141,7 +141,7 @@ public abstract interface MatchingGenerator extends
 		final ImmutableSet<Pair<Integer>> matchedEdges = 
 				ImmutableSet.copyOf(edgeMatch.entrySet().stream()
 					.map((arg) -> Pair.makePair(arg.getKey(), arg.getValue()))
-					.collect(Collectors.toSet()));
+					.collect(toSet()));
 		return new GraphMatching() {
 
 			@Override
@@ -203,8 +203,8 @@ public abstract interface MatchingGenerator extends
 			FeatureSetCompatibilityChecker fscc) {
 
 		// if they're not directed, we need to treat edge compatibility differently:
-		if(nodeMatching.getGraph1().getFeatures().contains(Graphs.DIRECTED) &&
-				nodeMatching.getGraph2().getFeatures().contains(Graphs.DIRECTED))
+		if(nodeMatching.getGraph1().getFeatures().anyMatch(f->f.equals(Graphs.DIRECTED)) &&
+		   nodeMatching.getGraph2().getFeatures().anyMatch(f->f.equals(Graphs.DIRECTED)))
 			return induceEdgeMatchingUndirected(nodeMatching, fscc);
 
 
@@ -213,31 +213,33 @@ public abstract interface MatchingGenerator extends
 		BiMap<Integer,Integer> edgeMatch = HashBiMap.create();
 
 		Multimap<Pair<Integer>, Integer> g2Edges = HashMultimap.create();
-		for(int g2e : g2.getEdgeIDs()) 
+		g2.getEdgeIDs().forEach(g2e -> 
 			g2Edges.put( 
 					Pair.makePair(
 							g2.getEdgeSourceNodeID(g2e), 
-							g2.getEdgeTargetNodeID(g2e)), g2e);
+							g2.getEdgeTargetNodeID(g2e)), g2e));
 
-		for(int eid : g1.getEdgeIDs()) {
+		g1.getEdgeIDs().forEach(eid -> {
 			int g1n1 = g1.getEdgeSourceNodeID(eid);
 			int g1n2 = g1.getEdgeTargetNodeID(eid);
 			int g2n1 = nodeMatching.getMatchedNodeInGraph2(g1n1);
 			int g2n2 = nodeMatching.getMatchedNodeInGraph2(g1n2);
 			if(g2n1 == -1 || g2n2 == -1) 
-				continue; //skip edges with unmapped nodes in graph 2		
+				return; //skip edges with unmapped nodes in graph 2		
 
 			if(g2Edges.get(Pair.makePair(g2n1, g2n2)).size() == 0) 
-				continue;  //skip if it can't be matched to a graph 2 edge
+				return;  //skip if it can't be matched to a graph 2 edge
 
 			int g2MatchedEdge = -1; // make sure the edges are compatible
 			for(int g2e : g2Edges.get(Pair.makePair(g2n1, g2n2))) 
-				if(fscc.apply(g1.getEdgeFeatures(eid), g2.getEdgeFeatures(g2e)))
+				if(fscc.apply(
+						g1.getEdgeFeatures(eid).collect(toSet()), 
+						g2.getEdgeFeatures(g2e).collect(toSet())))
 					g2MatchedEdge = g2e;
 
 			if(g2MatchedEdge != -1) //if we found a match, record it
 				edgeMatch.put(eid, g2MatchedEdge);
-		}
+		});
 		return includeEdgeMatching(nodeMatching, edgeMatch);
 	}
 
@@ -258,31 +260,33 @@ public abstract interface MatchingGenerator extends
 		BiMap<Integer,Integer> edgeMatch = HashBiMap.create();
 
 		Multimap<Set<Integer>, Integer> g2Edges = HashMultimap.create();
-		for(int g2e : g2.getEdgeIDs()) 
+		g2.getEdgeIDs().forEach(g2e ->
 			g2Edges.put( 
 					Sets.newHashSet(
 							g2.getEdgeSourceNodeID(g2e), 
-							g2.getEdgeTargetNodeID(g2e)), g2e);
+							g2.getEdgeTargetNodeID(g2e)), g2e));
 
-		for(int eid : g1.getEdgeIDs()) {
+		g1.getEdgeIDs().forEach(eid-> {
 			int g1n1 = g1.getEdgeSourceNodeID(eid);
 			int g1n2 = g1.getEdgeTargetNodeID(eid);
 			int g2n1 = nodeMatching.getMatchedNodeInGraph2(g1n1);
 			int g2n2 = nodeMatching.getMatchedNodeInGraph2(g1n2);
 			if(g2n1 == -1 || g2n2 == -1) 
-				continue; //skip edges with unmapped nodes in graph 2		
+				return; //skip edges with unmapped nodes in graph 2		
 
 				if(g2Edges.get(Sets.newHashSet(g2n1, g2n2)).size() == 0) 
-					continue;  //skip if it can't be matched to a graph 2 edge
+					return;  //skip if it can't be matched to a graph 2 edge
 
 				int g2MatchedEdge = -1; // make sure the edges are compatible
 				for(int g2e : g2Edges.get(Sets.newHashSet(g2n1, g2n2))) 
-					if(fscc.apply(g1.getEdgeFeatures(eid), g2.getEdgeFeatures(g2e)))
+					if(fscc.apply(
+							g1.getEdgeFeatures(eid).collect(toSet()), 
+							g2.getEdgeFeatures(g2e).collect(toSet())))
 						g2MatchedEdge = g2e;
 
 				if(g2MatchedEdge != -1) //if we found a match, record it
 					edgeMatch.put(eid, g2MatchedEdge);
-		}
+		});
 		return includeEdgeMatching(nodeMatching, edgeMatch);
 	}
 
@@ -294,12 +298,13 @@ public abstract interface MatchingGenerator extends
 
 		Multimap<Integer,Integer> possibilities = HashMultimap.create();
 
-		for(int n1 : g1.getNodeIDs()) {
-			for(int n2 : g2.getNodeIDs()) {
-				if(Funcles.apply(fscc, g1.getNodeFeatures(n1), g2.getNodeFeatures(n2)))
+		g1.getNodeIDs().forEach(n1 -> {
+			g2.getNodeIDs().forEach(n2 -> {
+				if(fscc.apply(g1.getNodeFeatures(n1).collect(toSet()), 
+						      g2.getNodeFeatures(n2).collect(toSet())))
 					possibilities.put(n1, n2);
-			}
-		}
+			});
+		});
 
 		return possibilities;
 	}
@@ -316,9 +321,10 @@ public abstract interface MatchingGenerator extends
 
 				//put node ID's in an array to insure they remain in the same order
 				List<Integer> nodeIDsTemp = Lists.newArrayList();
-				for(int n1 : g1.getNodeIDs())
+				g1.getNodeIDs().forEach(n1-> {
 					if(possibilities.containsKey(n1))
 						nodeIDsTemp.add(n1);
+				});
 				final Integer[] nodeIDs = nodeIDsTemp.toArray(new Integer[nodeIDsTemp.size()]);
 
 				//create an iterator for the possible complete mappings
