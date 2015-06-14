@@ -16,7 +16,6 @@ public class QueryRecord {
 	
 	private Object query;
 	private DBInterface db;
-	private GraphRetriever<?> ri;
 	private List<Integer> retrievedGraphIDs = new ArrayList<Integer>();
 	
 	/** creates a new QueryRecord for the given DB and query. This is a mutable object which may 
@@ -28,20 +27,6 @@ public class QueryRecord {
 	public QueryRecord(Object query, DBInterface db) {
 		this.query = query;
 		this.db = db;
-		ri = null;
-	}
-
-	/** creates a new QueryRecord for the given DB and query through a retrieval interface. This is a 
-	 * mutable object which may continue to be updated after the constructor is completed.
-	 * 
-	 * @param query the query made to the database (could be an ID (integer), Feature, Graph, etc...)
-	 * @param db the database being queried
-	 * @param ri retriever issuing queries to the DB
-	 */
-	public QueryRecord(Object query, DBInterface db, GraphRetriever<?> ri) {
-		this.query = query;
-		this.db = db;
-		this.ri = ri;
 	}
 	
 	/** called by a listener whenever a graph is lazily retrieved from the DB
@@ -78,11 +63,4 @@ public class QueryRecord {
 	 * @return the DB being queried
 	 */
 	public DBInterface getDB() { return db; }
-	
-	/** Returns the GraphRetreiver which issued the query, if one exists.
-	 * If the query was direct to the DBInterface, null is returned.
-	 * 
-	 * @return the GraphRetreiver which issued the query
-	 */
-	public GraphRetriever<?> getGraphRetreiver() { return ri; }
 }
