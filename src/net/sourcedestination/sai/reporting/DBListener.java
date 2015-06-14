@@ -1,13 +1,13 @@
-package net.sourcedestination.sai.db;
+package net.sourcedestination.sai.reporting;
 
 import java.util.stream.Stream;
 
+import net.sourcedestination.sai.db.DBInterface;
+import net.sourcedestination.sai.db.DBWrapper;
 import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;
 import net.sourcedestination.sai.graph.GraphFactory;
 import net.sourcedestination.sai.graph.MutableGraph;
-import net.sourcedestination.sai.reporting.Log;
-import net.sourcedestination.sai.reporting.QueryRecord;
 import static net.sourcedestination.sai.util.StreamUtil.listen;
 
 public class DBListener extends DBWrapper {
