@@ -36,6 +36,7 @@ import com.google.common.base.Function;
  * @version 2.0
  * @author Joseph Kendall-Morwick
  */
+@FunctionalInterface
 public interface GraphRetriever<DB extends DBInterface> {
 
     public Stream<Integer> retrieve(DB db, Graph q);
