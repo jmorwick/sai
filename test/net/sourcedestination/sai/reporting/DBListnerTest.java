@@ -3,21 +3,125 @@ package net.sourcedestination.sai.reporting;
 import static org.junit.Assert.*;
 import static net.sourcedestination.sai.db.SampleDBs.*;
 import static net.sourcedestination.sai.graph.SampleGraphs.*;
+
+import java.nio.file.AccessDeniedException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.sourcedestination.sai.db.BasicDBInterface;
 import net.sourcedestination.sai.db.DBInterface;
+import net.sourcedestination.sai.db.SampleDBs;
 import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;
 import net.sourcedestination.sai.graph.MutableGraph;
+import net.sourcedestination.sai.retrieval.GraphIndexBasedRetriever;
+import net.sourcedestination.sai.retrieval.GraphRetriever;
 
 import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
 public class DBListnerTest {
+
+	@Test
+	public void testGraphBasedRetrieverRecordingBasic() throws AccessDeniedException {
+		DBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices();
+		Log log = new Log("test");
+		GraphIndexBasedRetriever r = GraphIndexBasedRetriever::retrieveByBasicGraphIndexCount;
+		GraphIndexBasedRetriever orig = r;
+		r = new GraphIndexBasedRetrieverListener(r, log);
+
+		Set<Integer> q1Results = new HashSet<Integer>();
+		assertEquals(0, log.getNumQueryRecords());
+		assertEquals(0, log.getNumDeletionRecords());
+		assertEquals(0, log.getNumAdditionRecords());
+		Set<Integer> q1Indices = Sets.newHashSet(5, 6, 7, 8);
+		Stream<Integer> results = r.retrieve(db, q1Indices.stream());
+		assertEquals(1, log.getNumQueryRecords());
+		assertEquals(0, log.getNumDeletionRecords());
+		assertEquals(0, log.getNumAdditionRecords());
+		QueryRecord q1 = log.getQueryRecords().skip(0).findFirst().get();
+		assertTrue(q1.getDB() == db);
+		assertEquals(q1Results, q1.getRetrievedGraphIDs().collect(Collectors.toSet()));
+		results.forEach(id -> {
+			q1Results.add(id);
+			assertEquals(q1Indices, q1.getQuery());
+			assertTrue(q1.getDB() == db);
+			assertEquals(q1Results, q1.getRetrievedGraphIDs().collect(Collectors.toSet()));
+		});
+		
+		Set<Integer> q2Results = new HashSet<Integer>();
+		assertEquals(1, log.getNumQueryRecords());
+		assertEquals(0, log.getNumDeletionRecords());
+		assertEquals(0, log.getNumAdditionRecords());
+		Set<Integer> q2Indices = Sets.newHashSet(5, 6, 7);
+		results = r.retrieve(db, q2Indices.stream());
+		assertEquals(2, log.getNumQueryRecords());
+		assertEquals(0, log.getNumDeletionRecords());
+		assertEquals(0, log.getNumAdditionRecords());
+		QueryRecord q2 = log.getQueryRecords().skip(1).findFirst().get();
+		assertTrue(q2.getDB() == db);
+		assertEquals(q2Results, q2.getRetrievedGraphIDs().collect(Collectors.toSet()));
+		results.forEach(id -> {
+			q2Results.add(id);
+			assertEquals(q2Indices, q2.getQuery());
+			assertTrue(q2.getDB() == db);
+			assertEquals(q2Results, q2.getRetrievedGraphIDs().collect(Collectors.toSet()));
+		});
+
+	}
+
+	@Test
+	public void testIndexBasedRetrieverRecordingBasic() throws AccessDeniedException {
+		DBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices();
+		Log log = new Log("test");
+		GraphIndexBasedRetriever r = GraphIndexBasedRetriever::retrieveByBasicGraphIndexCount;
+		GraphIndexBasedRetriever orig = r;
+		r = new GraphIndexBasedRetrieverListener(r, log);
+
+		Set<Integer> q1Results = new HashSet<Integer>();
+		assertEquals(0, log.getNumQueryRecords());
+		assertEquals(0, log.getNumDeletionRecords());
+		assertEquals(0, log.getNumAdditionRecords());
+		Set<Integer> q1Indices = Sets.newHashSet(5, 6, 7, 8);
+		Stream<Integer> results = r.retrieve(db, q1Indices.stream());
+		assertEquals(1, log.getNumQueryRecords());
+		assertEquals(0, log.getNumDeletionRecords());
+		assertEquals(0, log.getNumAdditionRecords());
+		QueryRecord q1 = log.getQueryRecords().skip(0).findFirst().get();
+		assertTrue(q1.getDB() == db);
+		assertEquals(q1Results, q1.getRetrievedGraphIDs().collect(Collectors.toSet()));
+		results.forEach(id -> {
+			q1Results.add(id);
+			assertEquals(q1Indices, q1.getQuery());
+			assertTrue(q1.getDB() == db);
+			assertEquals(q1Results, q1.getRetrievedGraphIDs().collect(Collectors.toSet()));
+		});
+		
+		Set<Integer> q2Results = new HashSet<Integer>();
+		assertEquals(1, log.getNumQueryRecords());
+		assertEquals(0, log.getNumDeletionRecords());
+		assertEquals(0, log.getNumAdditionRecords());
+		Set<Integer> q2Indices = Sets.newHashSet(5, 6, 7);
+		results = r.retrieve(db, q2Indices.stream());
+		assertEquals(2, log.getNumQueryRecords());
+		assertEquals(0, log.getNumDeletionRecords());
+		assertEquals(0, log.getNumAdditionRecords());
+		QueryRecord q2 = log.getQueryRecords().skip(1).findFirst().get();
+		assertTrue(q2.getDB() == db);
+		assertEquals(q2Results, q2.getRetrievedGraphIDs().collect(Collectors.toSet()));
+		results.forEach(id -> {
+			q2Results.add(id);
+			assertEquals(q2Indices, q2.getQuery());
+			assertTrue(q2.getDB() == db);
+			assertEquals(q2Results, q2.getRetrievedGraphIDs().collect(Collectors.toSet()));
+		});
+
+	}
+
 
 	@Test
 	public void testFeatureNameBasedRetrievalRecording() {
@@ -40,15 +144,12 @@ public class DBListnerTest {
 		assertEquals("test", q1.getQuery());
 		assertTrue(q1.getDB() == orig);
 		assertEquals(q1Results, q1.getRetrievedGraphIDs().collect(Collectors.toSet()));
-		assertNull(q1.getGraphRetreiver());
 		results.forEach(id -> {
 			q1Results.add(id);
 			assertEquals("test", q1.getQuery());
 			assertTrue(q1.getDB() == orig);
 			assertEquals(q1Results, q1.getRetrievedGraphIDs().collect(Collectors.toSet()));
-			assertNull(q1.getGraphRetreiver());
-		});
-		
+		});	
 	}
 
 	@Test
@@ -72,13 +173,11 @@ public class DBListnerTest {
 		assertEquals(new Feature("test", "a"), q1.getQuery());
 		assertTrue(q1.getDB() == orig);
 		assertEquals(q1Results, q1.getRetrievedGraphIDs().collect(Collectors.toSet()));
-		assertNull(q1.getGraphRetreiver());
 		results.forEach(id -> {
 			q1Results.add(id);
 			assertEquals(new Feature("test", "a"), q1.getQuery());
 			assertTrue(q1.getDB() == orig);
 			assertEquals(q1Results, q1.getRetrievedGraphIDs().collect(Collectors.toSet()));
-			assertNull(q1.getGraphRetreiver());
 		});
 		
 		Set<Integer> q2Results = new HashSet<Integer>();
@@ -90,13 +189,11 @@ public class DBListnerTest {
 		assertEquals(new Feature("test", "b"), q2.getQuery());
 		assertTrue(q2.getDB() == orig);
 		assertEquals(q2Results, q2.getRetrievedGraphIDs().collect(Collectors.toSet()));
-		assertNull(q2.getGraphRetreiver());
 		results.forEach(id -> {
 			q2Results.add(id);
 			assertEquals(new Feature("test", "b"), q2.getQuery());
 			assertTrue(q2.getDB() == orig);
 			assertEquals(q2Results, q2.getRetrievedGraphIDs().collect(Collectors.toSet()));
-			assertNull(q2.getGraphRetreiver());
 		});
 		
 		Set<Integer> q3Results = new HashSet<Integer>();
@@ -108,13 +205,11 @@ public class DBListnerTest {
 		assertEquals(new Feature("test", "c"), q3.getQuery());
 		assertTrue(q3.getDB() == orig);
 		assertEquals(q3Results, q3.getRetrievedGraphIDs().collect(Collectors.toSet()));
-		assertNull(q3.getGraphRetreiver());
 		results.forEach(id -> {
 			q3Results.add(id);
 			assertEquals(new Feature("test", "c"), q3.getQuery());
 			assertTrue(q3.getDB() == orig);
 			assertEquals(q3Results, q3.getRetrievedGraphIDs().collect(Collectors.toSet()));
-			assertNull(q3.getGraphRetreiver());
 		});
 		
 		Set<Integer> q4Results = new HashSet<Integer>();
@@ -126,13 +221,11 @@ public class DBListnerTest {
 		assertEquals(new Feature("test", "d"), q4.getQuery());
 		assertTrue(q4.getDB() == orig);
 		assertEquals(q4Results, q4.getRetrievedGraphIDs().collect(Collectors.toSet()));
-		assertNull(q4.getGraphRetreiver());
 		results.forEach(id -> {
 			q4Results.add(id);
 			assertEquals(new Feature("test", "d"), q4.getQuery());
 			assertTrue(q4.getDB() == orig);
 			assertEquals(q4Results, q4.getRetrievedGraphIDs().collect(Collectors.toSet()));
-			assertNull(q4.getGraphRetreiver());
 		});
 	}
 
@@ -154,7 +247,6 @@ public class DBListnerTest {
 		assertEquals(1, q1.getQuery());
 		assertTrue(q1.getDB() == orig);
 		assertEquals(Sets.newHashSet(1), q1.getRetrievedGraphIDs().collect(Collectors.toSet()));
-		assertNull(q1.getGraphRetreiver());
 		
 		Graph g2 = db.retrieveGraph(2, MutableGraph::new);
 		assertEquals(2, log.getNumQueryRecords());
@@ -164,7 +256,6 @@ public class DBListnerTest {
 		assertEquals(2, q2.getQuery());
 		assertTrue(q2.getDB() == orig);
 		assertEquals(Sets.newHashSet(2), q2.getRetrievedGraphIDs().collect(Collectors.toSet()));
-		assertNull(q2.getGraphRetreiver());
 		
 		Graph g3 = db.retrieveGraph(3, MutableGraph::new);
 		assertEquals(3, log.getNumQueryRecords());
@@ -174,7 +265,6 @@ public class DBListnerTest {
 		assertEquals(3, q3.getQuery());
 		assertTrue(q3.getDB() == orig);
 		assertEquals(Sets.newHashSet(3), q3.getRetrievedGraphIDs().collect(Collectors.toSet()));
-		assertNull(q3.getGraphRetreiver());
 		
 		Graph g4 = db.retrieveGraph(4, MutableGraph::new);
 		assertEquals(4, log.getNumQueryRecords());
@@ -184,7 +274,6 @@ public class DBListnerTest {
 		assertEquals(4, q4.getQuery());
 		assertTrue(q4.getDB() == orig);
 		assertEquals(Sets.newHashSet(4), q4.getRetrievedGraphIDs().collect(Collectors.toSet()));
-		assertNull(q4.getGraphRetreiver());
 	}
 	
 	
