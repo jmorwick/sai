@@ -11,7 +11,7 @@ import com.google.common.collect.ConcurrentHashMultiset;
 @FunctionalInterface
 public interface FeatureIndexBasedRetriever {
 	
-    public abstract Stream<Integer> retrieve(DBInterface db, Stream<Feature> indices);
+    public Stream<Integer> retrieve(DBInterface db, Stream<Feature> indices);
     
     /**
      * A retriever which ranks graphs by the number of specified indices they are

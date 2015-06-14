@@ -37,8 +37,9 @@ import com.google.common.collect.ConcurrentHashMultiset;
  * @version 2.0
  * @author Joseph Kendall-Morwick
  */
-public abstract interface GraphIndexBasedRetriever {
-    public abstract Stream<Integer> retrieve(DBInterface db, Stream<Integer> indices);
+@FunctionalInterface
+public interface GraphIndexBasedRetriever {
+    public Stream<Integer> retrieve(DBInterface db, Stream<Integer> indices);
     
 
     /**
