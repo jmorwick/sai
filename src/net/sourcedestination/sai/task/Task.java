@@ -1,13 +1,15 @@
-package net.sourcedestination.sai.reporting;
+package net.sourcedestination.sai.task;
 
 import java.util.concurrent.Callable;
+
+import net.sourcedestination.sai.reporting.Log;
 
 /** represents a loggable task executing over a SAI database.
  * 
  * @author jmorwick
  *
  */
-public interface SAITask extends Callable<Log> {
+public interface Task extends Callable<Log> {
 	
 	/** optional method which reports how much of the task's work is remaining.
 	 *  By default, this always returns 0.0.

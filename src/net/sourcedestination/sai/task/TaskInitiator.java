@@ -1,6 +1,7 @@
-package net.sourcedestination.sai.reporting;
+package net.sourcedestination.sai.task;
+
 
 //TODO: do I need this? Why not Supplier<SAITask> instead?
 public interface TaskInitiator {
-	public SAITask startTask();
+	public Task startTask();
 }
