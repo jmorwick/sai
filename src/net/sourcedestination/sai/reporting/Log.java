@@ -54,7 +54,6 @@ public class Log {
 		for(Tuple2<String,String> t : params) {
 			this.params.put(t.a1(), t.a2());
 		}
-		
 	}
 	
 
