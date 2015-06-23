@@ -25,8 +25,8 @@ import java.util.stream.Stream;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.graph.Feature;
-import net.sourcedestination.sai.graph.Graphs;
 import net.sourcedestination.sai.graph.MutableGraph;
+import static net.sourcedestination.sai.graph.Graph.INDEXES_FEATURE_NAME;
 
 import com.google.common.collect.ConcurrentHashMultiset;
 
@@ -51,7 +51,7 @@ public interface GraphIndexBasedRetriever {
     	return indices.map(index -> // retrieve the index graphs with specified id's
     		db.retrieveGraph(index, MutableGraph::new).getFeatures().
     		// find the features indicating what graphs they index
-    		filter(f -> f.getName().equals(Graphs.INDEXES_FEATURE_NAME))
+    		filter(f -> f.getName().equals(INDEXES_FEATURE_NAME))
     		// get the id's of the graphs they index out of the features
     		//TODO: figure out why I need a cast below
     		.map((Function<Feature,Integer>) f -> Integer.parseInt(f.getValue())))

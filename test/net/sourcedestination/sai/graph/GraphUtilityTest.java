@@ -23,7 +23,6 @@ import java.nio.file.AccessDeniedException;
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
 import net.sourcedestination.sai.graph.Graph;
-import net.sourcedestination.sai.graph.Graphs;
 import net.sourcedestination.sai.graph.MutableGraph;
 
 import org.junit.*;
@@ -31,6 +30,7 @@ import org.junit.*;
 import com.google.common.collect.Sets;
 
 import static java.util.stream.Collectors.toSet;
+import static net.sourcedestination.sai.graph.Graph.*;
 import static org.junit.Assert.*;
 
 /**
@@ -45,7 +45,7 @@ public class GraphUtilityTest {
     	DBInterface db = SampleDBs.getEmptyDB();
         Graph g = SampleGraphs.getSmallGraph1();
         g.getEdgeIDs().forEach(e-> {
-            Graph ng = Graphs.copyWithoutEdge(g, MutableGraph::new, e);
+            Graph ng = copyWithoutEdge(g, MutableGraph::new, e);
             assertEquals(ng.getEdgeIDs().count(), g.getEdgeIDs().count()-1);
             assertEquals(ng.getNodeIDs().count(), g.getNodeIDs().count());
         });
@@ -56,7 +56,7 @@ public class GraphUtilityTest {
     	DBInterface db = SampleDBs.getEmptyDB();
         Graph g = SampleGraphs.getSmallGraph1();
         g.getNodeIDs().forEach(n-> {
-            Graph ng = Graphs.copyWithoutNode(g, MutableGraph::new, n);
+            Graph ng = copyWithoutNode(g, MutableGraph::new, n);
             if(n == 1)
             	assertEquals(Sets.newHashSet(2, 3, 4), ng.getEdgeIDs().collect(toSet()));
             else if(n == 2)

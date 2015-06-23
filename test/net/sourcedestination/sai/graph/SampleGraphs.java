@@ -1,6 +1,6 @@
 package net.sourcedestination.sai.graph;
 
-import static net.sourcedestination.sai.graph.Graphs.getFeature;
+import static net.sourcedestination.sai.graph.Graph.*;
 import static org.junit.Assert.assertEquals;
 
 import java.util.function.Predicate;
@@ -8,7 +8,6 @@ import java.util.function.Predicate;
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;
-import net.sourcedestination.sai.graph.Graphs;
 import net.sourcedestination.sai.graph.MutableGraph;
 
 import com.google.common.collect.Sets;
@@ -113,8 +112,8 @@ public class SampleGraphs {
 				g2.getEdgeIDs().collect(toSet()));
 		Predicate<Feature> p = 
 				f -> 
-					!f.getName().equals(Graphs.SAI_ID_NAME) &&
-					!f.getName().equals(Graphs.INDEXES_FEATURE_NAME);
+					!f.getName().equals(SAI_ID_NAME) &&
+					!f.getName().equals(INDEXES_FEATURE_NAME);
 		assertEquals(
 				g1.getFeatures().filter(p).collect(toSet()),
 				g2.getFeatures().filter(p).collect(toSet()));
@@ -163,7 +162,7 @@ public class SampleGraphs {
 
 	public static Graph getMediumUnlabeledTreeOneSelfIso() {
 	      MutableGraph g = new MutableGraph();
-	      g.addFeature(Graphs.TREE);
+	      g.addFeature(TREE);
 	      g.addNode(1);
 	      g.addNode(2);
 	      g.addNode(3);
@@ -216,7 +215,7 @@ public class SampleGraphs {
       g.addEdge(1, 1, 2);
       g.addEdgeFeature(1, new Feature("test", edgeVal));
       
-      g.addFeature(Graphs.INDEX);
+      g.addFeature(INDEX);
       return g;
     }
 

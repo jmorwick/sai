@@ -33,7 +33,7 @@ import net.sourcedestination.funcles.tuple.Pair;
 import net.sourcedestination.sai.comparison.compatibility.FeatureSetCompatibilityChecker;
 import net.sourcedestination.sai.comparison.heuristics.GraphMatchingHeuristic;
 import net.sourcedestination.sai.graph.Graph;
-import net.sourcedestination.sai.graph.Graphs;
+import static net.sourcedestination.sai.graph.Graph.*;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -203,8 +203,8 @@ public abstract interface MatchingGenerator extends
 			FeatureSetCompatibilityChecker fscc) {
 
 		// if they're not directed, we need to treat edge compatibility differently:
-		if(nodeMatching.getGraph1().getFeatures().anyMatch(f->f.equals(Graphs.DIRECTED)) &&
-		   nodeMatching.getGraph2().getFeatures().anyMatch(f->f.equals(Graphs.DIRECTED)))
+		if(nodeMatching.getGraph1().getFeatures().anyMatch(f->f.equals(DIRECTED)) &&
+		   nodeMatching.getGraph2().getFeatures().anyMatch(f->f.equals(DIRECTED)))
 			return induceEdgeMatchingUndirected(nodeMatching, fscc);
 
 

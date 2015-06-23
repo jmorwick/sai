@@ -18,7 +18,6 @@ import java.nio.file.AccessDeniedException;
 import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;
 import net.sourcedestination.sai.graph.GraphFactory;
-import net.sourcedestination.sai.graph.Graphs;
 import net.sourcedestination.sai.graph.MutableGraph;
 
 import com.google.common.collect.BiMap;
@@ -28,7 +27,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import static net.sourcedestination.sai.graph.Graphs.getFeature;
+import static net.sourcedestination.sai.graph.Graph.getFeature;
+import static net.sourcedestination.sai.graph.Graph.getIndexesFeature;
+import static net.sourcedestination.sai.graph.Graph.SAI_ID_NAME;
+import static net.sourcedestination.sai.graph.Graph.getIDFeature;
 
 // TODO: go over and look for more potential 1.8 updates
 
@@ -314,7 +316,7 @@ public class BasicDBInterface implements DBInterface {
 		if(!db.containsKey(graphID) || !db.containsKey(indexGraphID))
 			throw new IllegalArgumentException("graphid doesn't exist");
 		MutableGraph ireplace = new MutableGraph(db.get(indexGraphID));
-		ireplace.addFeature(Graphs.getIndexesFeature(graphID));
+		ireplace.addFeature(getIndexesFeature(graphID));
 		this.replaceGraph(indexGraphID, ireplace);
 	}
 
@@ -327,9 +329,9 @@ public class BasicDBInterface implements DBInterface {
 	public int addGraph(Graph g1) {
 		MutableGraph g = new MutableGraph(g1);
 		int newGraphIDtemp;
-		if(getFeature(g.getFeatures(), Graphs.SAI_ID_NAME) != null) {
+		if(getFeature(g.getFeatures(), SAI_ID_NAME) != null) {
 			newGraphIDtemp = Integer.parseInt(getFeature(g.getFeatures(), 
-					Graphs.SAI_ID_NAME).getValue());
+					SAI_ID_NAME).getValue());
 			if(db.containsKey(newGraphIDtemp)) {
 				newGraphIDtemp = nextGraphID;
 				System.out.println("!!!");
@@ -343,10 +345,10 @@ public class BasicDBInterface implements DBInterface {
 		//update SAI-id tag
 		Optional<Feature> saiID = 
 				g.getFeatures()
-				.filter(f -> f.getName().equals(Graphs.SAI_ID_NAME))
+				.filter(f -> f.getName().equals(SAI_ID_NAME))
 				.findFirst();
 		if(saiID.isPresent()) g.removeFeature(saiID.get()); // remove the old one
-		g.addFeature(Graphs.getIDFeature(newGraphID)); // add the new one
+		g.addFeature(getIDFeature(newGraphID)); // add the new one
 
 		//insert into db
 		db.put(newGraphID, g);
@@ -382,10 +384,10 @@ public class BasicDBInterface implements DBInterface {
 		//update SAI-id tag
 		Optional<Feature> saiID = 
 				g.getFeatures()
-				.filter(f -> f.getName().equals(Graphs.SAI_ID_NAME))
+				.filter(f -> f.getName().equals(SAI_ID_NAME))
 				.findFirst();
 		if(saiID.isPresent()) g.removeFeature(saiID.get()); // remove the old one
-		g.addFeature(Graphs.getIDFeature(indexGraphID)); // add the new one
+		g.addFeature(getIDFeature(indexGraphID)); // add the new one
 		
 		if(db.containsKey(indexGraphID))
 			db.remove(indexGraphID);
