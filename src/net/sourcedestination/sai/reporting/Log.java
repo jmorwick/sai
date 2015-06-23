@@ -42,6 +42,7 @@ public class Log {
 	private List<AdditionRecord> additions = new ArrayList<AdditionRecord>();
 	private List<DeletionRecord> deletions = new ArrayList<DeletionRecord>();
 	
+	
 	/** Constructs a new Log object which is ready to record data from a task.
 	 * @param taskName name of the task being run
 	 * @param params parameter values for the task being run
@@ -54,6 +55,26 @@ public class Log {
 			this.params.put(t.a1(), t.a2());
 		}
 		
+	}
+	
+
+	/** incorporates all data from the provided log in this log.
+	 * 
+	 * @param log
+	 */
+	public void include(Log log) {
+		if(this.startTime.compareTo(log.startTime) > 0)
+			this.startTime = log.startTime;
+		
+		if(this.endTime.compareTo(log.endTime) < 0)
+			this.endTime = log.endTime;
+		
+		this.params.putAll(log.params);
+		this.plots2d.putAll(log.plots2d);
+		this.plots3d.putAll(log.plots3d);
+		this.queries.addAll(log.queries);
+		this.additions.addAll(log.additions);
+		this.deletions.addAll(log.deletions);
 	}
 	
 	/** adds a new record of a query being made to this log. 
