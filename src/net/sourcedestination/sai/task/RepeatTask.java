@@ -1,10 +1,12 @@
 package net.sourcedestination.sai.task;
 
+import java.util.function.Supplier;
+
 import net.sourcedestination.sai.reporting.Log;
 
-public class RepeatTask implements TaskInitiator {
+public class RepeatTask implements Supplier<Task> {
 	
-	private TaskInitiator ti;
+	private Supplier<Task> ti;
 	private int iterations;
 	
 
@@ -13,14 +15,14 @@ public class RepeatTask implements TaskInitiator {
 	 * @param ti creates the task to be repeatedly executed
 	 * @param iterations the number of times to repeat the task
 	 */
-	public RepeatTask(TaskInitiator ti, int iterations) {
+	public RepeatTask(Supplier<Task> ti, int iterations) {
 		this.ti = ti;
 		this.iterations = iterations;
 	}
 
 
 	@Override
-	public Task startTask() {
+	public Task get() {
 
 		
 		return new Task() {
@@ -32,7 +34,7 @@ public class RepeatTask implements TaskInitiator {
 			public Log call() throws Exception {
 				Log log = null;
 				for(i=0; i<iterations; i++) {
-					currentTask = ti.startTask();
+					currentTask = ti.get();
 					if(log == null)
 						log = currentTask.call();
 					else log.include(currentTask.call());

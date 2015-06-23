@@ -8,7 +8,7 @@ import net.sourcedestination.sai.reporting.DBListener;
 import net.sourcedestination.sai.reporting.Log;
 import static net.sourcedestination.funcles.tuple.Tuple.makeTuple;
 
-public class DatabasePopulator implements TaskInitiator {
+public class DatabasePopulator implements Supplier<Task> {
 	
 	private Supplier<Graph> gen;
 	private int numGraphs;
@@ -23,7 +23,7 @@ public class DatabasePopulator implements TaskInitiator {
 
 
 	@Override
-	public Task startTask() {
+	public Task get() {
 		return new Task() {
 			private int i=0;
 
