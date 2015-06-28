@@ -38,6 +38,14 @@ public class DatabasePopulator implements Supplier<Task> {
 				}
 				return log;
 			}
+			
+			public double getPercentageDone() {
+				return (double)i/(double)numGraphs;
+			}
+			
+			public int getProgressUnits() {
+				return i;
+			}
 		};
 	}
 	

@@ -28,4 +28,16 @@ public interface Task extends Callable<Log> {
 	public default int getProgressUnits() {
 		return 0;
 	}
+	
+	public default String getTaskName() {
+		return this.getClass().getCanonicalName();
+	}
+	
+	public default void cancel() {
+		
+	}
+	
+	public default boolean running() {
+		return getPercentageDone() < 100.0 && getPercentageDone() > 0.0;
+	}
 }
