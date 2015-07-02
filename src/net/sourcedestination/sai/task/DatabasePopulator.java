@@ -27,6 +27,7 @@ public class DatabasePopulator implements Supplier<Task> {
 		return new Task() {
 			private int i=0;
 			private boolean cancel = false;
+			private boolean finished = false;
 
 			@Override
 			public Log call() throws Exception {
@@ -37,11 +38,16 @@ public class DatabasePopulator implements Supplier<Task> {
 				for(i=0; i<numGraphs && !cancel; i++) {
 					dbl.addGraph(gen.get());
 				}
+				finished = true;
 				return log;
 			}
 			
 			public void cancel() {
 				cancel = true;
+			}
+			
+			public boolean running() { 
+				return !finished;
 			}
 			
 			public double getPercentageDone() {
