@@ -18,6 +18,7 @@
  */
 
 package net.sourcedestination.sai.comparison.matching;
+
 import static java.util.stream.Collectors.toSet;
 
 import java.util.Comparator;
@@ -27,13 +28,13 @@ import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import net.sourcedestination.funcles.Funcles;
 import net.sourcedestination.funcles.function.Function2;
 import net.sourcedestination.funcles.tuple.Pair;
 import net.sourcedestination.sai.comparison.compatibility.FeatureSetCompatibilityChecker;
 import net.sourcedestination.sai.comparison.heuristics.GraphMatchingHeuristic;
 import net.sourcedestination.sai.graph.Graph;
 import static net.sourcedestination.sai.graph.Graph.*;
+import static net.sourcedestination.sai.util.FunctionUtil.argmax;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -392,7 +393,7 @@ public abstract interface MatchingGenerator extends
 				// TODO: determine why there is a syntax error without the reference below
 				// h extends Function<GraphMatching,Double>, but isn't recognized as such
 				// this is also corrected with a cast, but this is shorter
-				return Funcles.argmax(h::apply, s);
+				return argmax(h::apply, s);
 			};
 	}
 }

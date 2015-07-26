@@ -25,18 +25,18 @@ public class AdditionRecord extends Tuple3<DBInterface,Integer,Graph> {
 	 * 
 	 * @return the DB the graph was added to
 	 */
-	public DBInterface getDB() { return a1(); }
+	public DBInterface getDB() { return _1; }
 
 	/** the ID of the added graph within the DB.
 	 * 
 	 * @return the ID of the added graph within the DB
 	 */
-	public int getID() { return a2(); }
+	public int getID() { return _2; }
 
 	
 	/** the added graph (potentially a copy).
 	 * 
 	 * @return the added graph 
 	 */
-	public Graph getGraph() { return a3(); }
+	public Graph getGraph() { return _3; }
 }

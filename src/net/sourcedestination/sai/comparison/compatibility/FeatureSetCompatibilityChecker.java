@@ -8,7 +8,7 @@ import net.sourcedestination.sai.graph.Feature;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-public interface FeatureSetCompatibilityChecker extends Relation2<Set<Feature>> {
+public interface FeatureSetCompatibilityChecker extends Relation2<Set<Feature>,Set<Feature>> {
 
     /** checks if each feature in set 1 is compatible with at least one
      * feature in set 2, allowing repeats.

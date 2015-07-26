@@ -52,7 +52,7 @@ public class Log {
 		this.startTime = new Date();
 		this.params = new HashMap<String,String>();
 		for(Tuple2<String,String> t : params) {
-			this.params.put(t.a1(), t.a2());
+			this.params.put(t._1, t._2);
 		}
 	}
 	

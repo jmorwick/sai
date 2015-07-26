@@ -58,11 +58,11 @@ public class MutableGraph implements Graph {
 	}
 	@Override
 	public int getEdgeSourceNodeID(int e) {
-		return edgeContents.get(e).a1();
+		return edgeContents.get(e)._1;
 	}
 	@Override
 	public int getEdgeTargetNodeID(int e) {
-		return edgeContents.get(e).a2();
+		return edgeContents.get(e)._2;
 	}
 
 	public void addNode(final int nid) {

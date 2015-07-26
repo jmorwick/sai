@@ -25,17 +25,17 @@ public class DeletionRecord extends Tuple3<DBInterface,Integer,Graph> {
 	 * 
 	 * @return the DB the graph was deleted from
 	 */
-	public DBInterface getDB() { return a1(); }
+	public DBInterface getDB() { return _1; }
 	
 	/** the ID of the deleted graph within the DB.
 	 * 
 	 * @return the ID of the deleted graph within the DB
 	 */
-	public int getID() { return a2(); }
+	public int getID() { return _2; }
 	
 	/** the deleted graph (potentially a copy).
 	 * 
 	 * @return the deleted graph 
 	 */
-	public Graph getGraph() { return a3(); }
+	public Graph getGraph() { return _3; }
 }
