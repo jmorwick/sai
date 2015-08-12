@@ -45,7 +45,7 @@ public class GraphUtilityTest {
     	DBInterface db = SampleDBs.getEmptyDB();
         Graph g = SampleGraphs.getSmallGraph1();
         g.getEdgeIDs().forEach(e-> {
-            Graph ng = copyWithoutEdge(g, MutableGraph::new, e);
+            Graph ng = g.copyWithoutEdge(MutableGraph::new, e);
             assertEquals(ng.getEdgeIDs().count(), g.getEdgeIDs().count()-1);
             assertEquals(ng.getNodeIDs().count(), g.getNodeIDs().count());
         });
@@ -56,7 +56,7 @@ public class GraphUtilityTest {
     	DBInterface db = SampleDBs.getEmptyDB();
         Graph g = SampleGraphs.getSmallGraph1();
         g.getNodeIDs().forEach(n-> {
-            Graph ng = copyWithoutNode(g, MutableGraph::new, n);
+            Graph ng = g.copyWithoutNode(MutableGraph::new, n);
             if(n == 1)
             	assertEquals(Sets.newHashSet(2, 3, 4), ng.getEdgeIDs().collect(toSet()));
             else if(n == 2)
@@ -67,6 +67,13 @@ public class GraphUtilityTest {
             	assertEquals(Sets.newHashSet(1, 2), ng.getEdgeIDs().collect(toSet()));
             assertEquals(ng.getNodeIDs().count(), g.getNodeIDs().count()-1);
         });
+    }
+    
+    @Test
+    public void testJSONEncoding() {
+    	System.out.println(SampleGraphs.getSmallGraph1().toJSON());
+    	assertEquals("{\"nodes\":[{\"id\": 1,\"features\":[{\"name\": \"test\",\"value\":\"a\"}]},{\"id\": 2,\"features\":[{\"name\": \"test\",\"value\":\"b\"}]},{\"id\": 3,\"features\":[{\"name\": \"test\",\"value\":\"c\"}]},{\"id\": 4,\"features\":[{\"name\": \"test\",\"value\":\"d\"}]}],\"edges\":[{\"id\":1, \"fromID\":1, \"toID\":2,\"features\":[{\"name\": \"test\",\"value\":\"a\"}]},{\"id\":2, \"fromID\":2, \"toID\":3,\"features\":[{\"name\": \"test\",\"value\":\"b\"}]},{\"id\":3, \"fromID\":3, \"toID\":4,\"features\":[{\"name\": \"test\",\"value\":\"c\"}]},{\"id\":4, \"fromID\":2, \"toID\":4,\"features\":[{\"name\": \"test\",\"value\":\"d\"}]}],\"features\":[]}", 
+    			SampleGraphs.getSmallGraph1().toJSON());
     }
     
 }

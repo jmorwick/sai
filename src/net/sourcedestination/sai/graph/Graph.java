@@ -2,6 +2,8 @@ package net.sourcedestination.sai.graph;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public interface Graph {
@@ -13,10 +15,6 @@ public interface Graph {
 	public Stream<Feature> getEdgeFeatures(int e);
 	public int getEdgeSourceNodeID(int edgeID);
 	public int getEdgeTargetNodeID(int edgeID);
-	
-	
-	
-
 
 	public static final String INDEXES_FEATURE_NAME = "indexes";
 	public static final String SAI_ID_NAME = "SAI-id";
@@ -25,20 +23,57 @@ public interface Graph {
 	public static final Feature DIRECTED = new Feature("directed graph", "true");
 	public static final Feature TREE = new Feature("tree graph", "true");
 
-	public static <G extends Graph> G copyWithoutEdge(Graph g, GraphFactory<G> gf, int edgeID) {
-        MutableGraph t = new MutableGraph(g);
+	public default <G extends Graph> G copyWithoutEdge(GraphFactory<G> gf, int edgeID) {
+        MutableGraph t = new MutableGraph(this);
         if(t.getEdgeIDs().anyMatch(eid -> eid == edgeID))
         	t.removeEdge(edgeID);
         return gf.copy(t);
 	}
 	
-	public static <G extends Graph> G copyWithoutNode(Graph g, GraphFactory<G> gf, int nodeID) {
-        MutableGraph t = new MutableGraph(g);
+	public default <G extends Graph> G copyWithoutNode(GraphFactory<G> gf, int nodeID) {
+        MutableGraph t = new MutableGraph(this);
         if(t.getNodeIDs().anyMatch(nid -> nid == nodeID))
         	t.removeNode(nodeID);
         return gf.copy(t);
 	}
 	
+	public default String toJSON() {
+		StringBuffer sb = new StringBuffer();
+		Function<Feature,String> featureToJSON = 
+				f -> "{\"name\": \"" + f.getName() + 
+				"\",\"value\":\"" + f.getValue() + 
+				"\"}";
+				
+		sb.append("{");
+		sb.append("\"nodes\":[");
+		sb.append(getNodeIDs().map(
+				nodeID -> "{\"id\": " + nodeID + 
+				",\"features\":[" + 
+				getNodeFeatures(nodeID)
+					.map(featureToJSON)
+					.collect(Collectors.joining(",")) +
+				"]}"
+		).collect(Collectors.joining(","))); 
+		sb.append("],");
+		sb.append("\"edges\":[");
+		sb.append(getEdgeIDs().map(
+				edgeID -> "{\"id\":"+edgeID + 
+					", \"fromID\":" + getEdgeSourceNodeID(edgeID) + 
+					", \"toID\":" + getEdgeTargetNodeID(edgeID) + 
+					",\"features\":[" + 
+					getNodeFeatures(edgeID)
+						.map(featureToJSON)
+						.collect(Collectors.joining(",")) +
+					"]}"
+		).collect(Collectors.joining(",")));
+		sb.append("],");
+		sb.append("\"features\":[");
+		sb.append(getFeatures()
+				.map(featureToJSON)
+				.collect(Collectors.joining(",")));
+		sb.append("]}");
+		return sb.toString();
+	}
 
     /** returns the feature of the given feature-class associated with this feature set.
      * If more than one such feature exists, an arbitrary selection is returned.
