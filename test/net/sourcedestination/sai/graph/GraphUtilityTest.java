@@ -30,8 +30,8 @@ import org.junit.*;
 import com.google.common.collect.Sets;
 
 import static java.util.stream.Collectors.toSet;
-import static net.sourcedestination.sai.graph.Graph.*;
 import static org.junit.Assert.*;
+import static net.sourcedestination.sai.graph.SampleGraphs.assertGraphsAreIdentical;
 
 /**
  *
@@ -53,7 +53,6 @@ public class GraphUtilityTest {
     
     @Test
     public void testCopyWithoutNode() throws AccessDeniedException {
-    	DBInterface db = SampleDBs.getEmptyDB();
         Graph g = SampleGraphs.getSmallGraph1();
         g.getNodeIDs().forEach(n-> {
             Graph ng = g.copyWithoutNode(MutableGraph::new, n);
@@ -68,12 +67,17 @@ public class GraphUtilityTest {
             assertEquals(ng.getNodeIDs().count(), g.getNodeIDs().count()-1);
         });
     }
-    
+
     @Test
-    public void testJSONEncoding() {
-    	System.out.println(SampleGraphs.getSmallGraph1().toJSON());
-    	assertEquals("{\"nodes\":[{\"id\": 1,\"features\":[{\"name\": \"test\",\"value\":\"a\"}]},{\"id\": 2,\"features\":[{\"name\": \"test\",\"value\":\"b\"}]},{\"id\": 3,\"features\":[{\"name\": \"test\",\"value\":\"c\"}]},{\"id\": 4,\"features\":[{\"name\": \"test\",\"value\":\"d\"}]}],\"edges\":[{\"id\":1, \"fromID\":1, \"toID\":2,\"features\":[{\"name\": \"test\",\"value\":\"a\"}]},{\"id\":2, \"fromID\":2, \"toID\":3,\"features\":[{\"name\": \"test\",\"value\":\"b\"}]},{\"id\":3, \"fromID\":3, \"toID\":4,\"features\":[{\"name\": \"test\",\"value\":\"c\"}]},{\"id\":4, \"fromID\":2, \"toID\":4,\"features\":[{\"name\": \"test\",\"value\":\"d\"}]}],\"features\":[]}", 
-    			SampleGraphs.getSmallGraph1().toJSON());
+    public void testJSONCopy() throws AccessDeniedException {
+        Graph g = SampleGraphs.getSmallGraph1();
+    	assertGraphsAreIdentical(g, MutableGraph.fromJSON(g.toJSON()));
+        g = SampleGraphs.getSmallGraph2();
+    	assertGraphsAreIdentical(g, MutableGraph.fromJSON(g.toJSON()));
+        g = SampleGraphs.getSmallGraph3();
+    	assertGraphsAreIdentical(g, MutableGraph.fromJSON(g.toJSON()));
+        g = SampleGraphs.getSmallGraph4();
+    	assertGraphsAreIdentical(g, MutableGraph.fromJSON(g.toJSON()));
     }
     
 }

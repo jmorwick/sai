@@ -4,8 +4,14 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import net.sourcedestination.funcles.consumer.Consumer2;
 import net.sourcedestination.funcles.tuple.Pair;
 
 import com.google.common.collect.HashMultimap;
@@ -21,6 +27,49 @@ public class MutableGraph implements Graph {
 	private Map<Integer,Pair<Integer>> edgeContents = Maps.newHashMap();
 	private Multimap<Integer,Feature> nodeFeatures = HashMultimap.create();
 	private Multimap<Integer,Feature> edgeFeatures = HashMultimap.create();
+	
+	public static MutableGraph fromJSON(String json) {
+		MutableGraph g = new MutableGraph();
+		JSONObject parsedGraph = new JSONObject(json);
+		
+		// consumer which processes each feature in a JSONArray of features
+		Consumer2<Consumer<Feature>,JSONArray> processFeatures = 
+				(consumeFeature, arr) -> 
+					Stream.iterate(0, n->n+1).limit(arr.length())
+				    .map(id -> arr.getJSONObject(id))
+				    .map(f -> new Feature(f.getString("name"), f.getString("value")))
+				    .forEach(f -> consumeFeature.accept(f));
+		
+		// proces global features
+		processFeatures.accept(g::addFeature, parsedGraph.getJSONArray("features"));
+		
+		// process nodes
+		JSONArray nodes = parsedGraph.getJSONArray("nodes");
+		Stream.iterate(0, n->n+1).limit(nodes.length())
+		.map(id -> nodes.getJSONObject(id))
+		.forEach(n -> {
+			int nodeID = n.getInt("ID");
+			g.addNode(nodeID);
+			processFeatures.accept(
+					f -> g.addNodeFeature(nodeID, f),
+					n.getJSONArray("features"));
+		});
+		
+		// process edges
+		JSONArray edges = parsedGraph.getJSONArray("edges");
+		Stream.iterate(0, n->n+1).limit(edges.length())
+		.map(id -> edges.getJSONObject(id))
+		.forEach(e -> {
+			int edgeID = e.getInt("ID");
+			g.addEdge(edgeID, e.getInt("fromID"), e.getInt("toID"));
+			processFeatures.accept(
+					f -> g.addEdgeFeature(edgeID, f), 
+					e.getJSONArray("features"));
+		});
+		
+		return g;
+	}
+	
 	
 	public MutableGraph() {
 		

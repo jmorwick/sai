@@ -47,7 +47,7 @@ public interface Graph {
 		sb.append("{");
 		sb.append("\"nodes\":[");
 		sb.append(getNodeIDs().map(
-				nodeID -> "{\"id\": " + nodeID + 
+				nodeID -> "{\"ID\": " + nodeID + 
 				",\"features\":[" + 
 				getNodeFeatures(nodeID)
 					.map(featureToJSON)
@@ -57,7 +57,7 @@ public interface Graph {
 		sb.append("],");
 		sb.append("\"edges\":[");
 		sb.append(getEdgeIDs().map(
-				edgeID -> "{\"id\":"+edgeID + 
+				edgeID -> "{\"ID\":"+edgeID + 
 					", \"fromID\":" + getEdgeSourceNodeID(edgeID) + 
 					", \"toID\":" + getEdgeTargetNodeID(edgeID) + 
 					",\"features\":[" + 
