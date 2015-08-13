@@ -6,6 +6,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public interface Graph {
 	// TODO: consider making all Sets into Streams
 	public Stream<Integer> getEdgeIDs();
@@ -37,42 +40,55 @@ public interface Graph {
         return gf.copy(t);
 	}
 	
+	/** serializes this graph to a JSON encoded string
+	 * 
+	 * @return a JSON encoded String representing this graph
+	 */
 	public default String toJSON() {
-		StringBuffer sb = new StringBuffer();
-		Function<Feature,String> featureToJSON = 
-				f -> "{\"name\": \"" + f.getName() + 
-				"\",\"value\":\"" + f.getValue() + 
-				"\"}";
-				
-		sb.append("{");
-		sb.append("\"nodes\":[");
-		sb.append(getNodeIDs().map(
-				nodeID -> "{\"ID\": " + nodeID + 
-				",\"features\":[" + 
-				getNodeFeatures(nodeID)
-					.map(featureToJSON)
-					.collect(Collectors.joining(",")) +
-				"]}"
-		).collect(Collectors.joining(","))); 
-		sb.append("],");
-		sb.append("\"edges\":[");
-		sb.append(getEdgeIDs().map(
-				edgeID -> "{\"ID\":"+edgeID + 
-					", \"fromID\":" + getEdgeSourceNodeID(edgeID) + 
-					", \"toID\":" + getEdgeTargetNodeID(edgeID) + 
-					",\"features\":[" + 
-					getNodeFeatures(edgeID)
-						.map(featureToJSON)
-						.collect(Collectors.joining(",")) +
-					"]}"
-		).collect(Collectors.joining(",")));
-		sb.append("],");
-		sb.append("\"features\":[");
-		sb.append(getFeatures()
-				.map(featureToJSON)
-				.collect(Collectors.joining(",")));
-		sb.append("]}");
-		return sb.toString();
+		
+		// helper for encoding features into JSON arrays
+		Function<Feature,JSONObject> featureToJSON = f -> {
+			JSONObject obj = new JSONObject();
+			obj.put("name", f.getName());
+			obj.put("value", f.getValue());
+			return obj;
+		};
+		
+		// encode nodes
+		JSONArray nodes = new JSONArray();
+		getNodeIDs().map( nodeID -> {
+			JSONObject node = new JSONObject();
+			node.put("ID", nodeID);
+			JSONArray features = new JSONArray();
+			getNodeFeatures(nodeID).map(featureToJSON).forEach(features::put);
+			node.put("features", features);
+			return node;
+		}).forEach(nodes::put);
+		
+		// encode edges
+		JSONArray edges = new JSONArray();
+		getEdgeIDs().map( edgeID -> {
+			JSONObject edge = new JSONObject();
+			edge.put("ID", edgeID);
+			edge.put("fromID", getEdgeSourceNodeID(edgeID));
+			edge.put("toID", getEdgeTargetNodeID(edgeID));
+			JSONArray features = new JSONArray();
+			getNodeFeatures(edgeID).map(featureToJSON).forEach(features::put);
+			edge.put("features", features);
+			return edge;
+		}).forEach(edges::put);
+		
+		// encode features attached to graph
+		JSONArray globalFeatures = new JSONArray();
+		getFeatures().map(featureToJSON).forEach(globalFeatures::put);
+		
+		// build complete JSON object
+		JSONObject graph = new JSONObject();
+		graph.put("features", globalFeatures);
+		graph.put("nodes", nodes);
+		graph.put("edges", edges);
+		
+		return graph.toString();
 	}
 
     /** returns the feature of the given feature-class associated with this feature set.
