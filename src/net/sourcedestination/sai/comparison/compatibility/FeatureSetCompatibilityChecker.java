@@ -2,13 +2,13 @@ package net.sourcedestination.sai.comparison.compatibility;
 
 import java.util.Set;
 
-import net.sourcedestination.funcles.relation.Relation2;
+import net.sourcedestination.funcles.predicate.Predicate2;
 import net.sourcedestination.sai.graph.Feature;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-public interface FeatureSetCompatibilityChecker extends Relation2<Set<Feature>,Set<Feature>> {
+public interface FeatureSetCompatibilityChecker extends Predicate2<Set<Feature>,Set<Feature>> {
 
     /** checks if each feature in set 1 is compatible with at least one
      * feature in set 2, allowing repeats.

@@ -1,6 +1,5 @@
 package net.sourcedestination.sai.retrieval;
 
-import static net.sourcedestination.funcles.Funcles.apply;
 import static net.sourcedestination.sai.comparison.compatibility.FeatureSetCompatibilityChecker.greedy1To1Checker;
 import static net.sourcedestination.sai.comparison.matching.MatchingGenerator.createCompleteMatchingGenerator;
 import static org.junit.Assert.*;
@@ -54,7 +53,7 @@ public class RetrievalUtilTest {
 	}
 
 	private void selfTest(Graph g, MatchingGenerator gen) {
-		GraphMatching m = apply(gen, g, g);
+		GraphMatching m = gen.apply(g, g);
 		
 		assertEquals(g.getNodeIDs().count(), m.getAllNodeMatches().size());
 		assertEquals(g.getEdgeIDs().count(), m.getAllEdgeMatches().size());
@@ -82,7 +81,7 @@ public class RetrievalUtilTest {
 				greedy1To1Checker(FeatureCompatibilityChecker::areLexicallyCompatible), 
 				GraphMatchingHeuristic::basicEdgeCount);
 		Graph g = SampleGraphs.getSmallSymmetricTree();
-		GraphMatching m = apply(gen, g, g);
+		GraphMatching m = gen.apply(g, g);
 		
 		assertEquals(g.getNodeIDs().count(), m.getAllNodeMatches().size());
 		assertEquals(g.getEdgeIDs().count(), m.getAllEdgeMatches().size());
@@ -102,9 +101,7 @@ public class RetrievalUtilTest {
 		MatchingGenerator gen = createCompleteMatchingGenerator(
 				greedy1To1Checker(FeatureCompatibilityChecker::areLexicallyCompatible), 
 				GraphMatchingHeuristic::basicEdgeCount);
-		GraphMatching m = apply(gen, 
-				SampleGraphs.getSmallGraph1(),
-				SampleGraphs.getSmallGraph2());
+		GraphMatching m = gen.apply(SampleGraphs.getSmallGraph1(), SampleGraphs.getSmallGraph2());
 		
 		assertEquals(4, m.getAllNodeMatches().size());
 		assertEquals(3, m.getAllEdgeMatches().size());

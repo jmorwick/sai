@@ -1,6 +1,5 @@
 package net.sourcedestination.sai.comparison.compatibility;
 
-import static net.sourcedestination.funcles.Funcles.apply;
 import static net.sourcedestination.sai.comparison.compatibility.FeatureCompatibilityChecker.areLexicallyCompatible;
 import static net.sourcedestination.sai.comparison.compatibility.FeatureSetCompatibilityChecker.greedy1To1Checker;
 import static net.sourcedestination.sai.comparison.compatibility.FeatureSetCompatibilityChecker.many1To1Checker;
@@ -44,20 +43,20 @@ public class CompatibilityUtilTest {
 		assertTrue(!areLexicallyCompatible(f4, f3));
 
 		FeatureCompatibilityChecker c = FeatureCompatibilityChecker::areLexicallyCompatible;
-		assertTrue(apply(c, f1, f1));
-		assertTrue(!apply(c, f1, f2));
-		assertTrue(apply(c, f1, f3));
-		assertTrue(!apply(c, f1, f4));
-		assertTrue(!apply(c, f2, f3));
-		assertTrue(!apply(c, f2, f4));
-		assertTrue(!apply(c, f3, f4));
+		assertTrue(c.apply(f1, f1));
+		assertTrue(!c.apply(f1, f2));
+		assertTrue(c.apply(f1, f3));
+		assertTrue(!c.apply(f1, f4));
+		assertTrue(!c.apply(f2, f3));
+		assertTrue(!c.apply(f2, f4));
+		assertTrue(!c.apply(f3, f4));
 
-		assertTrue(!apply(c, f2, f1));
-		assertTrue(apply(c, f3, f1));
-		assertTrue(!apply(c, f4, f1));
-		assertTrue(!apply(c, f3, f2));
-		assertTrue(!apply(c, f4, f2));
-		assertTrue(!apply(c, f4, f3));
+		assertTrue(!c.apply(f2, f1));
+		assertTrue(c.apply(f3, f1));
+		assertTrue(!c.apply(f4, f1));
+		assertTrue(!c.apply(f3, f2));
+		assertTrue(!c.apply(f4, f2));
+		assertTrue(!c.apply(f4, f3));
 	}
 	
 	private static FeatureCompatibilityChecker p = 
@@ -81,20 +80,20 @@ public class CompatibilityUtilTest {
 		Feature f6 = new Feature("c", "2");
 		Feature f7 = new Feature("c", "1");
 		Feature f8 = new Feature("c", "3");
-		assertTrue(apply(c, Sets.<Feature>newHashSet(), Sets.<Feature>newHashSet()));
-		assertTrue(apply(c, Sets.<Feature>newHashSet(), Sets.newHashSet(f1)));
-		assertTrue(apply(c, Sets.newHashSet(f1), Sets.newHashSet(f1)));
-		assertTrue(apply(c, Sets.newHashSet(f1), Sets.newHashSet(f1, f2)));
-		assertTrue(!apply(c, Sets.newHashSet(f1, f2), Sets.newHashSet(f1)));
-		assertTrue(!apply(c, Sets.newHashSet(f1, f4), Sets.newHashSet(f1)));
-		assertTrue(!apply(c2, Sets.newHashSet(f4), Sets.newHashSet(f1)));
-		assertTrue(apply(c, Sets.newHashSet(f4), Sets.newHashSet(f1)));
-		assertTrue(apply(c, Sets.newHashSet(f4), Sets.newHashSet(f1, f4)));
-		assertTrue(apply(c, Sets.newHashSet(f4), Sets.newHashSet(f1, f3, f7)));
-		assertTrue(apply(c, Sets.newHashSet(f4), Sets.newHashSet(f1, f3, f7, f8)));
-		assertTrue(!apply(c, Sets.newHashSet(f1, f4), Sets.newHashSet(f1, f3, f7, f8)));
-		assertTrue(!apply(c, Sets.newHashSet(f5, f6), Sets.newHashSet(f1, f3, f7, f8)));
-		assertTrue(apply(c, Sets.newHashSet(f5, f6), Sets.newHashSet(f5, f6, f7, f8)));
+		assertTrue(c.apply(Sets.<Feature>newHashSet(), Sets.<Feature>newHashSet()));
+		assertTrue(c.apply(Sets.<Feature>newHashSet(), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f1), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f1), Sets.newHashSet(f1, f2)));
+		assertTrue(!c.apply(Sets.newHashSet(f1, f2), Sets.newHashSet(f1)));
+		assertTrue(!c.apply(Sets.newHashSet(f1, f4), Sets.newHashSet(f1)));
+		assertTrue(!c2.apply(Sets.newHashSet(f4), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1, f4)));
+		assertTrue(c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1, f3, f7)));
+		assertTrue(c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1, f3, f7, f8)));
+		assertTrue(!c.apply(Sets.newHashSet(f1, f4), Sets.newHashSet(f1, f3, f7, f8)));
+		assertTrue(!c.apply(Sets.newHashSet(f5, f6), Sets.newHashSet(f1, f3, f7, f8)));
+		assertTrue(c.apply(Sets.newHashSet(f5, f6), Sets.newHashSet(f5, f6, f7, f8)));
 	}
 
 	@Test
@@ -111,22 +110,22 @@ public class CompatibilityUtilTest {
 		Feature f6 = new Feature("c", "2");
 		Feature f7 = new Feature("c", "1");
 		Feature f8 = new Feature("c", "3");
-		assertTrue(apply(c, Sets.<Feature>newHashSet(), Sets.<Feature>newHashSet()));
-		assertTrue(apply(c, Sets.<Feature>newHashSet(), Sets.newHashSet(f1)));
-		assertTrue(apply(c, Sets.newHashSet(f1), Sets.newHashSet(f1)));
-		assertTrue(apply(c, Sets.newHashSet(f1), Sets.newHashSet(f1, f2)));
-		assertTrue(!apply(c, Sets.newHashSet(f1, f2), Sets.newHashSet(f1)));
-		assertTrue(apply(c, Sets.newHashSet(f1, f4), Sets.newHashSet(f1)));
-		assertTrue(apply(c, Sets.newHashSet(f1, f4), Sets.newHashSet(f1, f4)));
-		assertTrue(apply(c, Sets.newHashSet(f1, f4), Sets.newHashSet(f2, f1, f7, f4, f3)));
-		assertTrue(!apply(c2, Sets.newHashSet(f4), Sets.newHashSet(f1)));
-		assertTrue(apply(c, Sets.newHashSet(f4), Sets.newHashSet(f1)));
-		assertTrue(apply(c, Sets.newHashSet(f4), Sets.newHashSet(f1, f4)));
-		assertTrue(apply(c, Sets.newHashSet(f4), Sets.newHashSet(f1, f3, f7)));
-		assertTrue(apply(c, Sets.newHashSet(f4), Sets.newHashSet(f1, f3, f7, f8)));
-		assertTrue(apply(c, Sets.newHashSet(f1, f4), Sets.newHashSet(f1, f3, f7, f8)));
-		assertTrue(!apply(c, Sets.newHashSet(f5, f6), Sets.newHashSet(f1, f3, f7, f8)));
-		assertTrue(apply(c, Sets.newHashSet(f5, f6), Sets.newHashSet(f5, f6, f7, f8)));
+		assertTrue(c.apply(Sets.<Feature>newHashSet(), Sets.<Feature>newHashSet()));
+		assertTrue(c.apply(Sets.<Feature>newHashSet(), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f1), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f1), Sets.newHashSet(f1, f2)));
+		assertTrue(!c.apply(Sets.newHashSet(f1, f2), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f1, f4), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f1, f4), Sets.newHashSet(f1, f4)));
+		assertTrue(c.apply(Sets.newHashSet(f1, f4), Sets.newHashSet(f2, f1, f7, f4, f3)));
+		assertTrue(!c2.apply(Sets.newHashSet(f4), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1, f4)));
+		assertTrue(c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1, f3, f7)));
+		assertTrue(c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1, f3, f7, f8)));
+		assertTrue(c.apply(Sets.newHashSet(f1, f4), Sets.newHashSet(f1, f3, f7, f8)));
+		assertTrue(!c.apply(Sets.newHashSet(f5, f6), Sets.newHashSet(f1, f3, f7, f8)));
+		assertTrue(c.apply(Sets.newHashSet(f5, f6), Sets.newHashSet(f5, f6, f7, f8)));
 	}
 
 }

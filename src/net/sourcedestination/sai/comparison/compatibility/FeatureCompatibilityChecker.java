@@ -1,9 +1,9 @@
 package net.sourcedestination.sai.comparison.compatibility;
 
-import net.sourcedestination.funcles.relation.Relation2;
+import net.sourcedestination.funcles.predicate.Predicate2;
 import net.sourcedestination.sai.graph.Feature;
 
-public interface FeatureCompatibilityChecker extends Relation2<Feature,Feature> {
+public interface FeatureCompatibilityChecker extends Predicate2<Feature,Feature> {
 
 	/** checks to see if features have the same name and value */
 	public static boolean areLexicallyCompatible(Feature a, Feature b) {
