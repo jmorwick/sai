@@ -10,9 +10,9 @@ import static net.sourcedestination.funcles.tuple.Tuple.makeTuple;
 
 public class DatabasePopulator implements Supplier<Task> {
 	
-	private Supplier<Graph> gen;
-	private int numGraphs;
-	private DBInterface db;
+	private final Supplier<Graph> gen;
+	private final int numGraphs;
+	private final DBInterface db;
 	
 
 	public DatabasePopulator(DBInterface db, Supplier<Graph> gen, int numGraphs) {

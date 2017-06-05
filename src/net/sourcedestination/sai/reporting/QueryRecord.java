@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import net.sourcedestination.sai.db.DBInterface;
-import net.sourcedestination.sai.retrieval.GraphRetriever;
 
 /** record of a query made to a DB, potentially through a GraphRetriever.
  * 
@@ -14,9 +13,9 @@ import net.sourcedestination.sai.retrieval.GraphRetriever;
  */
 public class QueryRecord {
 	
-	private Object query;
-	private DBInterface db;
-	private List<Integer> retrievedGraphIDs = new ArrayList<Integer>();
+	private final Object query;
+	private final DBInterface db;
+	private final List<Integer> retrievedGraphIDs = new ArrayList<>();
 	
 	/** creates a new QueryRecord for the given DB and query. This is a mutable object which may 
 	 * continue to be updated after the constructor is completed.

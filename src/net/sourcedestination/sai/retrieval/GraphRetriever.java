@@ -27,8 +27,7 @@ import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;
 import net.sourcedestination.sai.graph.GraphFactory;
 
-import com.google.common.base.Function;
-
+import java.util.function.Function;
 /**
  * Implementations of this class are tasked with generating (or retrieving)
  * indices for a stored graph.

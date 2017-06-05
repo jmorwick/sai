@@ -59,7 +59,7 @@ public class CompatibilityUtilTest {
 		assertTrue(!c.apply(f4, f3));
 	}
 	
-	private static FeatureCompatibilityChecker p = 
+	private static final FeatureCompatibilityChecker p =
 			(a1, a2) -> {
 					if(a1.getName().equals("b") && a2.getName().equals("a"))
 						return a1.getValue().equals(a2.getValue());
@@ -80,8 +80,8 @@ public class CompatibilityUtilTest {
 		Feature f6 = new Feature("c", "2");
 		Feature f7 = new Feature("c", "1");
 		Feature f8 = new Feature("c", "3");
-		assertTrue(c.apply(Sets.<Feature>newHashSet(), Sets.<Feature>newHashSet()));
-		assertTrue(c.apply(Sets.<Feature>newHashSet(), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(), Sets.newHashSet()));
+		assertTrue(c.apply(Sets.newHashSet(), Sets.newHashSet(f1)));
 		assertTrue(c.apply(Sets.newHashSet(f1), Sets.newHashSet(f1)));
 		assertTrue(c.apply(Sets.newHashSet(f1), Sets.newHashSet(f1, f2)));
 		assertTrue(!c.apply(Sets.newHashSet(f1, f2), Sets.newHashSet(f1)));
@@ -110,8 +110,8 @@ public class CompatibilityUtilTest {
 		Feature f6 = new Feature("c", "2");
 		Feature f7 = new Feature("c", "1");
 		Feature f8 = new Feature("c", "3");
-		assertTrue(c.apply(Sets.<Feature>newHashSet(), Sets.<Feature>newHashSet()));
-		assertTrue(c.apply(Sets.<Feature>newHashSet(), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(), Sets.newHashSet()));
+		assertTrue(c.apply(Sets.newHashSet(), Sets.newHashSet(f1)));
 		assertTrue(c.apply(Sets.newHashSet(f1), Sets.newHashSet(f1)));
 		assertTrue(c.apply(Sets.newHashSet(f1), Sets.newHashSet(f1, f2)));
 		assertTrue(!c.apply(Sets.newHashSet(f1, f2), Sets.newHashSet(f1)));

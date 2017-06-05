@@ -6,19 +6,16 @@ import static net.sourcedestination.sai.graph.SampleGraphs.*;
 
 import java.nio.file.AccessDeniedException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import net.sourcedestination.sai.db.BasicDBInterface;
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
 import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;
 import net.sourcedestination.sai.graph.MutableGraph;
 import net.sourcedestination.sai.retrieval.GraphIndexBasedRetriever;
-import net.sourcedestination.sai.retrieval.GraphRetriever;
 
 import org.junit.Test;
 
@@ -34,7 +31,7 @@ public class DBListnerTest {
 		GraphIndexBasedRetriever orig = r;
 		r = new GraphIndexBasedRetrieverListener(r, log);
 
-		Set<Integer> q1Results = new HashSet<Integer>();
+		Set<Integer> q1Results = new HashSet<>();
 		assertEquals(0, log.getNumQueryRecords());
 		assertEquals(0, log.getNumDeletionRecords());
 		assertEquals(0, log.getNumAdditionRecords());
@@ -53,7 +50,7 @@ public class DBListnerTest {
 			assertEquals(q1Results, q1.getRetrievedGraphIDs().collect(Collectors.toSet()));
 		});
 		
-		Set<Integer> q2Results = new HashSet<Integer>();
+		Set<Integer> q2Results = new HashSet<>();
 		assertEquals(1, log.getNumQueryRecords());
 		assertEquals(0, log.getNumDeletionRecords());
 		assertEquals(0, log.getNumAdditionRecords());
@@ -82,7 +79,7 @@ public class DBListnerTest {
 		GraphIndexBasedRetriever orig = r;
 		r = new GraphIndexBasedRetrieverListener(r, log);
 
-		Set<Integer> q1Results = new HashSet<Integer>();
+		Set<Integer> q1Results = new HashSet<>();
 		assertEquals(0, log.getNumQueryRecords());
 		assertEquals(0, log.getNumDeletionRecords());
 		assertEquals(0, log.getNumAdditionRecords());
@@ -101,7 +98,7 @@ public class DBListnerTest {
 			assertEquals(q1Results, q1.getRetrievedGraphIDs().collect(Collectors.toSet()));
 		});
 		
-		Set<Integer> q2Results = new HashSet<Integer>();
+		Set<Integer> q2Results = new HashSet<>();
 		assertEquals(1, log.getNumQueryRecords());
 		assertEquals(0, log.getNumDeletionRecords());
 		assertEquals(0, log.getNumAdditionRecords());
@@ -135,7 +132,7 @@ public class DBListnerTest {
 		
 		Stream<Integer> results = null;
 		
-		Set<Integer> q1Results = new HashSet<Integer>();
+		Set<Integer> q1Results = new HashSet<>();
 		results = db.retrieveGraphsWithFeatureName("test");
 		assertEquals(1, log.getNumQueryRecords());
 		assertEquals(0, log.getNumDeletionRecords());
@@ -164,7 +161,7 @@ public class DBListnerTest {
 		
 		Stream<Integer> results = null;
 		
-		Set<Integer> q1Results = new HashSet<Integer>();
+		Set<Integer> q1Results = new HashSet<>();
 		results = db.retrieveGraphsWithFeature(new Feature("test", "a"));
 		assertEquals(1, log.getNumQueryRecords());
 		assertEquals(0, log.getNumDeletionRecords());
@@ -180,7 +177,7 @@ public class DBListnerTest {
 			assertEquals(q1Results, q1.getRetrievedGraphIDs().collect(Collectors.toSet()));
 		});
 		
-		Set<Integer> q2Results = new HashSet<Integer>();
+		Set<Integer> q2Results = new HashSet<>();
 		results = db.retrieveGraphsWithFeature(new Feature("test", "b"));
 		assertEquals(2, log.getNumQueryRecords());
 		assertEquals(0, log.getNumDeletionRecords());
@@ -196,7 +193,7 @@ public class DBListnerTest {
 			assertEquals(q2Results, q2.getRetrievedGraphIDs().collect(Collectors.toSet()));
 		});
 		
-		Set<Integer> q3Results = new HashSet<Integer>();
+		Set<Integer> q3Results = new HashSet<>();
 		results = db.retrieveGraphsWithFeature(new Feature("test", "c"));
 		assertEquals(3, log.getNumQueryRecords());
 		assertEquals(0, log.getNumDeletionRecords());
@@ -212,7 +209,7 @@ public class DBListnerTest {
 			assertEquals(q3Results, q3.getRetrievedGraphIDs().collect(Collectors.toSet()));
 		});
 		
-		Set<Integer> q4Results = new HashSet<Integer>();
+		Set<Integer> q4Results = new HashSet<>();
 		results = db.retrieveGraphsWithFeature(new Feature("test", "d"));
 		assertEquals(4, log.getNumQueryRecords());
 		assertEquals(0, log.getNumDeletionRecords());

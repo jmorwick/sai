@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import com.google.common.collect.HashMultimap;
@@ -28,19 +27,18 @@ import net.sourcedestination.sai.graph.Graph;
  * the SAI webapp. 
  * 
  * @author jmorwick
- *
  */
 public class Log {
 	
-	private String taskName;
+	private final String taskName;
 	private Date startTime;
 	private Date endTime;
-	private Map<String,String> params;
-	private Multimap<String,Pair<Double>> plots2d = HashMultimap.create();
-	private Multimap<String,Triple<Double>> plots3d = HashMultimap.create();
-	private List<QueryRecord> queries = new ArrayList<QueryRecord>();
-	private List<AdditionRecord> additions = new ArrayList<AdditionRecord>();
-	private List<DeletionRecord> deletions = new ArrayList<DeletionRecord>();
+	private final Map<String,String> params;
+	private final Multimap<String,Pair<Double>> plots2d = HashMultimap.create();
+	private final Multimap<String,Triple<Double>> plots3d = HashMultimap.create();
+	private final List<QueryRecord> queries = new ArrayList<>();
+	private final List<AdditionRecord> additions = new ArrayList<>();
+	private final List<DeletionRecord> deletions = new ArrayList<>();
 	
 	
 	/** Constructs a new Log object which is ready to record data from a task.
@@ -50,7 +48,7 @@ public class Log {
 	public Log(String taskName, Tuple2<String,String> ... params) {
 		this.taskName = taskName;
 		this.startTime = new Date();
-		this.params = new HashMap<String,String>();
+		this.params = new HashMap<>();
 		for(Tuple2<String,String> t : params) {
 			this.params.put(t._1, t._2);
 		}
@@ -59,7 +57,7 @@ public class Log {
 
 	/** incorporates all data from the provided log in this log.
 	 * 
-	 * @param log
+	 * @param log log to incorporate data from
 	 */
 	public void include(Log log) {
 		if(this.startTime.compareTo(log.startTime) > 0)
@@ -78,7 +76,7 @@ public class Log {
 	
 	/** adds a new record of a query being made to this log. 
 	 * This is expected only to be called by a DB or retriever wrapper.
-	 * @param record
+	 * @param record record to be added
 	 */
 	public void recordQueryRecord(QueryRecord record) {
 		queries.add(record);
@@ -86,7 +84,6 @@ public class Log {
 
 	/** adds a new record of a graph being added to the DB to this log. 
 	 * This is expected only to be called by a DB or retriever wrapper.
-	 * @param record
 	 */
 	public void recordAddition(DBInterface db, int graphID, Graph g) {
 		additions.add(new AdditionRecord(db, graphID, g));
@@ -94,7 +91,6 @@ public class Log {
 
 	/** adds a new record of a graph being deleted from the DB to this log. 
 	 * This is expected only to be called by a DB or retriever wrapper.
-	 * @param record
 	 */
 	public void recordDeletion(DBInterface db, int graphID, Graph g) {
 		deletions.add(new DeletionRecord(db, graphID, g));
@@ -103,8 +99,8 @@ public class Log {
 	/** records a point on a 2d plot within this log
 	 * 
 	 * @param plotName name of the plot the point will be recorded on
-	 * @param x 
-	 * @param y
+	 * @param x x coordinate of point
+	 * @param y y coordinate of point
 	 */
 	public void recordDataPoint(String plotName, double x, double y) {
 		plots2d.put(plotName, Pair.makePair(x, y));
@@ -113,9 +109,9 @@ public class Log {
 	/** records a point on a 3d plot within this log
 	 * 
 	 * @param plotName name of the plot the point will be recorded on
-	 * @param x 
-	 * @param y
-	 * @param z
+	 * @param x x coordinate of point
+	 * @param y y coordinate of point
+	 * @param z z coordinate of point
 	 */
 	public void recordDataPoint(String plotName, double x, double y, double z) {
 		plots3d.put(plotName, Triple.makeTriple(x, y, z));

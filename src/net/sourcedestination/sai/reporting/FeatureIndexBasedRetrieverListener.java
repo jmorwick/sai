@@ -18,8 +18,8 @@ import net.sourcedestination.sai.retrieval.FeatureIndexBasedRetriever;
  *
  */
 public class FeatureIndexBasedRetrieverListener implements FeatureIndexBasedRetriever {
-	private FeatureIndexBasedRetriever wrappedRetriever;
-	private Log log;
+	private final FeatureIndexBasedRetriever wrappedRetriever;
+	private final Log log;
 	
 	public FeatureIndexBasedRetrieverListener(FeatureIndexBasedRetriever retriever, Log log) {
 		this.wrappedRetriever = retriever;
@@ -32,7 +32,7 @@ public class FeatureIndexBasedRetrieverListener implements FeatureIndexBasedRetr
 	
 	@Override
 	public Stream<Integer> retrieve(DBInterface db, Stream<Feature> indices) {
-		Set<Feature> indiciesRecord = new HashSet<Feature>();
+		Set<Feature> indiciesRecord = new HashSet<>();
 		indices = listen(indices, indiciesRecord::add);
 		QueryRecord qr = new QueryRecord(indiciesRecord, db);
 		log.recordQueryRecord(qr);

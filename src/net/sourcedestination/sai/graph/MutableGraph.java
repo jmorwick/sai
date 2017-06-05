@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -21,12 +20,12 @@ import com.google.common.collect.Sets;
 
 public class MutableGraph implements Graph {
 	
-	private Set<Feature> features = Sets.newHashSet();
-	private Set<Integer> nodes = Sets.newHashSet();
-	private Set<Integer> edges = Sets.newHashSet();
-	private Map<Integer,Pair<Integer>> edgeContents = Maps.newHashMap();
-	private Multimap<Integer,Feature> nodeFeatures = HashMultimap.create();
-	private Multimap<Integer,Feature> edgeFeatures = HashMultimap.create();
+	private final Set<Feature> features = Sets.newHashSet();
+	private final Set<Integer> nodes = Sets.newHashSet();
+	private final Set<Integer> edges = Sets.newHashSet();
+	private final Map<Integer,Pair<Integer>> edgeContents = Maps.newHashMap();
+	private final Multimap<Integer,Feature> nodeFeatures = HashMultimap.create();
+	private final Multimap<Integer,Feature> edgeFeatures = HashMultimap.create();
 	
 	public static MutableGraph fromJSON(String json) {
 		MutableGraph g = new MutableGraph();
@@ -36,9 +35,9 @@ public class MutableGraph implements Graph {
 		Consumer2<Consumer<Feature>,JSONArray> processFeatures = 
 				(consumeFeature, arr) -> 
 					Stream.iterate(0, n->n+1).limit(arr.length())
-				    .map(id -> arr.getJSONObject(id))
+				    .map(arr::getJSONObject)
 				    .map(f -> new Feature(f.getString("name"), f.getString("value")))
-				    .forEach(f -> consumeFeature.accept(f));
+				    .forEach(consumeFeature::accept);
 		
 		// proces global features
 		processFeatures.accept(g::addFeature, parsedGraph.getJSONArray("features"));
@@ -46,7 +45,7 @@ public class MutableGraph implements Graph {
 		// process nodes
 		JSONArray nodes = parsedGraph.getJSONArray("nodes");
 		Stream.iterate(0, n->n+1).limit(nodes.length())
-		.map(id -> nodes.getJSONObject(id))
+		.map(nodes::getJSONObject)
 		.forEach(n -> {
 			int nodeID = n.getInt("ID");
 			g.addNode(nodeID);
@@ -58,7 +57,7 @@ public class MutableGraph implements Graph {
 		// process edges
 		JSONArray edges = parsedGraph.getJSONArray("edges");
 		Stream.iterate(0, n->n+1).limit(edges.length())
-		.map(id -> edges.getJSONObject(id))
+		.map(edges::getJSONObject)
 		.forEach(e -> {
 			int edgeID = e.getInt("ID");
 			g.addEdge(edgeID, e.getInt("fromID"), e.getInt("toID"));
@@ -80,7 +79,7 @@ public class MutableGraph implements Graph {
 	 * @param g the graph to copy
 	 */
 	public MutableGraph(Graph g) {
-		g.getFeatures().forEach(f -> addFeature(f));
+		g.getFeatures().forEach(this::addFeature);
 		g.getNodeIDs().forEach(n -> {
 			addNode(n);
 			g.getNodeFeatures(n).forEach(f -> addNodeFeature(n, f));
@@ -210,8 +209,7 @@ public class MutableGraph implements Graph {
 
 	@Override 
 	public boolean equals(Object o) { 
-		return (o instanceof MutableGraph) ?
-			 o.toString().equals(toString()) : false;
+		return (o instanceof MutableGraph) && o.toString().equals(toString());
 	}
 	
 }

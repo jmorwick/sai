@@ -56,10 +56,8 @@ public class DBListener extends DBWrapper {
 	public Stream<Integer> retrieveGraphsWithFeatureName(String name) {
 		QueryRecord qr = new QueryRecord(name, getWrappedDB());
 		log.recordQueryRecord(qr);
-		 Stream<Integer> s = 
-		   listen(getWrappedDB().retrieveGraphsWithFeatureName(name),
-			      qr::recordRetrievedGraphID);
-		return s;
+		return listen(getWrappedDB().retrieveGraphsWithFeatureName(name),
+               qr::recordRetrievedGraphID);
 	}
 
 	@Override

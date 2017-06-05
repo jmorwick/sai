@@ -6,8 +6,8 @@ import net.sourcedestination.sai.reporting.Log;
 
 public class RepeatTask implements Supplier<Task> {
 	
-	private Supplier<Task> ti;
-	private int iterations;
+	private final Supplier<Task> ti;
+	private final int iterations;
 	
 
 	/** creates a new task which repeats a given task a fixed number of times.

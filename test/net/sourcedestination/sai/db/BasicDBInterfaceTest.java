@@ -12,10 +12,8 @@ import java.util.stream.Collectors;
 
 import net.sourcedestination.sai.db.BasicDBInterface;
 import net.sourcedestination.sai.db.DBInterface;
-import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.GraphFactory;
 import net.sourcedestination.sai.graph.MutableGraph;
-import net.sourcedestination.sai.graph.SampleGraphs;
 
 import org.junit.After;
 import org.junit.Before;

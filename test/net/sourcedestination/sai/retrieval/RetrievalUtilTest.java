@@ -34,16 +34,16 @@ public class RetrievalUtilTest {
 		assertTrue(i.hasNext());
 		assertEquals(1, (int)i.next());
 		assertTrue(i.hasNext());
-		assertTrue(Sets.newHashSet(3, 4).contains((int)i.next()));
+		assertTrue(Sets.newHashSet(3, 4).contains(i.next()));
 		assertTrue(i.hasNext());
-		assertTrue(Sets.newHashSet(3, 4).contains((int)i.next()));
+		assertTrue(Sets.newHashSet(3, 4).contains(i.next()));
 		assertTrue(!i.hasNext());
 		
 		i = r.retrieve(db, Sets.newHashSet(5, 6, 7).stream()).iterator();
 		assertTrue(i.hasNext());
-		assertTrue(Sets.newHashSet(1, 2).contains((int)i.next()));
+		assertTrue(Sets.newHashSet(1, 2).contains(i.next()));
 		assertTrue(i.hasNext());
-		assertTrue(Sets.newHashSet(1, 2).contains((int)i.next()));
+		assertTrue(Sets.newHashSet(1, 2).contains(i.next()));
 		assertTrue(i.hasNext());
 		assertEquals(4, (int)i.next());
 		assertTrue(i.hasNext());

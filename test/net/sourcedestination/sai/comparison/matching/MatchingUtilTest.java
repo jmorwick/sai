@@ -10,6 +10,7 @@ import static org.junit.Assert.*;
 import java.nio.file.AccessDeniedException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import net.sourcedestination.funcles.tuple.Pair;
@@ -223,7 +224,7 @@ public class MatchingUtilTest {
 								FeatureCompatibilityChecker::areLexicallyCompatible);
 				BiMap<Integer,Integer> nodeMatch = HashBiMap.create();
 				g1.getNodeIDs().forEach(nid-> {
-					if(g2.getNodeIDs().anyMatch(n->n==nid))
+					if(g2.getNodeIDs().anyMatch(n-> Objects.equals(n, nid)))
 						nodeMatch.put(nid, nid);  //this is complete BS...
 					  //...but works for the examples since the ID's match
 				});

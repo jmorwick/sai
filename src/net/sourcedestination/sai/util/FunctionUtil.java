@@ -1,9 +1,12 @@
 package net.sourcedestination.sai.util;
 
+import net.sourcedestination.funcles.tuple.Tuple2;
+
 import static net.sourcedestination.funcles.tuple.Tuple.makeTuple;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -39,7 +42,7 @@ public class FunctionUtil {
    public static <F,T extends Comparable<T>> F argmax(Function<F,T> f, 
    		Stream<F> inputs) {
    	return inputs.map(x -> makeTuple(x, f.apply(x))) 
-   			.max((x,y) -> x._2().compareTo(y._2())).get()._1();
+   			.max(Comparator.comparing(Tuple2::_2)).get()._1();
    }
 
 }

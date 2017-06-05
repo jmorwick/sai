@@ -16,8 +16,8 @@ import static net.sourcedestination.sai.util.StreamUtil.listen;
  */
 public class GraphRetrieverListener<DB extends DBInterface>  implements GraphRetriever<DB> {
 
-	private GraphRetriever<DB> wrappedRetriever;
-	private Log log;
+	private final GraphRetriever<DB> wrappedRetriever;
+	private final Log log;
 	
 	public GraphRetrieverListener(GraphRetriever<DB> retriever, Log log) {
 		this.wrappedRetriever = retriever;

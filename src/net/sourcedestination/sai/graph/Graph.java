@@ -3,7 +3,6 @@ package net.sourcedestination.sai.graph;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -114,7 +113,7 @@ public interface Graph {
     public static Feature getFeature(Stream<Feature> features, String featureName) {
         Optional<Feature> optional =
         		features.filter(f -> f.getName().equals(featureName)).findFirst();
-        return optional.isPresent() ? optional.get() : null;
+        return optional.orElse(null);
     }
 	
 

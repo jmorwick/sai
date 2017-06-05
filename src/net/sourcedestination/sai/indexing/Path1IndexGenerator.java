@@ -27,7 +27,7 @@ public class Path1IndexGenerator implements FeatureIndexGenerator {
     	return ret;
     }
     
-    private static Pattern replacementPattern = Pattern.compile("(,|:|\\\\)");
+    private static final Pattern replacementPattern = Pattern.compile("(,|:|\\\\)");
     public static String encodeValue(String v) {
     	return replacementPattern.matcher(v).replaceAll("\\\\$1");
     }
@@ -40,16 +40,16 @@ public class Path1IndexGenerator implements FeatureIndexGenerator {
             		.collect(Collectors.toSet());
             s.getEdgeFeatures(e)
             		.filter(f -> featureNamesSet.contains(f.getName()))
-            		.forEach(f -> edgeFeatures.add(f));
+            		.forEach(edgeFeatures::add);
             if(edgeFeatures.size() == 0) edgeFeatures.add(null); //make links without edge features
 
             s.getNodeFeatures(s.getEdgeSourceNodeID(e))
     		.filter(f -> featureNamesSet.contains(f.getName()))
-    		.forEach(f -> fromNodeFeatures.add(f));
+    		.forEach(fromNodeFeatures::add);
             
             s.getNodeFeatures(s.getEdgeTargetNodeID(e))
     		.filter(f -> featureNamesSet.contains(f.getName()))
-    		.forEach(f -> toNodeFeatures.add(f));
+    		.forEach(toNodeFeatures::add);
             
             for(Feature n1f : fromNodeFeatures) {
                 for(Feature n2f : toNodeFeatures) {

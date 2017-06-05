@@ -16,12 +16,9 @@ import org.junit.Test;
 import com.google.common.collect.Sets;
 
 public class MutableGraphTest {
-	
-	private static DBInterface db;
-	
-	@Before 
+
+    @Before
 	public void setUp() throws AccessDeniedException {
-		db = SampleDBs.getEmptyDB();
 	}
 
 	@Test

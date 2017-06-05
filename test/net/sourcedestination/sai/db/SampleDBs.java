@@ -3,12 +3,7 @@ package net.sourcedestination.sai.db;
 import java.nio.file.AccessDeniedException;
 
 import net.sourcedestination.sai.db.BasicDBInterface;
-import net.sourcedestination.sai.db.DBInterface;
-import net.sourcedestination.sai.graph.Graph;
-import net.sourcedestination.sai.graph.GraphFactory;
 import net.sourcedestination.sai.graph.SampleGraphs;
-
-import com.google.common.collect.Lists;
 
 public class SampleDBs {
 	public static BasicDBInterface getEmptyDB() {
@@ -25,7 +20,7 @@ public class SampleDBs {
 	}
 	
 
-	public static BasicDBInterface smallGraphsDBWithCorrectIndices() throws AccessDeniedException {
+	public static BasicDBInterface smallGraphsDBWithCorrectIndices() {
 		BasicDBInterface db = getEmptyDB();
 		int g1 = db.addGraph(SampleGraphs.getSmallGraph1()); //1
 		int g2 = db.addGraph(SampleGraphs.getSmallGraph2()); //2
@@ -55,7 +50,7 @@ public class SampleDBs {
 		return db;
 	}
 
-	public static BasicDBInterface smallGraphsDBWithIncorrectIndices() throws AccessDeniedException {
+	public static BasicDBInterface smallGraphsDBWithIncorrectIndices() {
 		BasicDBInterface db = getEmptyDB();
 		int g1 = db.addGraph(SampleGraphs.getSmallGraph1());
 		int g2 = db.addGraph(SampleGraphs.getSmallGraph2());

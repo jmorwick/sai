@@ -17,8 +17,8 @@ import net.sourcedestination.sai.retrieval.GraphIndexBasedRetriever;
  *
  */
 public class GraphIndexBasedRetrieverListener implements GraphIndexBasedRetriever {
-	private GraphIndexBasedRetriever wrappedRetriever;
-	private Log log;
+	private final GraphIndexBasedRetriever wrappedRetriever;
+	private final Log log;
 	
 	public GraphIndexBasedRetrieverListener(GraphIndexBasedRetriever retriever, Log log) {
 		this.wrappedRetriever = retriever;
@@ -31,7 +31,7 @@ public class GraphIndexBasedRetrieverListener implements GraphIndexBasedRetrieve
 	
 	@Override
 	public Stream<Integer> retrieve(DBInterface db, Stream<Integer> indices) {
-		Set<Integer> indiciesRecord = new HashSet<Integer>();
+		Set<Integer> indiciesRecord = new HashSet<>();
 		indices = listen(indices, indiciesRecord::add);
 		QueryRecord qr = new QueryRecord(indiciesRecord, db);
 		log.recordQueryRecord(qr);

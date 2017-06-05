@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 public class ImmutableGraph implements Graph {
 	
@@ -41,9 +40,9 @@ public class ImmutableGraph implements Graph {
 		edgeContents = ImmutableMap.copyOf(
 		    g.getEdgeIDs().collect(Collectors.toMap(
 				edgeID -> edgeID,
-				edgeID -> // TODO: determine if the casts to Integer are absolutely necessary
-				Pair.makePair(g.getEdgeSourceNodeID((Integer)edgeID), 
-						g.getEdgeTargetNodeID((Integer)edgeID)))));
+				edgeID ->
+				Pair.makePair(g.getEdgeSourceNodeID(edgeID),
+						g.getEdgeTargetNodeID(edgeID)))));
 		Multimap<Integer,Feature> tempMap = HashMultimap.create();
 		g.getNodeIDs().forEach(nodeID -> {
 			g.getNodeFeatures(nodeID)
@@ -119,8 +118,7 @@ public class ImmutableGraph implements Graph {
 
 	@Override 
 	public boolean equals(Object o) { 
-		return (o instanceof ImmutableGraph) ?
-			 o.toString().equals(toString()) : false;
+		return (o instanceof ImmutableGraph) && o.toString().equals(toString());
 	}
 	
 }

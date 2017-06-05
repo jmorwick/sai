@@ -23,6 +23,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.collect.Multiset;
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.MutableGraph;
@@ -53,8 +54,7 @@ public interface GraphIndexBasedRetriever {
     		// find the features indicating what graphs they index
     		filter(f -> f.getName().equals(INDEXES_FEATURE_NAME))
     		// get the id's of the graphs they index out of the features
-    		//TODO: figure out why I need a cast below
-    		.map((Function<Feature,Integer>) f -> Integer.parseInt(f.getValue())))
+    		.map(f -> Integer.parseInt(f.getValue())))
     	.reduce(Stream::concat).get() //concatenate streams of graph id's together
         // combine allgraph id's in to a multiset
         .collect(Collectors.toCollection(ConcurrentHashMultiset::create))
@@ -62,7 +62,7 @@ public interface GraphIndexBasedRetriever {
 		//sort by multiplicity (negated for descending order)
 		.sorted((l,r) -> -Integer.compare(l.getCount(), r.getCount()))
 		// convert from multiset entries to graph id's
-		.map(e -> e.getElement());
+		.map(Multiset.Entry::getElement);
     	
     }
 }

@@ -17,23 +17,23 @@ public class TestStreamUtil {
 	@Test
 	public void testStreamFromCollection() {
 		List<Integer> ls1 = Lists.newArrayList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-		List<Integer> ls2 = new ArrayList<Integer>();
+		List<Integer> ls2 = new ArrayList<>();
 		listen(ls1.stream(), ls2::add).forEach(x -> assertEquals((int)x, ls2.size()));
 		assertEquals(ls1, ls2);
 	}
 
 	@Test
 	public void testStreamFromIterator() {
-		List<Double> ls1 = new ArrayList<Double>();
-		List<Double> ls2 = new ArrayList<Double>();
+		List<Double> ls1 = new ArrayList<>();
+		List<Double> ls2 = new ArrayList<>();
 		listen(Stream.generate(Math::random).limit(10), ls1::add).forEach(ls2::add);
 		assertEquals(ls1, ls2);
 	}
 	
 	@Test
 	public void testIteratorFromStream() {
-		List<Double> ls1 = new ArrayList<Double>();
-		List<Double> ls2 = new ArrayList<Double>();
+		List<Double> ls1 = new ArrayList<>();
+		List<Double> ls2 = new ArrayList<>();
 		Stream<Double> s = listen(Stream.generate(Math::random).limit(10), ls1::add);
 		for(Iterator<Double> i = s.iterator(); i.hasNext(); ls2.add(i.next()));
 		assertEquals(ls1, ls2);

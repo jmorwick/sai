@@ -5,12 +5,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.function.Predicate;
 
-import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;
 import net.sourcedestination.sai.graph.MutableGraph;
-
-import com.google.common.collect.Sets;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -135,16 +132,18 @@ public class SampleGraphs {
 
 	public static String toString(Graph g1) {
 		StringBuilder ret = new StringBuilder();
-		ret.append("nodes: " + g1.getNodeIDs() + "\n");
-		ret.append("edges: " + g1.getEdgeIDs() + "\n");
-		ret.append("features: " + g1.getFeatures() + "\n");
-		g1.getNodeIDs().forEach(nodeID-> 
-			ret.append("node #" + nodeID + ": " + g1.getNodeFeatures(nodeID)));
+		ret.append("nodes: ").append(g1.getNodeIDs()).append("\n")
+			.append("edges: ").append(g1.getEdgeIDs()).append("\n")
+			.append("features: ").append(g1.getFeatures()).append("\n");
+		g1.getNodeIDs().forEach(nodeID->
+				ret.append("node #").append(nodeID).append(": ")
+					.append(g1.getNodeFeatures(nodeID)));
 
-		g1.getNodeIDs().forEach(edgeID-> 
-			ret.append("edge #" + edgeID + "(" + g1.getEdgeSourceNodeID(edgeID) + 
-					"," + g1.getEdgeTargetNodeID(edgeID) +"): " + 
-					g1.getNodeFeatures(edgeID)));
+		g1.getNodeIDs().forEach(edgeID->
+				ret.append("edge #").append(edgeID).append("(")
+					.append(g1.getEdgeSourceNodeID(edgeID))
+					.append(",").append(g1.getEdgeTargetNodeID(edgeID))
+					.append("): ").append(g1.getNodeFeatures(edgeID)));
 		return ret.toString();
 	}
 

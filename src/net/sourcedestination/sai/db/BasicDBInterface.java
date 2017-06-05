@@ -135,7 +135,7 @@ public class BasicDBInterface implements DBInterface {
 				replaceGraph(gid, g);
 			}
 			in.close();
-		} catch (NumberFormatException e) {
+		} catch (NumberFormatException | InputMismatchException e) {
 			e.printStackTrace();
 			throw new AccessDeniedException(dbfile.getAbsolutePath(), 
 					null, "formatting error when reading file");
@@ -143,10 +143,6 @@ public class BasicDBInterface implements DBInterface {
 			e.printStackTrace();
 			throw new AccessDeniedException(dbfile.getAbsolutePath(), 
 					null, "I/O error when reading file");
-		} catch (InputMismatchException e) {
-			e.printStackTrace();
-			throw new AccessDeniedException(dbfile.getAbsolutePath(), 
-					null, "formatting error when reading file");
 		} catch (NoSuchElementException e) {
 			e.printStackTrace();
 			throw new AccessDeniedException(dbfile.getAbsolutePath(), 
@@ -167,7 +163,6 @@ public class BasicDBInterface implements DBInterface {
 
 	/** saves database details completely to the db file 
 	 * provided to the constructor.
-	 * @throws FileNotFoundException 
 	 */
 	@Override
 	public void disconnect() {
@@ -322,7 +317,7 @@ public class BasicDBInterface implements DBInterface {
 
 	/** assigns a fresh id to the graph and adds it to the database
 	 * 
-	 * @param g the graph to be added to the database
+	 * @param g1 the graph to be added to the database
 	 * @return the id of the graph after it was added to the database
 	 */
 	@Override
@@ -347,7 +342,8 @@ public class BasicDBInterface implements DBInterface {
 				g.getFeatures()
 				.filter(f -> f.getName().equals(SAI_ID_NAME))
 				.findFirst();
-		if(saiID.isPresent()) g.removeFeature(saiID.get()); // remove the old one
+		// remove the old one
+		saiID.ifPresent(g::removeFeature);
 		g.addFeature(getIDFeature(newGraphID)); // add the new one
 
 		//insert into db
@@ -386,7 +382,8 @@ public class BasicDBInterface implements DBInterface {
 				g.getFeatures()
 				.filter(f -> f.getName().equals(SAI_ID_NAME))
 				.findFirst();
-		if(saiID.isPresent()) g.removeFeature(saiID.get()); // remove the old one
+		// remove the old one
+		saiID.ifPresent(g::removeFeature);
 		g.addFeature(getIDFeature(indexGraphID)); // add the new one
 		
 		if(db.containsKey(indexGraphID))

@@ -390,10 +390,7 @@ public abstract interface MatchingGenerator extends
 				};
 				Iterable<GraphMatching> iterable = () -> i;
 				Stream<GraphMatching> s = StreamSupport.stream(iterable.spliterator(), false);
-				// TODO: determine why there is a syntax error without the reference below
-				// h extends Function<GraphMatching,Double>, but isn't recognized as such
-				// this is also corrected with a cast, but this is shorter
-				return argmax(h::apply, s);
+				return argmax(h, s);
 			};
 	}
 }
