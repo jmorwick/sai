@@ -20,13 +20,7 @@ public interface DBInterface {
     public Stream<Integer> getGraphIDStream();
 	public Stream<Integer> retrieveGraphsWithFeature(Feature f);
 	public Stream<Integer> retrieveGraphsWithFeatureName(String name);
-	
-	//TODO: remove these and create a wrapper which deals with the issue
-    public Set<Integer> getHiddenGraphs(); 
-    public void hideGraph(int graphID);
-    public void unhideGraph(int graphID);
-    
-    
+
     public static void copyDBs(DBInterface fromDB, DBInterface toDB) {
   	 fromDB.getGraphIDStream().forEach(
   			 id -> toDB.addGraph(fromDB.retrieveGraph(id, MutableGraph::new)));

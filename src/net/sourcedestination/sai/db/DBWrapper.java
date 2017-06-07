@@ -54,21 +54,6 @@ public class DBWrapper implements DBInterface {
 	}
 
 	@Override
-	public Set<Integer> getHiddenGraphs() {
-		return db.getHiddenGraphs();
-	}
-
-	@Override
-	public void hideGraph(int graphID) {
-		db.hideGraph(graphID);
-	}
-
-	@Override
-	public void unhideGraph(int graphID) {
-		db.unhideGraph(graphID);
-	}
-
-	@Override
 	public void deleteGraph(int graphID) {
 		db.deleteGraph(graphID);
 	}

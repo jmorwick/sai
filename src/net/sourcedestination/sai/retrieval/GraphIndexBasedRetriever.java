@@ -41,7 +41,6 @@ import com.google.common.collect.ConcurrentHashMultiset;
 @FunctionalInterface
 public interface GraphIndexBasedRetriever {
     public Stream<Integer> retrieve(DBInterface db, Stream<Integer> indices);
-    
 
     /**
      * A retriever which ranks graphs by the number of specified indices they are
@@ -63,6 +62,5 @@ public interface GraphIndexBasedRetriever {
 		.sorted((l,r) -> -Integer.compare(l.getCount(), r.getCount()))
 		// convert from multiset entries to graph id's
 		.map(Multiset.Entry::getElement);
-    	
     }
 }

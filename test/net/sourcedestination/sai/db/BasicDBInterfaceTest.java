@@ -359,52 +359,16 @@ public class BasicDBInterfaceTest {
 						INDEXES_FEATURE_NAME).collect(Collectors.toSet());
 		assertEquals(Sets.newHashSet(gid3, gid4), observed);
 	}
-
-	@Test
-	public void testHidingGraphs() throws AccessDeniedException {
-		BasicDBInterface db = new BasicDBInterface();
-		assertEquals(0, db.getDatabaseSize());
-		int gid1 = db.addGraph(getSmallGraph1());
-		int gid2 = db.addGraph(getSmallGraph2());
-		int gid3 = db.addGraph(getSmallGraph3());
-		int gid4 = db.addGraph(getSmallGraph4());
-
-		Set<Integer> observed = Sets.newHashSet(db.getGraphIDStream().iterator());
-		Set<Integer> expected = Sets.newHashSet(gid1, gid2, gid3, gid4);
-		assertEquals(expected, observed);
-
-		db.hideGraph(gid2);
-		expected = Sets.newHashSet(gid1, gid3, gid4);
-		observed = Sets.newHashSet(db.getGraphIDStream().iterator());
-		assertEquals(expected, observed);
-		
-		db.hideGraph(gid3);
-		expected = Sets.newHashSet(gid1, gid4);
-		observed = Sets.newHashSet(db.getGraphIDStream().iterator());
-		assertEquals(expected, observed);
-		
-		db.unhideGraph(gid2);
-		expected = Sets.newHashSet(gid1, gid2, gid4);
-		observed = Sets.newHashSet(db.getGraphIDStream().iterator());
-		assertEquals(expected, observed);
-		
-		db.hideGraph(gid4);
-		expected = Sets.newHashSet(gid1, gid2);
-		observed = Sets.newHashSet(db.getGraphIDStream().iterator());
-		assertEquals(expected, observed);
-	}
 	
 	@Test
 	public void testDeletingGraphs() throws AccessDeniedException {
 		BasicDBInterface db = new BasicDBInterface();
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(getSmallGraph1());
-		int gid2 = db.addGraph(getSmallGraph2());
 		int gid3 = db.addGraph(getSmallGraph3());
 		db.deleteGraph(gid3);
 		int gid4 = db.addGraph(getSmallGraph4());
-		db.hideGraph(gid2);
-		
+
 		Set<Integer> observed = Sets.newHashSet();
 		Set<Integer> total = Sets.newHashSet(gid1, gid4);
 		Iterator<Integer> gi = db.getGraphIDStream().iterator();

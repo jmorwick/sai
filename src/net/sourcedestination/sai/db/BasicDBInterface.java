@@ -40,8 +40,7 @@ public class BasicDBInterface implements DBInterface {
 
 	private Map<Integer, Graph> db;
 	private Multimap<String, Feature> featuresWithName;
-	private BiMap<Integer,Feature> featureIDs; 
-	private Set<Integer> hiddenGraphs;
+	private BiMap<Integer,Feature> featureIDs;
 	private Multimap<String, Integer> graphsWithFeatureName;
 	private Multimap<Feature, Integer> graphsWithFeature;
 	private int nextFeatureID = 1;
@@ -51,7 +50,6 @@ public class BasicDBInterface implements DBInterface {
 		featuresWithName = HashMultimap.create();
 		featureIDs = HashBiMap.create();
 		db = Maps.newHashMap();
-		hiddenGraphs = Sets.newHashSet();
 		graphsWithFeatureName = HashMultimap.create();
 		graphsWithFeature = HashMultimap.create();
 	}
@@ -235,10 +233,6 @@ public class BasicDBInterface implements DBInterface {
 
 	@Override
 	public <G extends Graph> G retrieveGraph(int graphID, GraphFactory<G> f) {
-		if(hiddenGraphs.contains(graphID) || !db.containsKey(graphID))
-			return null;
-
-		//otherwise, rebuild it...
 		G g =  f.copy(db.get(graphID));
 		db.put(graphID, g);
 		return g;
@@ -247,30 +241,12 @@ public class BasicDBInterface implements DBInterface {
 
 	@SuppressWarnings("unchecked")
 	public <G extends Graph> G retrieveGraph(int graphID) {
-		if(hiddenGraphs.contains(graphID) || !db.containsKey(graphID))
-			return null;
-
 		return (G) db.get(graphID);
 	}
 
 	@Override
 	public Stream<Integer> getGraphIDStream() {
-		return db.keySet().stream().filter(id -> !hiddenGraphs.contains(id));
-	}
-
-	@Override
-	public Set<Integer> getHiddenGraphs() {
-		return Sets.newHashSet(hiddenGraphs);
-	}
-
-	@Override
-	public void hideGraph(int graphID) {
-		hiddenGraphs.add(graphID);
-	}
-
-	@Override
-	public void unhideGraph(int graphID) {
-		hiddenGraphs.remove(graphID);
+		return db.keySet().stream();
 	}
 
 	private void addFeature(Feature f) {
