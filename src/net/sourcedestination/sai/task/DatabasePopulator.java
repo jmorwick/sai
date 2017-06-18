@@ -8,7 +8,7 @@ import net.sourcedestination.sai.reporting.DBListener;
 import net.sourcedestination.sai.reporting.Log;
 import static net.sourcedestination.funcles.tuple.Tuple.makeTuple;
 
-public class DatabasePopulator implements Supplier<Task> {
+public class DatabasePopulator implements Supplier<Task<Log>> {
 	
 	private final Supplier<Graph> gen;
 	private final int numGraphs;
@@ -23,14 +23,14 @@ public class DatabasePopulator implements Supplier<Task> {
 
 
 	@Override
-	public Task get() {
-		return new Task() {
+	public Task<Log> get() {
+		return new Task<Log>() {
 			private int i=0;
 			private boolean cancel = false;
 			private boolean finished = false;
 
 			@Override
-			public Log call() throws Exception {
+			public Log get() {
 				Log log = new Log("Populate Database", 
 						makeTuple("generator", gen.toString()), 
 						makeTuple("numGraphs", ""+numGraphs));

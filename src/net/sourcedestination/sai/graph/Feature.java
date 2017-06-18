@@ -1,8 +1,5 @@
 package net.sourcedestination.sai.graph;
 
-
-import com.sun.istack.internal.NotNull;
-
 public final class Feature implements Comparable<Feature> {
 	private final String value;
 	private final String name;
@@ -32,7 +29,7 @@ public final class Feature implements Comparable<Feature> {
 		return "("+name + ": " + value+")";
 	}
 
-	@Override @NotNull
+	@Override
 	public int compareTo(Feature f) {
 		return getName().equals(f.getName()) ? 
 				getValue().compareTo(f.getValue()) :

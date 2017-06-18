@@ -1,6 +1,7 @@
 package net.sourcedestination.sai.task;
 
 import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
 import net.sourcedestination.sai.reporting.Log;
 
@@ -9,7 +10,7 @@ import net.sourcedestination.sai.reporting.Log;
  * @author jmorwick
  *
  */
-public interface Task extends Callable<Log> {
+public interface Task<T> extends Supplier<T> {
 	
 	/** optional method which reports how much of the task's work is remaining.
 	 *  By default, this always returns 0.0.

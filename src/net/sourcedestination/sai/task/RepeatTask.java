@@ -4,9 +4,9 @@ import java.util.function.Supplier;
 
 import net.sourcedestination.sai.reporting.Log;
 
-public class RepeatTask implements Supplier<Task> {
+public class RepeatTask implements Supplier<Task<Log>> {
 	
-	private final Supplier<Task> ti;
+	private final Supplier<Task<Log>> ti;
 	private final int iterations;
 	
 
@@ -15,29 +15,29 @@ public class RepeatTask implements Supplier<Task> {
 	 * @param ti creates the task to be repeatedly executed
 	 * @param iterations the number of times to repeat the task
 	 */
-	public RepeatTask(Supplier<Task> ti, int iterations) {
+	public RepeatTask(Supplier<Task<Log>> ti, int iterations) {
 		this.ti = ti;
 		this.iterations = iterations;
 	}
 
 
 	@Override
-	public Task get() {
+	public Task<Log> get() {
 
 		
-		return new Task() {
+		return new Task<Log>() {
 
-			private Task currentTask;
+			private Task<Log> currentTask;
 			private int i;
 			
 			@Override
-			public Log call() throws Exception {
+			public Log get() {
 				Log log = null;
 				for(i=0; i<iterations; i++) {
 					currentTask = ti.get();
 					if(log == null)
-						log = currentTask.call();
-					else log.include(currentTask.call());
+						log = currentTask.get();
+					else log.include(currentTask.get());
 				}
 				return log;
 			}
