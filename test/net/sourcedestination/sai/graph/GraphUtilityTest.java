@@ -71,13 +71,15 @@ public class GraphUtilityTest {
     @Test
     public void testJSONCopy() throws AccessDeniedException {
         Graph g = SampleGraphs.getSmallGraph1();
-    	assertGraphsAreIdentical(g, MutableGraph.fromJSON(g.toJSON()));
+        GraphSerializer encoder = new SaiGraphJsonSerializer();
+        GraphDeserializer<MutableGraph> decoder = new SaiGraphJsonDeserializer();
+    	assertGraphsAreIdentical(g, decoder.apply(encoder.apply(g)));
         g = SampleGraphs.getSmallGraph2();
-    	assertGraphsAreIdentical(g, MutableGraph.fromJSON(g.toJSON()));
+    	assertGraphsAreIdentical(g, decoder.apply(encoder.apply(g)));
         g = SampleGraphs.getSmallGraph3();
-    	assertGraphsAreIdentical(g, MutableGraph.fromJSON(g.toJSON()));
+    	assertGraphsAreIdentical(g, decoder.apply(encoder.apply(g)));
         g = SampleGraphs.getSmallGraph4();
-    	assertGraphsAreIdentical(g, MutableGraph.fromJSON(g.toJSON()));
+    	assertGraphsAreIdentical(g, decoder.apply(encoder.apply(g)));
     }
     
 }
