@@ -1,11 +1,6 @@
 package net.sourcedestination.sai.db;
 
-import java.util.InputMismatchException;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -246,7 +241,7 @@ public class BasicDBInterface implements DBInterface {
 
 	@Override
 	public Stream<Integer> getGraphIDStream() {
-		return db.keySet().stream();
+		return new HashSet<>(db.keySet()).stream();
 	}
 
 	private void addFeature(Feature f) {
