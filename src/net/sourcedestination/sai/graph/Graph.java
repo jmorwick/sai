@@ -3,13 +3,13 @@ package net.sourcedestination.sai.graph;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public interface Graph {
-	// TODO: consider making all Sets into Streams
 	public Stream<Integer> getEdgeIDs();
 	public Stream<Integer> getNodeIDs();
 	public Stream<Feature> getFeatures();
@@ -17,6 +17,22 @@ public interface Graph {
 	public Stream<Feature> getEdgeFeatures(int e);
 	public int getEdgeSourceNodeID(int edgeID);
 	public int getEdgeTargetNodeID(int edgeID);
+
+	public default Set<Integer> getEdgeIDsSet() {
+		return getEdgeIDs().collect(Collectors.toSet());
+	}
+	public default Set<Integer> getNodeIDsSet() {
+		return getNodeIDs().collect(Collectors.toSet());
+	}
+	public default Set<Feature> getFeaturesSet() {
+		return getFeatures().collect(Collectors.toSet());
+	}
+	public default Set<Feature> getNodeFeaturesSet(int n) {
+		return getNodeFeatures(n).collect(Collectors.toSet());
+	}
+	public default Set<Feature> getEdgeFeaturesSet(int e) {
+		return getEdgeFeatures(e).collect(Collectors.toSet());
+	}
 
 	public static final String INDEXES_FEATURE_NAME = "indexes";
 	public static final String SAI_ID_NAME = "SAI-id";
@@ -64,7 +80,6 @@ public interface Graph {
         		features.filter(f -> f.getName().equals(featureName)).findFirst();
         return optional.orElse(null);
     }
-	
 
 	public static Feature getFeature(String name, String value) {
 		return new Feature(name, value);
