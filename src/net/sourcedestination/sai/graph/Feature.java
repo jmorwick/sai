@@ -1,10 +1,5 @@
 package net.sourcedestination.sai.graph;
 
-import com.sun.istack.internal.NotNull;
-
-import java.util.Set;
-import java.util.function.Predicate;
-
 public final class Feature implements Comparable<Feature> {
 	private final String value;
 	private final String name;
