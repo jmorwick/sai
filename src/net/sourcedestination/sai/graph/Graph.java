@@ -34,6 +34,50 @@ public interface Graph {
 		return getEdgeFeatures(e).collect(Collectors.toSet());
 	}
 
+	/** if Node nid has only one feature, this method returns it. Otherwise it returns null.
+	 *
+	 * @param nid
+	 * @return
+	 */
+	public default Feature getNodeFeature(int nid) {
+		Set<Feature> features = getNodeFeaturesSet(nid);
+		return features.size() == 1 ? features.iterator().next() : null;
+	}
+
+	/** if Edge eid has only one feature, this method returns it. Otherwise it returns null.
+	 *
+	 * @param eid
+	 * @return
+	 */
+	public default Feature getEdgeFeature(int eid) {
+		Set<Feature> features = getEdgeFeaturesSet(eid);
+		return features.size() == 1 ? features.iterator().next() : null;
+	}
+
+	/** if Node nid has only one feature with given featureName, this method returns it. Otherwise it returns null.
+	 *
+	 * @param nid
+	 * @return
+	 */
+	public default Feature getNodeFeature(String featureName, int nid) {
+		Set<Feature> features = getNodeFeatures(nid)
+				.filter(f -> f.getName().equals(featureName))
+				.collect(Collectors.toSet());
+		return features.size() == 1 ? features.iterator().next() : null;
+	}
+
+	/** if Edge eid has only one feature with given featureName, this method returns it. Otherwise it returns null.
+	 *
+	 * @param eid
+	 * @return
+	 */
+	public default Feature getEdgeFeature(String featureName, int eid) {
+		Set<Feature> features = getEdgeFeatures(eid)
+				.filter(f -> f.getName().equals(featureName))
+				.collect(Collectors.toSet());
+		return features.size() == 1 ? features.iterator().next() : null;
+	}
+
 	public static final String INDEXES_FEATURE_NAME = "indexes";
 	public static final String SAI_ID_NAME = "SAI-id";
 
