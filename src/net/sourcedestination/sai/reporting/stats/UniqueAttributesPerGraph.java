@@ -11,61 +11,49 @@ import net.sourcedestination.sai.task.Task;
 import java.util.HashSet;
 import java.util.OptionalDouble;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 /**  TODO: add test
  *   TODO: comment / license
  */
-public class UniqueAttributesPerGraph implements DBStatistic {
+public class UniqueAttributesPerGraph implements IndependentDBStatistic {
 
     private final Set<String> featureNames;
+    private Set<Feature> discoveredFeatures;
 
     public UniqueAttributesPerGraph() {
+        this.discoveredFeatures = ConcurrentHashMap.newKeySet();
         this.featureNames = null;
     }
     public UniqueAttributesPerGraph(Set<String> featureNames) {
+        this.discoveredFeatures = ConcurrentHashMap.newKeySet();
         this.featureNames = featureNames;
     }
 
-    public Task<Double> apply(DBInterface db) {
-        final Predicate<Feature> retrieveSpecifiedFeatures =
-                f -> featureNames == null || //  ... only filter if there is a list
-                     featureNames.contains(f.getName());
+    public boolean isFeatureOfInterest(Feature f) {
+        return featureNames == null ||  // all features are of interest
+            featureNames.contains(f.getName());   // it's included in the feature names of interest
+    }
 
-        return new Task<Double> () {
-            private final AtomicInteger count = new AtomicInteger();
+    public void processGraph(Graph g) {
+        g.getFeatures().filter(this::isFeatureOfInterest)
+                .forEach(discoveredFeatures::add);
+        g.getNodeIDs()
+                .map(g::getNodeFeatures)
+                .forEach(s -> s
+                        .filter(this::isFeatureOfInterest)
+                        .forEach(discoveredFeatures::add));
+        g.getEdgeIDs()
+                .map(g::getEdgeFeatures)
 
-            public Double get() {
-                GraphFactory gf = ImmutableGraph::new;
-                int dbsize = db.getDatabaseSize();
-                Set<Feature> features = new HashSet<>();
-                db.getGraphIDStream()
-                        .forEach(id -> {
-                            Graph g = db.retrieveGraph(id, gf);
-                            g.getFeatures().filter(retrieveSpecifiedFeatures)
-                                    .forEach(features::add);
-                            g.getNodeIDs()
-                                    .map(g::getNodeFeatures)
-                                    .forEach(s -> s
-                                            .filter(retrieveSpecifiedFeatures)
-                                            .forEach(features::add));
-                            g.getEdgeIDs()
-                                    .map(g::getEdgeFeatures)
+                .forEach(s -> s
+                        .filter(this::isFeatureOfInterest)
+                        .forEach(discoveredFeatures::add));
+    }
 
-                                    .forEach(s -> s
-                                            .filter(retrieveSpecifiedFeatures)
-                                            .forEach(features::add));
-                            count.incrementAndGet();
-                        });
-                if(dbsize > 0) return (double)features.size() / dbsize;
-                return 0.0;
-            }
-
-            @Override
-            public double getPercentageDone() {
-                return (double)count.get() / (db.getDatabaseSize());
-            }
-        };
+    public double getResult() {
+        return discoveredFeatures.size();
     }
 }
