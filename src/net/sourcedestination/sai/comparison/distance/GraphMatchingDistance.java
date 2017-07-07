@@ -17,24 +17,36 @@
 
  */
 
-package net.sourcedestination.sai.comparison.heuristics;
+package net.sourcedestination.sai.comparison.distance;
 
 import net.sourcedestination.sai.comparison.matching.GraphMatching;
 
 import com.google.common.base.Function;
+import net.sourcedestination.sai.comparison.matching.MatchingEvaluator;
+import net.sourcedestination.sai.comparison.matching.MatchingGenerator;
+import net.sourcedestination.sai.graph.Graph;
 
 /**
- * This class houses a method for judging the utility of a matching between
- * two graphs.  These are mainly used for ranking retrieval candidates.
+ * A graph distance metric which works with two components for generating and judging
+ * matchings between two graphs.
  *
  * @version 2.0.0
  * @author Joseph Kendall-Morwick
  */
-@FunctionalInterface
-public interface GraphMatchingHeuristic extends Function<GraphMatching,Double> {
+public class GraphMatchingDistance<M extends GraphMatching, G extends Graph>
+		implements GraphDistance<G> {
 
-	public static Double basicEdgeCount(GraphMatching m) {
-		return (double)m.getAllEdgeMatches().size() / 
-				(double)m.getGraph1().getEdgeIDs().count();
+	private final MatchingGenerator<? extends M, ? super G> gen;
+	private final MatchingEvaluator<M> eval;
+
+	public GraphMatchingDistance(MatchingGenerator<? extends M, ? super G> gen,
+								 MatchingEvaluator<M> eval) {
+		this.gen = gen;
+		this.eval = eval;
+	}
+
+	@Override
+	public Double apply(G g1, G g2) {
+		return eval.evaluateMatching(gen.apply(g1, g2));
 	}
 }

@@ -30,8 +30,8 @@ import java.util.stream.StreamSupport;
 
 import net.sourcedestination.funcles.function.Function2;
 import net.sourcedestination.funcles.tuple.Pair;
-import net.sourcedestination.sai.comparison.compatibility.FeatureSetCompatibilityChecker;
-import net.sourcedestination.sai.comparison.heuristics.GraphMatchingHeuristic;
+//import net.sourcedestination.sai.comparison.compatibility.FeatureSetCompatibilityChecker;
+import net.sourcedestination.sai.comparison.distance.GraphMatchingDistance;
 import net.sourcedestination.sai.graph.Graph;
 import static net.sourcedestination.sai.graph.Graph.*;
 import static net.sourcedestination.sai.util.FunctionUtil.argmax;
@@ -54,24 +54,8 @@ import com.google.common.collect.Sets;
 // TODO: take another pass over this file looking for 1.8 updates to make
 
 @FunctionalInterface
-public abstract interface MatchingGenerator extends 
-		Function2<Graph, Graph,GraphMatching> {
-
-	public static Comparator<Graph> createGraphMatchOrdering(
-			final Graph query,
-			final MatchingGenerator gen, 
-			final GraphMatchingHeuristic h) {
-		return (g1, g2) -> {
-				GraphMatching gm1 = gen.apply(query, g1);
-				GraphMatching gm2 = gen.apply(query, g2);
-				
-				//create an integer from the [-1,1] value below for comparisons
-				double result = (1000*(h.apply(gm1) - h.apply(gm2)));
-				if(result < 0) return (int)result - 1;
-				if(result > 0) return (int)result + 1;
-				return 0;
-		};
-	}
+public interface MatchingGenerator<M extends GraphMatching, G extends Graph> extends
+		Function2<G, G,M> {
 
 	public static GraphMatching createBasicNodeMatching(final Graph g1, final Graph g2,
 			BiMap<Integer,Integer> nodeMatch) {
@@ -132,7 +116,7 @@ public abstract interface MatchingGenerator extends
 		};
 	}
 
-
+/*
 	public static GraphMatching includeEdgeMatching(final GraphMatching nodeMatching, 
 			BiMap<Integer,Integer> edgeMatch) {
 		final BiMap<Integer,Integer> copyEdgeMatch = 
@@ -199,8 +183,8 @@ public abstract interface MatchingGenerator extends
 	 * @param nodeMatching
 	 * @param fscc
 	 * @return
-	 */
-	public static GraphMatching induceEdgeMatching(GraphMatching nodeMatching, 
+	 *
+	public static GraphMatching induceEdgeMatching(GraphMatching nodeMatching,
 			FeatureSetCompatibilityChecker fscc) {
 
 		// if they're not directed, we need to treat edge compatibility differently:
@@ -252,7 +236,7 @@ public abstract interface MatchingGenerator extends
 	 * @param nodeMatching
 	 * @param fscc
 	 * @return
-	 */
+	 *
 	public static GraphMatching induceEdgeMatchingUndirected(
 			GraphMatching nodeMatching, 
 			FeatureSetCompatibilityChecker fscc) {
@@ -314,7 +298,7 @@ public abstract interface MatchingGenerator extends
 	@SuppressWarnings("unchecked")
 	public static MatchingGenerator createCompleteMatchingGenerator(
 			final FeatureSetCompatibilityChecker fscc,
-			final GraphMatchingHeuristic h
+			final GraphMatchingDistance h
 			) {
 		return (g1, g2) -> {
 				final Multimap<Integer,Integer> possibilities = 
@@ -393,4 +377,5 @@ public abstract interface MatchingGenerator extends
 				return argmax(h, s);
 			};
 	}
+	*/
 }

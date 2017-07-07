@@ -1,4 +1,4 @@
-package net.sourcedestination.sai.comparison.heuristics;
+package net.sourcedestination.sai.comparison.distance;
 
 import java.util.Map;
 import java.util.Set;
@@ -9,7 +9,7 @@ import net.sourcedestination.sai.graph.Feature;
 import com.google.common.base.Function;
 
 @FunctionalInterface
-public interface FeatureSetMatchingHeuristic extends 
+public interface FeatureSetDistance extends
 	Function<Tuple3<Set<Feature>,Set<Feature>,Map<Feature,Feature>>,Double> {
 
 }
