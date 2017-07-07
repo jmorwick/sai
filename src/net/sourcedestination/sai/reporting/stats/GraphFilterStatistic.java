@@ -10,17 +10,18 @@ import net.sourcedestination.sai.task.Task;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
-/** A DB statistic that can be calculated by examining each graph, independently, in parallel.
+/**
  * Created by jmorwick on 7/7/17.
  */
-public interface IndependentDBStatistic extends DBStatistic {
+public interface GraphFilterStatistic extends DBStatistic {
 
-    public void processGraph(Graph g);
-    public double getResult();
+    public boolean filterGraph(Graph g);
 
     public default Task<Double> apply(DBInterface db) {
+        final Predicate<Graph> filter = this::filterGraph;
         return new Task<Double> () {
             private final AtomicInteger count = new AtomicInteger();
 
@@ -28,13 +29,14 @@ public interface IndependentDBStatistic extends DBStatistic {
                 GraphFactory gf = ImmutableGraph::new;
                 int dbsize = db.getDatabaseSize();
                 Set<Feature> features = new HashSet<>();
-                db.getGraphIDStream()
-                        .forEach(id -> {
-                            Graph g = db.retrieveGraph(id, gf);
-                            processGraph(g);
+                long total = db.getGraphIDStream()
+                        .map(id -> db.retrieveGraph(id, gf))
+                        .filter(g -> {
                             count.incrementAndGet();
-                        });
-                if(dbsize > 0) return getResult() / dbsize;
+                            return filter.test(g);
+                        })
+                        .count();
+                if(dbsize > 0) return (double)total / dbsize;
                 return 0.0;
             }
 
