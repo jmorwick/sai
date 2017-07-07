@@ -31,10 +31,8 @@ public interface GraphFilterStatistic extends DBStatistic {
                 Set<Feature> features = new HashSet<>();
                 long total = db.getGraphIDStream()
                         .map(id -> db.retrieveGraph(id, gf))
-                        .filter(g -> {
-                            count.incrementAndGet();
-                            return filter.test(g);
-                        })
+                        .peek(x -> count.incrementAndGet()) // increment progress counter
+                        .filter(filter)
                         .count();
                 if(dbsize > 0) return (double)total / dbsize;
                 return 0.0;
