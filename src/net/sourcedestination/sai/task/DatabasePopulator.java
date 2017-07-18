@@ -1,5 +1,6 @@
 package net.sourcedestination.sai.task;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -9,25 +10,23 @@ import net.sourcedestination.sai.reporting.DBListener;
 import net.sourcedestination.sai.reporting.Log;
 import static net.sourcedestination.funcles.tuple.Tuple.makeTuple;
 
-public class DatabasePopulator implements Supplier<Task<Log>> {
+public class DatabasePopulator implements Function<DBInterface,Task<Log>> {
 	
-	private final Stream<Graph> gstream;
+	private final Stream<? extends Graph> gstream;
 	private final int numGraphs;
-	private final DBInterface db;
 	
-	public DatabasePopulator(DBInterface db, Stream<Graph> gstream) {
-		this(db, gstream, -1);
+	public DatabasePopulator(Stream<? extends Graph> gstream) {
+		this(gstream, -1);
 	}
 
-	public DatabasePopulator(DBInterface db, Stream<Graph> gstream, int numGraphs) {
+	public DatabasePopulator(Stream<? extends Graph> gstream, int numGraphs) {
 		this.gstream = gstream;
 		this.numGraphs = numGraphs;
-		this.db = db;
 	}
 
 
 	@Override
-	public Task<Log> get() {
+	public Task<Log> apply(DBInterface db) {
 		Class dbpopClass = this.getClass();
 		return new Task<Log>() {
 			private int i=0;
