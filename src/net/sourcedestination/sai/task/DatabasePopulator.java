@@ -1,6 +1,7 @@
 package net.sourcedestination.sai.task;
 
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.graph.Graph;
@@ -10,13 +11,16 @@ import static net.sourcedestination.funcles.tuple.Tuple.makeTuple;
 
 public class DatabasePopulator implements Supplier<Task<Log>> {
 	
-	private final Supplier<Graph> gen;
+	private final Stream<Graph> gstream;
 	private final int numGraphs;
 	private final DBInterface db;
 	
+	public DatabasePopulator(DBInterface db, Stream<Graph> gstream) {
+		this(db, gstream, -1);
+	}
 
-	public DatabasePopulator(DBInterface db, Supplier<Graph> gen, int numGraphs) {
-		this.gen = gen;
+	public DatabasePopulator(DBInterface db, Stream<Graph> gstream, int numGraphs) {
+		this.gstream = gstream;
 		this.numGraphs = numGraphs;
 		this.db = db;
 	}
@@ -24,6 +28,7 @@ public class DatabasePopulator implements Supplier<Task<Log>> {
 
 	@Override
 	public Task<Log> get() {
+		Class dbpopClass = this.getClass();
 		return new Task<Log>() {
 			private int i=0;
 			private boolean cancel = false;
@@ -32,12 +37,13 @@ public class DatabasePopulator implements Supplier<Task<Log>> {
 			@Override
 			public Log get() {
 				Log log = new Log("Populate Database", 
-						makeTuple("generator", gen.toString()), 
+						makeTuple("generator", dbpopClass.getCanonicalName()),
 						makeTuple("numGraphs", ""+numGraphs));
 				DBListener dbl = new DBListener(db, log);
-				for(i=0; i<numGraphs && !cancel; i++) {
-					dbl.addGraph(gen.get());
-				}
+				gstream.filter(g -> {
+					dbl.addGraph(g);
+					return cancel; // if this is true, the stream will exit
+				}).findFirst();
 				finished = true;
 				return log;
 			}
@@ -46,12 +52,13 @@ public class DatabasePopulator implements Supplier<Task<Log>> {
 				cancel = true;
 			}
 			
-			public boolean running() { 
+			public boolean running() {
 				return !finished;
 			}
 			
 			public double getPercentageDone() {
-				return (double)i/(double)numGraphs;
+				return numGraphs > 0 ? (double)i/(double)numGraphs :
+						!finished ? 0 : 1;
 			}
 			
 			public int getProgressUnits() {
