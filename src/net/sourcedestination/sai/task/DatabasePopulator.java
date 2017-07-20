@@ -46,6 +46,9 @@ public class DatabasePopulator implements Function<DBInterface,Task<Log>> {
 				finished = true;
 				return log;
 			}
+
+			@Override
+			public String getTaskName() { return dbpopClass.getCanonicalName(); }
 			
 			public void cancel() {
 				cancel = true;
