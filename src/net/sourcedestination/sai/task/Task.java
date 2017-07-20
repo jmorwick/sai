@@ -18,7 +18,9 @@ public interface Task<T> extends Supplier<T> {
 	 * @return percentage (0.0 - 1.0) of the task remaining
 	 */
 	public default double getPercentageDone() {
-		return 0.0;
+		return getTotalProgressUnits() != -1 ?
+				(double)getProgressUnits() / getTotalProgressUnits() :
+				0;
 	}
 	
 	/** optional method which reports how much work has been done (in nondescript "units").
@@ -29,6 +31,8 @@ public interface Task<T> extends Supplier<T> {
 	public default int getProgressUnits() {
 		return 0;
 	}
+
+	public default int getTotalProgressUnits() { return -1; }
 	
 	public default String getTaskName() {
 		return this.getClass().getCanonicalName();
@@ -36,9 +40,5 @@ public interface Task<T> extends Supplier<T> {
 	
 	public default void cancel() {
 		
-	}
-	
-	public default boolean running() {
-		return getPercentageDone() < 100.0 && getPercentageDone() > 0.0;
 	}
 }
