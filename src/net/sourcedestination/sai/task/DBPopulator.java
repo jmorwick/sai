@@ -1,5 +1,6 @@
 package net.sourcedestination.sai.task;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -9,20 +10,10 @@ import net.sourcedestination.sai.reporting.DBListener;
 import net.sourcedestination.sai.reporting.Log;
 import static net.sourcedestination.funcles.tuple.Tuple.makeTuple;
 
-public class DBPopulator implements Function<DBInterface,Task<Log>> {
-	
-	private final Stream<? extends Graph> gstream;
-	private final int numGraphs;
-	
-	public DBPopulator(Stream<? extends Graph> gstream) {
-		this(gstream, -1);
-	}
+public abstract class DBPopulator implements Function<DBInterface,Task<Log>> {
 
-	public DBPopulator(Stream<? extends Graph> gstream, int numGraphs) {
-		this.gstream = gstream;
-		this.numGraphs = numGraphs;
-	}
-
+	public abstract Stream<Graph> getGraphStream();
+	public abstract int getNumGraphs();
 
 	@Override
 	public Task<Log> apply(DBInterface db) {
@@ -30,15 +21,17 @@ public class DBPopulator implements Function<DBInterface,Task<Log>> {
 		return new Task<Log>() {
 			private boolean cancel = false;
 			private boolean finished = false;
+			private AtomicInteger graphsProcessed = new AtomicInteger(0);
 
 			@Override
 			public Log get() {
 				Log log = new Log("Populate Database", 
 						makeTuple("generator", dbpopClass.getCanonicalName()),
-						makeTuple("numGraphs", ""+numGraphs));
+						makeTuple("numGraphs", ""+getNumGraphs()));
 				DBListener dbl = new DBListener(db, log);
-				gstream.filter(g -> {
+				getGraphStream().filter(g -> {
 					dbl.addGraph(g);
+					graphsProcessed.incrementAndGet();
 					return cancel; // if this is true, the stream will exit
 				}).findFirst();
 				return log;
@@ -54,11 +47,11 @@ public class DBPopulator implements Function<DBInterface,Task<Log>> {
 
 			@Override
 			public int getProgressUnits() {
-				return db.getDatabaseSize();
+				return graphsProcessed.get();
 			}
 
 			@Override
-			public int getTotalProgressUnits() { return numGraphs; }
+			public int getTotalProgressUnits() { return getNumGraphs(); }
 		};
 	}
 	
