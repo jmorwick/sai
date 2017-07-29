@@ -34,6 +34,4 @@ public class GraphRetrieverListener<DB extends DBInterface>  implements GraphRet
 		log.recordQueryRecord(qr);
 		return listen(wrappedRetriever.retrieve(db, q), qr::recordRetrievedGraphID);
 	}
-	
-
 }

@@ -26,6 +26,7 @@ import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;
 import net.sourcedestination.sai.graph.GraphFactory;
+import net.sourcedestination.sai.task.Task;
 
 import java.util.function.Function;
 /**
@@ -39,7 +40,6 @@ import java.util.function.Function;
 public interface GraphRetriever<DB extends DBInterface> {
 
     public Stream<Integer> retrieve(DB db, Graph q);
-
 
 	public static <DB extends DBInterface> GraphRetriever<DB> createPhase1Retriever(
 			GraphRetriever<DB> indexRetriever,
