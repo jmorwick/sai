@@ -152,6 +152,8 @@ public class Log {
 	 * @return records of each query recorded in this log
 	 */
 	public Stream<QueryRecord> getQueryRecords() { return queries.stream(); }
+
+	public QueryRecord getQueryRecord(int id) { return queries.get(id); }
 	
 	/** returns the number of graphs added to the db while logging.
 	 * 
