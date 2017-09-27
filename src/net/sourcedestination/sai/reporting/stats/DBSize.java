@@ -8,11 +8,9 @@ import net.sourcedestination.sai.task.Task;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-/**  TODO: add test
- *   TODO: comment / license
- */
-public class DBSize implements DBStatistic {
-    public Task<Double> apply(DBInterface db) {
-        return DBStatistic.returnImmediately((double)db.getDatabaseSize());
+
+public class DBSize extends FastDBStatistic {
+    public double computeStat(DBInterface db) {
+        return (double)db.getDatabaseSize();
     }
 }
