@@ -38,7 +38,7 @@ public class SaiGraphJsonSerializer implements GraphSerializer {
             edge.put("fromID", g.getEdgeSourceNodeID(edgeID));
             edge.put("toID", g.getEdgeTargetNodeID(edgeID));
             JSONArray features = new JSONArray();
-            g.getNodeFeatures(edgeID).map(featureToJSON).forEach(features::put);
+            g.getEdgeFeatures(edgeID).map(featureToJSON).forEach(features::put);
             edge.put("features", features);
             return edge;
         }).forEach(edges::put);
