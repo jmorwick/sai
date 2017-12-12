@@ -20,13 +20,15 @@
 package net.sourcedestination.sai.retrieval;
 
 import java.util.Comparator;
+import java.util.Set;
 import java.util.stream.Stream;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;
 import net.sourcedestination.sai.graph.GraphFactory;
-import net.sourcedestination.sai.task.Task;
 
 import java.util.function.Function;
 /**
@@ -45,14 +47,20 @@ public interface GraphRetriever<DB extends DBInterface> {
 			GraphRetriever<DB> indexRetriever,
 			GraphIndexBasedRetriever ibRetriever
 			) {
+
+		Logger logger = LogManager.getLogger(GraphRetriever.class);
+		logger.info("creating phase-1 retriever using index retriever");
 		return (db, q) -> ibRetriever.retrieve(db, indexRetriever.retrieve(db, q));
 	}
 	
 	public static <DB extends DBInterface>  GraphRetriever<DB> createPhase1Retriever(
-			final Function<Graph,Stream<Feature>> indexGenerator,
+			final Function<Graph,Set<Feature>> indexGenerator,
 			final FeatureIndexBasedRetriever ibRetriever
 			) {
-		return (db, q) -> ibRetriever.retrieve(db, indexGenerator.apply(q));
+
+		Logger logger = LogManager.getLogger(GraphRetriever.class);
+		logger.info("creating phase-1 retriever using index generator");
+		return (db, q) -> ibRetriever.retrieve(db, indexGenerator.apply(q).stream());
 	}
 	
 	public static <G extends Graph, DB extends DBInterface> Stream<G> twoPhasedRetrieval(
