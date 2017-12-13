@@ -11,7 +11,7 @@ import com.google.common.collect.ConcurrentHashMultiset;
 
 @FunctionalInterface
 public interface FeatureIndexBasedRetriever {
-	
+
     public Stream<Integer> retrieve(DBInterface db, Stream<Feature> indices);
     
     /**
@@ -29,7 +29,7 @@ public interface FeatureIndexBasedRetriever {
                 .collect(Collectors.toCollection(ConcurrentHashMultiset::create))
                 .entrySet().stream() // stream this multiset
         		//sort by multiplicity
-        		.sorted((l,r) -> l.getCount() > r.getCount() ? l.getElement() : r.getElement())
+				.sorted((l,r) -> -Integer.compare(l.getCount(), r.getCount()))
         		// convert from multiset entries to graph id's
         		.map(Multiset.Entry::getElement);
     }
