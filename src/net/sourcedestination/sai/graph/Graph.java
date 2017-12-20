@@ -99,7 +99,29 @@ public interface Graph {
         return gf.copy(t);
 	}
 
-    /** returns the feature of the given feature-class associated with this feature set.
+	/** generates all edges whose source node is nid.
+	 *  Default implementation is O(E)
+	 */
+	public default Stream<Integer> getIncidentToEdges(int nid) {
+		return getEdgeIDs().filter(eid -> getEdgeSourceNodeID(nid) == eid);
+	}
+
+	/** generates all edges whose target node is nid.
+	 *  Default implementation is O(E)
+	 */
+	public default Stream<Integer> getIncidentFromEdges(int nid) {
+		return getEdgeIDs().filter(eid -> getEdgeTargetNodeID(nid) == eid);
+	}
+
+	/** generates all edges incident on the node nid.
+	 *  Default implementation is O(E)
+	 */
+	public default Stream<Integer> getIncidentEdges(int nid) {
+		return getEdgeIDs()
+				.filter(eid -> getEdgeTargetNodeID(nid) == eid || getEdgeSourceNodeID(nid) == eid);
+	}
+
+	/** returns the feature of the given feature-class associated with this feature set.
      * If more than one such feature exists, an arbitrary selection is returned.
      * If no such feature exists, null is returned.
      * @param features the set of features to search
@@ -136,5 +158,4 @@ public interface Graph {
 	public static Feature getIDFeature(int graphID) {
 		return new Feature(SAI_ID_NAME, graphID+"");
 	}
-
 }
