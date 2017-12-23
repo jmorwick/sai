@@ -103,14 +103,14 @@ public interface Graph {
 	 *  Default implementation is O(E)
 	 */
 	public default Stream<Integer> getIncidentToEdges(int nid) {
-		return getEdgeIDs().filter(eid -> getEdgeSourceNodeID(nid) == eid);
+		return getEdgeIDs().filter(eid -> getEdgeSourceNodeID(eid) == nid);
 	}
 
 	/** generates all edges whose target node is nid.
 	 *  Default implementation is O(E)
 	 */
 	public default Stream<Integer> getIncidentFromEdges(int nid) {
-		return getEdgeIDs().filter(eid -> getEdgeTargetNodeID(nid) == eid);
+		return getEdgeIDs().filter(eid -> getEdgeTargetNodeID(eid) == nid);
 	}
 
 	/** generates all edges incident on the node nid.
