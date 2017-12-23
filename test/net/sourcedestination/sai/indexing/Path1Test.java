@@ -20,11 +20,11 @@ public class Path1Test {
 	@Test
 	public void testPath1Generation() throws AccessDeniedException {
 		Set<Feature> expected = Sets.newHashSet();
-		expected.add(new Feature(PATH1NAME, "test,a:test,a:test,b"));
-		expected.add(new Feature(PATH1NAME, "test,b:test,a:test,c"));
-		expected.add(new Feature(PATH1NAME, "test,c:test,a:test,d"));
-		expected.add(new Feature(PATH1NAME, "test,b:test,a:test,d"));
-		assertEquals(expected, 
+		expected.add(new Feature(PATH1NAME, "[test:a], [test:b]"));
+		expected.add(new Feature(PATH1NAME, "[test:b], [test:c]"));
+		expected.add(new Feature(PATH1NAME, "[test:c], [test:d]"));
+		expected.add(new Feature(PATH1NAME, "[test:b], [test:d]"));
+		assertEquals(expected,
 				generatePath1IndexFeatures(SampleGraphs.getSmallGraph1(), "test"));
 	}
 

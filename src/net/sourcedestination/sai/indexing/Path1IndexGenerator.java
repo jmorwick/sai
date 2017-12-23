@@ -1,15 +1,14 @@
 package net.sourcedestination.sai.indexing;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;
 
 import com.google.common.collect.Sets;
-//TODO: update to use streams, move in to FeatureIndexGenerator file
+//TODO: update to generalize to longer paths, perhaps move everything in to FeatureIndexGenerator
 public class Path1IndexGenerator implements FeatureIndexGenerator {
     public static final String PATH1NAME = "path1-index";
     
@@ -21,9 +20,9 @@ public class Path1IndexGenerator implements FeatureIndexGenerator {
 
     public static Set<Feature> generatePath1IndexFeatures(Graph s, String ... featureNames) {
     	Set<Feature> ret = Sets.newHashSet();
-    	s.getEdgeIDs().forEach(e -> 
-    		ret.addAll(generatePath1IndexFeature(s, e, featureNames)));
-    	
+    	FeatureIndexGenerator.enumeratePaths(s, 1,1, featureNames)
+                .map(ls -> new Feature(PATH1NAME, generatePathKIndexFeature(ls)))
+                .forEach(ret::add);
     	return ret;
     }
     
@@ -31,41 +30,13 @@ public class Path1IndexGenerator implements FeatureIndexGenerator {
     public static String encodeValue(String v) {
     	return replacementPattern.matcher(v).replaceAll("\\\\$1");
     }
-    private static Set<Feature> generatePath1IndexFeature(Graph s, int e, String ... featureNames) {
-    	    Set<Feature> ret = Sets.newHashSet();
-            Set<Feature> fromNodeFeatures = Sets.newHashSet();
-            Set<Feature> toNodeFeatures = Sets.newHashSet();
-            Set<Feature> edgeFeatures = Sets.newHashSet();
-            Set<String> featureNamesSet = Arrays.stream(featureNames)
-            		.collect(Collectors.toSet());
-            s.getEdgeFeatures(e)
-            		.filter(f -> featureNamesSet.contains(f.getName()))
-            		.forEach(edgeFeatures::add);
-            if(edgeFeatures.size() == 0) edgeFeatures.add(null); //make links without edge features
-
-            s.getNodeFeatures(s.getEdgeSourceNodeID(e))
-    		.filter(f -> featureNamesSet.contains(f.getName()))
-    		.forEach(fromNodeFeatures::add);
-            
-            s.getNodeFeatures(s.getEdgeTargetNodeID(e))
-    		.filter(f -> featureNamesSet.contains(f.getName()))
-    		.forEach(toNodeFeatures::add);
-            
-            for(Feature n1f : fromNodeFeatures) {
-                for(Feature n2f : toNodeFeatures) {
-                    for(Feature ef : edgeFeatures) {
-                    	ret.add(new Feature(PATH1NAME, 
-                    			encodeValue(n1f.getName()) + "," + 
-                            	encodeValue(n1f.getValue()) +
-                            	(ef != null ? ":" + 
-                    			encodeValue(ef.getName()) + "," + 
-                            	encodeValue(ef.getValue()) : "") + ":" + 
-                    			encodeValue(n2f.getName()) + "," + 
-                            	encodeValue(n2f.getValue())));
-                    }
-                }
-            }
-            return ret;
+    private static String generatePathKIndexFeature(List<Feature> ls) {
+        String ret = "";
+        for(Feature f : ls) {
+            ret += ret.length() == 0 ? "" : ", ";
+            ret += "[" + encodeValue(f.getName()) + ":" + encodeValue(f.getValue()) + "]";
+        }
+        return ret;
     }
 
 	@Override

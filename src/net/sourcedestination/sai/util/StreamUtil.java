@@ -1,5 +1,8 @@
 package net.sourcedestination.sai.util;
 
+import com.google.common.collect.Lists;
+
+import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -45,5 +48,14 @@ public class StreamUtil {
 			}
 			
 		};
+	}
+
+	/** concatenates 2 lists together
+	 * TODO: consider a more efficient, linked-list based implementation, or 3rd party lib
+	 */
+	public static <T> List<T> concatenateLists(List<T> a, List<T> b) {
+		List<T> c = Lists.newArrayList(a);
+		c.addAll(b);
+		return c;
 	}
 }
