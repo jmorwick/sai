@@ -2,8 +2,10 @@ package net.sourcedestination.sai.util;
 
 import com.google.common.collect.Lists;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -57,5 +59,11 @@ public class StreamUtil {
 		List<T> c = Lists.newArrayList(a);
 		c.addAll(b);
 		return c;
+	}
+
+	public static <T> Stream<T> toStream(Iterator<T> i) {
+		return StreamSupport.stream(
+				Spliterators.spliteratorUnknownSize(i, Spliterator.ORDERED),
+				false);
 	}
 }

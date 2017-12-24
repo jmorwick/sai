@@ -7,9 +7,9 @@ import java.util.stream.Stream;
 import net.sourcedestination.funcles.tuple.Pair;
 import net.sourcedestination.sai.graph.Graph;
 
-public interface GraphMatching {
-	public Graph getGraph1();
-	public Graph getGraph2();
+public interface GraphMatching<G extends Graph> {
+	public G getGraph1();
+	public G getGraph2();
 	public Integer getMatchedNodeInGraph2(int g1NodeID);
 	public Integer getMatchedNodeInGraph1(int g2NodeID);
 	public Integer getMatchedEdgeInGraph2(int g1NodeID);

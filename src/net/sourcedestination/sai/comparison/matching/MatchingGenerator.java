@@ -23,16 +23,15 @@ import static java.util.stream.Collectors.toSet;
 
 import java.util.*;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import net.sourcedestination.funcles.function.Function2;
 import net.sourcedestination.funcles.tuple.Pair;
 import net.sourcedestination.sai.comparison.compatibility.EdgeCompatibilityChecker;
 import net.sourcedestination.sai.comparison.compatibility.NodeCompatabilityChecker;
-import net.sourcedestination.sai.comparison.distance.GraphMatchingDistance;
 import net.sourcedestination.sai.graph.Graph;
 
 import static net.sourcedestination.sai.util.FunctionUtil.argmax;
+import static net.sourcedestination.sai.util.StreamUtil.toStream;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -52,11 +51,12 @@ import com.google.common.collect.Multimap;
 // TODO: take another pass over this file looking for 1.8 updates to make
 
 @FunctionalInterface
-public interface MatchingGenerator<M extends GraphMatching, G extends Graph> extends
-		Function2<G, G,M> {
+public interface MatchingGenerator<G extends Graph> extends
+		Function2<G, G, Stream<GraphMatching>> {
 
 	/** gerenates a matching object including only node matches given a BiMap of the node matching */
-	public static GraphMatching createBasicNodeMatching(final Graph g1, final Graph g2,
+	public static <G extends Graph> GraphMatching<G> createBasicNodeMatching(
+	        final G g1, final G g2,
 			BiMap<Integer,Integer> nodeMatch) {
 		final BiMap<Integer,Integer> copyNodeMatch = 
 				ImmutableBiMap.copyOf(nodeMatch);
@@ -115,7 +115,8 @@ public interface MatchingGenerator<M extends GraphMatching, G extends Graph> ext
 		};
 	}
 
-	public static GraphMatching includeEdgeMatching(final GraphMatching nodeMatching, 
+	public static <G extends Graph> GraphMatching<G> includeEdgeMatching(
+	        final GraphMatching<G> nodeMatching,
 			BiMap<Integer,Integer> edgeMatch) {
 		final BiMap<Integer,Integer> copyEdgeMatch = 
 				ImmutableBiMap.copyOf(edgeMatch);
@@ -192,11 +193,12 @@ public interface MatchingGenerator<M extends GraphMatching, G extends Graph> ext
 	 * @param ecc
 	 * @return
 	 */
-	public static GraphMatching induceEdgeMatching(GraphMatching nodeMatching,
-			EdgeCompatibilityChecker ecc) {
+	public static <G extends Graph> GraphMatching<G> induceEdgeMatching(
+	        GraphMatching<G> nodeMatching,
+			EdgeCompatibilityChecker<G> ecc) {
 
-		final Graph g1 = nodeMatching.getGraph1();
-		final Graph g2 = nodeMatching.getGraph2();
+		final G g1 = nodeMatching.getGraph1();
+		final G g2 = nodeMatching.getGraph2();
 		BiMap<Integer,Integer> edgeMatch = HashBiMap.create();
 
 		// cache the edges in graph 2
@@ -208,9 +210,9 @@ public interface MatchingGenerator<M extends GraphMatching, G extends Graph> ext
 							g2.getEdgeTargetNodeID(g2e)), g2e));
 
 		// try to match up edges in graph 1 with an edge in graph 2
-		g1.getEdgeIDs().forEach(eid -> {
-			Integer g1n1 = g1.getEdgeSourceNodeID(eid);
-            Integer g1n2 = g1.getEdgeTargetNodeID(eid);
+		g1.getEdgeIDs().forEach(eid1 -> {
+			Integer g1n1 = g1.getEdgeSourceNodeID(eid1);
+            Integer g1n2 = g1.getEdgeTargetNodeID(eid1);
             Integer g2n1 = nodeMatching.getMatchedNodeInGraph2(g1n1);
             Integer g2n2 = nodeMatching.getMatchedNodeInGraph2(g1n2);
 			if(g2n1 == null || g2n2 == null)
@@ -221,43 +223,38 @@ public interface MatchingGenerator<M extends GraphMatching, G extends Graph> ext
 
             // try to find a matched edge in g2
             Optional<Integer> g2MatchedEdge = g2Edges.get(Pair.makePair(g2n1, g2n2)).stream()
-                    .filter(g2e -> ecc.apply(g1, g2, g1.getEdgeFeatures(eid), g2.getEdgeFeatures(g2e)))
+                    .filter(eid2 -> ecc.apply(g1, g2, eid1, eid2))
                     .findFirst();
 
 			if(g2MatchedEdge.isPresent()) //if we found a match, record it
-				edgeMatch.put(eid, g2MatchedEdge.get());
+				edgeMatch.put(eid1, g2MatchedEdge.get());
 		});
 		return includeEdgeMatching(nodeMatching, edgeMatch);
 	}
 
 
 
-	public static Multimap<Integer,Integer> getNodeMatchingPossibilities(
-			final NodeCompatabilityChecker ncc,
-			Graph g1,
-			Graph g2) {
+	public static <G extends Graph> Multimap<Integer,Integer> getNodeMatchingPossibilities(
+			final NodeCompatabilityChecker<G> ncc,
+			final G g1,
+			final G g2) {
 
 		Multimap<Integer,Integer> possibilities = HashMultimap.create();
 
-		g1.getNodeIDs().forEach(n1 -> {
-			g2.getNodeIDs().forEach(n2 -> {
-				if(ncc.apply(g1, g2, g1.getNodeFeatures(n1),
-						      g2.getNodeFeatures(n2)))
-					possibilities.put(n1, n2);
+		g1.getNodeIDs().forEach(nid1 -> {
+			g2.getNodeIDs().forEach(nid2 -> {
+				if(ncc.apply(g1, g2, nid1, nid2))
+					possibilities.put(nid1, nid2);
 			});
 		});
 
 		return possibilities;
 	}
 
-/*
-	@SuppressWarnings("unchecked")
-	public static MatchingGenerator createCompleteMatchingGenerator(
-            final NodeCompatabilityChecker ncc,
-            final EdgeCompatibilityChecker ecc,
-			final GraphMatchingDistance h
-			) {
-		return (g1, g2) -> {
+	public static <G extends Graph> Stream<GraphMatching<G>> generateAllMatchings(
+	        G g1, G g2,
+            final NodeCompatabilityChecker<G> ncc,
+            final EdgeCompatibilityChecker<G> ecc) {
 				final Multimap<Integer,Integer> possibilities = 
 						getNodeMatchingPossibilities(ncc, g1, g2);
 
@@ -270,9 +267,9 @@ public interface MatchingGenerator<M extends GraphMatching, G extends Graph> ext
 				final Integer[] nodeIDs = nodeIDsTemp.toArray(new Integer[nodeIDsTemp.size()]);
 
 				//create an iterator for the possible complete mappings
-				Iterator<GraphMatching> i = new Iterator<GraphMatching>() {
+				Iterator<GraphMatching<G>> i = new Iterator<GraphMatching<G>>() {
 					private int[] currentMap = new int[nodeIDs.length];
-					private GraphMatching nextMatching = nextMatching();
+					private GraphMatching<G> nextMatching = nextMatching();
 
 					@Override
 					public boolean hasNext() {
@@ -280,15 +277,15 @@ public interface MatchingGenerator<M extends GraphMatching, G extends Graph> ext
 					}
 
 					@Override
-					public GraphMatching next() {
+					public GraphMatching<G> next() {
 						if(nextMatching == null) 
 							throw new IllegalStateException("no more matchings left");
-						GraphMatching currentMatching = nextMatching;
+						GraphMatching<G> currentMatching = nextMatching;
 						nextMatching = nextMatching();
 						return currentMatching;
 					}
 
-					public GraphMatching nextMatching() {
+					public GraphMatching<G> nextMatching() {
 						BiMap<Integer,Integer> nodeMap = null;
 						while(nodeMap == null && currentMap != null) {
 							nodeMap = HashBiMap.create();
@@ -329,10 +326,14 @@ public interface MatchingGenerator<M extends GraphMatching, G extends Graph> ext
 					}
 
 				};
-				Iterable<GraphMatching> iterable = () -> i;
-				Stream<GraphMatching> s = StreamSupport.stream(iterable.spliterator(), false);
-				return argmax(h, s);
-			};
+
+				return toStream(i);
 	}
-*/
+
+    public static <G extends Graph> GraphMatching<G> getBestMatching(
+            Stream<GraphMatching<G>> s,
+            MatchingEvaluator<G> eval) {
+        return argmax(eval, s);
+    }
+
 }
