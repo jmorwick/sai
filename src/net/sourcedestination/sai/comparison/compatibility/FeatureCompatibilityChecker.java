@@ -3,6 +3,7 @@ package net.sourcedestination.sai.comparison.compatibility;
 import net.sourcedestination.funcles.predicate.Predicate2;
 import net.sourcedestination.sai.graph.Feature;
 
+@FunctionalInterface
 public interface FeatureCompatibilityChecker extends Predicate2<Feature,Feature> {
 
 	/** checks to see if features have the same name and value */
