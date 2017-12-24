@@ -4,17 +4,18 @@ import static net.sourcedestination.sai.comparison.compatibility.FeatureCompatib
 import static org.junit.Assert.*;
 
 import java.nio.file.AccessDeniedException;
+import java.util.Set;
 import java.util.stream.Stream;
 
-import net.sourcedestination.sai.comparison.compatibility.FeatureCompatibilityChecker;
-import net.sourcedestination.sai.comparison.compatibility.FeatureSetCompatibilityChecker;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import net.sourcedestination.funcles.predicate.Predicate2;
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
 import net.sourcedestination.sai.graph.Feature;
 
 import org.junit.Test;
-
-import com.google.common.collect.Sets;
 
 public class CompatibilityUtilTest {
 
@@ -67,10 +68,10 @@ public class CompatibilityUtilTest {
 	
 	@Test
 	public void testGreedy1To1Checker() throws AccessDeniedException {
-		FeatureSetCompatibilityChecker c = FeatureSetCompatibilityChecker::checkFeaturesGreedy1To1;
-		FeatureSetCompatibilityChecker c2 = (fs1, fs2) ->
-				FeatureSetCompatibilityChecker.checkFeaturesGreedy1To1(
+		Predicate2<Set<Feature>,Set<Feature>> c = (fs1, fs2) ->
+				FeatureSetCompatibilityCheckers.checkFeaturesGreedy1To1(
 					FeatureCompatibilityChecker::areLexicallyCompatible, fs1, fs2);
+		
 		DBInterface db = SampleDBs.getEmptyDB();
 		Feature f1 = new Feature("a", "1");
 		Feature f2 = new Feature("a", "2");
@@ -80,46 +81,25 @@ public class CompatibilityUtilTest {
 		Feature f6 = new Feature("c", "2");
 		Feature f7 = new Feature("c", "1");
 		Feature f8 = new Feature("c", "3");
-		assertTrue(c.apply(Stream.empty(), Stream.empty()));
-		assertTrue(c.apply(Stream.empty(), Stream.of(f1)));
-		assertTrue(c.apply(Stream.of(f1), Stream.of(f1)));
-		assertTrue(c.apply(Stream.of(f1), Stream.of(f1, f2)));
-		assertTrue(!c.apply(Stream.of(f1, f2), Stream.of(f1)));
-		assertTrue(!c.apply(Stream.of(f1, f4), Stream.of(f1)));
-		assertTrue(!c.apply(Stream.of(f4), Stream.of(f1)));
-		assertTrue(c.apply(Stream.of(f4), Stream.of(f1, f4)));
-		assertTrue(!c.apply(Stream.of(f4), Stream.of(f1, f3, f7)));
-		assertTrue(!c.apply(Stream.of(f4), Stream.of(f1, f3, f7, f8)));
-		assertTrue(!c.apply(Stream.of(f1, f4), Stream.of(f1, f3, f7, f8)));
-		assertTrue(!c.apply(Stream.of(f5, f6), Stream.of(f1, f3, f7, f8)));
-		assertTrue(c.apply(Stream.of(f5, f6), Stream.of(f5, f6, f7, f8)));
-		assertTrue(!c.apply(Stream.of(f1, f1), Stream.of(f1)));
-		assertTrue(!c.apply(Stream.of(f1, f1), Stream.of(f1, f2)));
-		assertTrue(c.apply(Stream.of(f1, f1), Stream.of(f1, f2, f1)));
-
-		assertTrue(c2.apply(Stream.empty(), Stream.empty()));
-		assertTrue(c2.apply(Stream.empty(), Stream.of(f1)));
-		assertTrue(c2.apply(Stream.of(f1), Stream.of(f1)));
-		assertTrue(c2.apply(Stream.of(f1), Stream.of(f1, f2)));
-		assertTrue(!c2.apply(Stream.of(f1, f2), Stream.of(f1)));
-		assertTrue(!c2.apply(Stream.of(f1, f4), Stream.of(f1)));
-		assertTrue(!c2.apply(Stream.of(f4), Stream.of(f1)));
-		assertTrue(c2.apply(Stream.of(f4), Stream.of(f1, f4)));
-		assertTrue(!c2.apply(Stream.of(f4), Stream.of(f1, f3, f7)));
-		assertTrue(!c2.apply(Stream.of(f4), Stream.of(f1, f3, f7, f8)));
-		assertTrue(!c2.apply(Stream.of(f1, f4), Stream.of(f1, f3, f7, f8)));
-		assertTrue(!c2.apply(Stream.of(f5, f6), Stream.of(f1, f3, f7, f8)));
-		assertTrue(c2.apply(Stream.of(f5, f6), Stream.of(f5, f6, f7, f8)));
-		assertTrue(!c2.apply(Stream.of(f1, f1), Stream.of(f1)));
-		assertTrue(!c2.apply(Stream.of(f1, f1), Stream.of(f1, f2)));
-		assertTrue(c2.apply(Stream.of(f1, f1), Stream.of(f1, f2, f1)));
+		assertTrue(c.apply(Sets.newHashSet(), Sets.newHashSet()));
+		assertTrue(c.apply(Sets.newHashSet(), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f1), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f1), Sets.newHashSet(f1, f2)));
+		assertTrue(!c.apply(Sets.newHashSet(f1, f2), Sets.newHashSet(f1)));
+		assertTrue(!c.apply(Sets.newHashSet(f1, f4), Sets.newHashSet(f1)));
+		assertTrue(!c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1, f4)));
+		assertTrue(!c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1, f3, f7)));
+		assertTrue(!c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1, f3, f7, f8)));
+		assertTrue(!c.apply(Sets.newHashSet(f1, f4), Sets.newHashSet(f1, f3, f7, f8)));
+		assertTrue(!c.apply(Sets.newHashSet(f5, f6), Sets.newHashSet(f1, f3, f7, f8)));
+		assertTrue(c.apply(Sets.newHashSet(f5, f6), Sets.newHashSet(f5, f6, f7, f8)));
 	}
 
 	@Test
 	public void testMany1To1Checker() throws AccessDeniedException {
-		FeatureSetCompatibilityChecker c = FeatureSetCompatibilityChecker::checkFeaturesGreedyManyTo1;
-		FeatureSetCompatibilityChecker c2 = (fs1, fs2) ->
-				FeatureSetCompatibilityChecker.checkFeaturesGreedyManyTo1(
+		Predicate2<Set<Feature>,Set<Feature>> c = (fs1, fs2) ->
+				FeatureSetCompatibilityCheckers.checkFeaturesGreedyManyTo1(
 						FeatureCompatibilityChecker::areLexicallyCompatible, fs1, fs2);
 		DBInterface db = SampleDBs.getEmptyDB();
 		Feature f1 = new Feature("a", "1");
@@ -130,43 +110,22 @@ public class CompatibilityUtilTest {
 		Feature f6 = new Feature("c", "2");
 		Feature f7 = new Feature("c", "1");
 		Feature f8 = new Feature("c", "3");
-		assertTrue(c.apply(Stream.empty(), Stream.empty()));
-		assertTrue(c.apply(Stream.empty(), Stream.of(f1)));
-		assertTrue(c.apply(Stream.of(f1), Stream.of(f1)));
-		assertTrue(c.apply(Stream.of(f1), Stream.of(f1, f2)));
-		assertTrue(!c.apply(Stream.of(f1, f2), Stream.of(f1)));
-		assertTrue(!c.apply(Stream.of(f1, f4), Stream.of(f1)));
-		assertTrue(c.apply(Stream.of(f1, f4), Stream.of(f1, f4)));
-		assertTrue(c.apply(Stream.of(f1, f4), Stream.of(f2, f1, f7, f4, f3)));
-		assertTrue(!c.apply(Stream.of(f4), Stream.of(f1)));
-		assertTrue(c.apply(Stream.of(f4), Stream.of(f1, f4)));
-		assertTrue(!c.apply(Stream.of(f4), Stream.of(f1, f3, f7)));
-		assertTrue(!c.apply(Stream.of(f4), Stream.of(f1, f3, f7, f8)));
-		assertTrue(!c.apply(Stream.of(f1, f4), Stream.of(f1, f3, f7, f8)));
-		assertTrue(!c.apply(Stream.of(f5, f6), Stream.of(f1, f3, f7, f8)));
-		assertTrue(c.apply(Stream.of(f5, f6), Stream.of(f5, f6, f7, f8)));
-		assertTrue(c.apply(Stream.of(f1, f1), Stream.of(f1)));
-		assertTrue(c.apply(Stream.of(f1, f1), Stream.of(f1, f2)));
-		assertTrue(c.apply(Stream.of(f1, f1), Stream.of(f1, f2, f1)));
+		assertTrue(c.apply(Sets.newHashSet(), Sets.newHashSet()));
+		assertTrue(c.apply(Sets.newHashSet(), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f1), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f1), Sets.newHashSet(f1, f2)));
+		assertTrue(!c.apply(Sets.newHashSet(f1, f2), Sets.newHashSet(f1)));
+		assertTrue(!c.apply(Sets.newHashSet(f1, f4), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f1, f4), Sets.newHashSet(f1, f4)));
+		assertTrue(c.apply(Sets.newHashSet(f1, f4), Sets.newHashSet(f2, f1, f7, f4, f3)));
+		assertTrue(!c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1)));
+		assertTrue(c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1, f4)));
+		assertTrue(!c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1, f3, f7)));
+		assertTrue(!c.apply(Sets.newHashSet(f4), Sets.newHashSet(f1, f3, f7, f8)));
+		assertTrue(!c.apply(Sets.newHashSet(f1, f4), Sets.newHashSet(f1, f3, f7, f8)));
+		assertTrue(!c.apply(Sets.newHashSet(f5, f6), Sets.newHashSet(f1, f3, f7, f8)));
+		assertTrue(c.apply(Sets.newHashSet(f5, f6), Sets.newHashSet(f5, f6, f7, f8)));
 
-		assertTrue(c2.apply(Stream.empty(), Stream.empty()));
-		assertTrue(c2.apply(Stream.empty(), Stream.of(f1)));
-		assertTrue(c2.apply(Stream.of(f1), Stream.of(f1)));
-		assertTrue(c2.apply(Stream.of(f1), Stream.of(f1, f2)));
-		assertTrue(!c2.apply(Stream.of(f1, f2), Stream.of(f1)));
-		assertTrue(!c2.apply(Stream.of(f1, f4), Stream.of(f1)));
-		assertTrue(c2.apply(Stream.of(f1, f4), Stream.of(f1, f4)));
-		assertTrue(c2.apply(Stream.of(f1, f4), Stream.of(f2, f1, f7, f4, f3)));
-		assertTrue(!c2.apply(Stream.of(f4), Stream.of(f1)));
-		assertTrue(c2.apply(Stream.of(f4), Stream.of(f1, f4)));
-		assertTrue(!c2.apply(Stream.of(f4), Stream.of(f1, f3, f7)));
-		assertTrue(!c2.apply(Stream.of(f4), Stream.of(f1, f3, f7, f8)));
-		assertTrue(!c2.apply(Stream.of(f1, f4), Stream.of(f1, f3, f7, f8)));
-		assertTrue(!c2.apply(Stream.of(f5, f6), Stream.of(f1, f3, f7, f8)));
-		assertTrue(c2.apply(Stream.of(f5, f6), Stream.of(f5, f6, f7, f8)));
-		assertTrue(c2.apply(Stream.of(f1, f1), Stream.of(f1)));
-		assertTrue(c2.apply(Stream.of(f1, f1), Stream.of(f1, f2)));
-		assertTrue(c2.apply(Stream.of(f1, f1), Stream.of(f1, f2, f1)));
 	}
 
 }
