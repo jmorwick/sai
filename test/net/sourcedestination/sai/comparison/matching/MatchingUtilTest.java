@@ -1,6 +1,5 @@
 package net.sourcedestination.sai.comparison.matching;
 /*
-import static net.sourcedestination.sai.comparison.compatibility.FeatureSetCompatibilityChecker.greedy1To1Checker;
 import static net.sourcedestination.sai.comparison.matching.MatchingGenerator.createBasicNodeMatching;
 import static net.sourcedestination.sai.comparison.matching.MatchingGenerator.createGraphMatchOrdering;
 import static net.sourcedestination.sai.comparison.matching.MatchingGenerator.includeEdgeMatching;
@@ -14,8 +13,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import net.sourcedestination.funcles.tuple.Pair;
-import net.sourcedestination.sai.comparison.compatibility.FeatureCompatibilityChecker;
-import net.sourcedestination.sai.comparison.compatibility.FeatureSetCompatibilityChecker;
 import net.sourcedestination.sai.comparison.distance.GraphMatchingDistance;
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
@@ -138,7 +135,7 @@ public class MatchingUtilTest {
 		Graph g2 = SampleGraphs.getSmallGraph1();
 		BiMap<Integer,Integer> nodeMatch = HashBiMap.create();
 		GraphMatching m;
-		FeatureSetCompatibilityChecker fscc = 
+		FeatureSetCompatibilityCheckers fscc =
 				greedy1To1Checker(FeatureCompatibilityChecker::areLexicallyCompatible);
 
 		nodeMatch.put(1,1);
@@ -217,7 +214,7 @@ public class MatchingUtilTest {
 		GraphMatchingDistance h = GraphMatchingDistance::basicEdgeCount;
 		MatchingGenerator fakeGen = 
 			(g1, g2) -> {
-				FeatureSetCompatibilityChecker fscc = 
+				FeatureSetCompatibilityCheckers fscc =
 						greedy1To1Checker(
 								FeatureCompatibilityChecker::areLexicallyCompatible);
 				BiMap<Integer,Integer> nodeMatch = HashBiMap.create();

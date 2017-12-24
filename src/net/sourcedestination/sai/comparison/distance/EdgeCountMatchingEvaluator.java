@@ -8,7 +8,7 @@ import net.sourcedestination.sai.comparison.matching.MatchingEvaluator;
  */
 public class EdgeCountMatchingEvaluator implements MatchingEvaluator {
     public Double evaluateMatching(GraphMatching m) {
-        return (double)m.getAllEdgeMatches().size() /
+        return (double)m.getAllEdgeMatches().count() /
                 (double)m.getGraph1().getEdgeIDs().count();
     }
 }
