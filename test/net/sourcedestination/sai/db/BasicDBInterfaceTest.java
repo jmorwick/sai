@@ -53,7 +53,6 @@ public class BasicDBInterfaceTest {
 
 	@Test
 	public void testSavingToAndLoadingFromFileOneGraph() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph::new;
 		BasicDBInterface db = new BasicDBInterface();
 		File f = new File("/tmp/sai-db-test-"+Math.random());
 		tempFiles.add(f);
@@ -63,19 +62,18 @@ public class BasicDBInterfaceTest {
 		int gid = db.addGraph(getSmallGraph1());
 		assertEquals(1, db.getDatabaseSize());
 		assertGraphsAreIdentical(getSmallGraph1(), 
-				db.retrieveGraph(gid, gf));
+				db.retrieveGraph(gid));
 		
 		db.disconnect();
 		
 		db = new BasicDBInterface(f);
 		assertEquals(1, db.getDatabaseSize());
 		assertGraphsAreIdentical(getSmallGraph1(), 
-				db.retrieveGraph(gid, gf));
+				db.retrieveGraph(gid));
 	}
 
 	@Test
 	public void testSavingAndLoadingMultipleGraphs() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph::new;
 		BasicDBInterface db = new BasicDBInterface();
 		File f = new File("/tmp/sai-db-test-"+Math.random());
 		tempFiles.add(f);
@@ -88,11 +86,11 @@ public class BasicDBInterfaceTest {
 
 		assertEquals(3, db.getDatabaseSize());
 		assertGraphsAreIdentical(getSmallGraph1(), 
-				db.retrieveGraph(gid1, gf));
+				db.retrieveGraph(gid1));
 		assertGraphsAreIdentical(getSmallGraph2(), 
-				db.retrieveGraph(gid2, gf));
+				db.retrieveGraph(gid2));
 		assertGraphsAreIdentical(getSmallGraph3(), 
-				db.retrieveGraph(gid3, gf));
+				db.retrieveGraph(gid3));
 		
 		db.disconnect();
 		
@@ -102,15 +100,15 @@ public class BasicDBInterfaceTest {
 		db = new BasicDBInterface(f);
 		assertEquals(3, db.getDatabaseSize());
 		assertGraphsAreIdentical(getSmallGraph1(), 
-				db.retrieveGraph(gid1, gf));
+				db.retrieveGraph(gid1));
 		assertGraphsAreIdentical(getSmallGraph2(), 
-				db.retrieveGraph(gid2, gf));
+				db.retrieveGraph(gid2));
 		assertGraphsAreIdentical(getSmallGraph3(), 
-				db.retrieveGraph(gid3, gf));
+				db.retrieveGraph(gid3));
 	}
 	
 	private static Set<Integer> getIndexedGraphIDs(DBInterface db, int iid) {
-		return db.retrieveGraph(iid, MutableGraph::new).getFeatures()
+		return db.retrieveGraph(iid).getFeatures()
 				// only keep index features
 				.filter(f -> f.getName().equals(INDEXES_FEATURE_NAME))
 				// get the id's of the indexed graphs
@@ -120,7 +118,6 @@ public class BasicDBInterfaceTest {
 
 	@Test
 	public void testAddingIndexToGraph() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph::new;
 		BasicDBInterface db = new BasicDBInterface();
 		File f = new File("/tmp/sai-db-test-"+Math.random());
 		tempFiles.add(f);
@@ -139,13 +136,13 @@ public class BasicDBInterfaceTest {
 				db.retrieveGraphsWithFeatureName(
 						INDEXES_FEATURE_NAME)).size());
 		assertGraphsAreIdentical(getSmallGraph1(), 
-				db.retrieveGraph(gid1, gf));
+				db.retrieveGraph(gid1));
 		assertGraphsAreIdentical(getSmallGraph2(), 
-				db.retrieveGraph(gid2, gf));
+				db.retrieveGraph(gid2));
 		MutableGraph rg = new MutableGraph(getSmallGraph1());
 		rg.addFeature(INDEX);
 		assertGraphsAreIdentical(rg, 
-				db.retrieveGraph(gid3, gf));
+				db.retrieveGraph(gid3));
 		assertEquals(gid3, (int)db.retrieveGraphsWithFeatureName(
 				INDEXES_FEATURE_NAME).iterator().next());
 		assertEquals(Sets.newHashSet(), getIndexedGraphIDs(db, gid1));
@@ -176,13 +173,13 @@ public class BasicDBInterfaceTest {
 				db.retrieveGraphsWithFeatureName(
 						INDEXES_FEATURE_NAME)).size());
 		assertGraphsAreIdentical(getSmallGraph1(), 
-				db.retrieveGraph(gid1, gf));
+				db.retrieveGraph(gid1));
 		assertGraphsAreIdentical(getSmallGraph2(), 
-				db.retrieveGraph(gid2, gf));
+				db.retrieveGraph(gid2));
 		rg = new MutableGraph(getSmallGraph1());
 		rg.addFeature(INDEX);
 		assertGraphsAreIdentical(rg, 
-				db.retrieveGraph(gid3, gf));
+				db.retrieveGraph(gid3));
 		assertEquals(gid3, (int)db.retrieveGraphsWithFeatureName(
 				INDEXES_FEATURE_NAME).iterator().next());
 		assertEquals(Sets.newHashSet(), getIndexedGraphIDs(db, gid1));
@@ -205,7 +202,6 @@ public class BasicDBInterfaceTest {
 
 	@Test
 	public void testAddingIndexToMultipleGraphs() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph::new;
 		BasicDBInterface db = new BasicDBInterface();
 		File f = new File("/tmp/sai-db-test-"+Math.random());
 		tempFiles.add(f);
@@ -228,17 +224,17 @@ public class BasicDBInterfaceTest {
 		assertEquals(2, db.retrieveGraphsWithFeatureName(
 						INDEXES_FEATURE_NAME).count());
 		assertGraphsAreIdentical(getSmallGraph1(), 
-				db.retrieveGraph(gid1, gf));
+				db.retrieveGraph(gid1));
 		assertGraphsAreIdentical(getSmallGraph2(), 
-				db.retrieveGraph(gid2, gf));
+				db.retrieveGraph(gid2));
 		MutableGraph rg = new MutableGraph(getOneEdgeIndex("a", "b", "a"));
 		rg.addFeature(INDEX);
 		assertGraphsAreIdentical(rg, 
-				db.retrieveGraph(gid3, gf));
+				db.retrieveGraph(gid3));
 		rg = new MutableGraph(getOneEdgeIndex("b", "c", "a"));
 		rg.addFeature(INDEX);
 		assertGraphsAreIdentical(rg, 
-				db.retrieveGraph(gid4, gf));
+				db.retrieveGraph(gid4));
 		assertEquals(Sets.newHashSet(), 
 				db.retrieveGraph(gid1).getFeatures()
 				.filter(feature -> feature.getName().equals(INDEXES_FEATURE_NAME))
@@ -280,17 +276,17 @@ public class BasicDBInterfaceTest {
 						INDEXES_FEATURE_NAME)
 						.distinct().count());
 		assertGraphsAreIdentical(getSmallGraph1(), 
-				db.retrieveGraph(gid1, gf));
+				db.retrieveGraph(gid1));
 		assertGraphsAreIdentical(getSmallGraph2(), 
-				db.retrieveGraph(gid2, gf));
+				db.retrieveGraph(gid2));
 		rg = new MutableGraph(getOneEdgeIndex("a", "b", "a"));
 		rg.addFeature(INDEX);
 		assertGraphsAreIdentical(rg, 
-				db.retrieveGraph(gid3, gf));
+				db.retrieveGraph(gid3));
 		rg = new MutableGraph(getOneEdgeIndex("b", "c", "a"));
 		rg.addFeature(INDEX);
 		assertGraphsAreIdentical(rg, 
-				db.retrieveGraph(gid4, gf));
+				db.retrieveGraph(gid4));
 		assertEquals(Sets.newHashSet(), getIndexedGraphIDs(db, gid1));
 		assertEquals(Sets.newHashSet(), getIndexedGraphIDs(db, gid2));
 		assertEquals(Sets.newHashSet(gid1), getIndexedGraphIDs(db, gid3));

@@ -26,11 +26,10 @@ public interface GraphFilterStatistic extends DBStatistic {
             private final AtomicInteger count = new AtomicInteger();
 
             public Double get() {
-                GraphFactory gf = ImmutableGraph::new;
                 int dbsize = db.getDatabaseSize();
                 Set<Feature> features = new HashSet<>();
                 long total = db.getGraphIDStream()
-                        .map(id -> db.retrieveGraph(id, gf))
+                        .map(id -> db.retrieveGraph(id))
                         .peek(x -> count.incrementAndGet()) // increment progress counter
                         .filter(filter)
                         .count();

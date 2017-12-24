@@ -27,9 +27,9 @@ public class DBListener extends DBWrapper {
 	}
 
 	@Override
-	public <G extends Graph> G retrieveGraph(int graphID, GraphFactory<G> f) {
+	public Graph retrieveGraph(int graphID) {
 		QueryRecord qr = new QueryRecord(graphID, getWrappedDB());
-		G result = getWrappedDB().retrieveGraph(graphID, f);
+		Graph result = getWrappedDB().retrieveGraph(graphID);
 		if(result != null) 
 			qr.recordRetrievedGraphID(graphID);
 		log.recordQueryRecord(qr);
@@ -63,7 +63,7 @@ public class DBListener extends DBWrapper {
 	@Override
 	public void deleteGraph(int graphID) {
 		log.recordDeletion(getWrappedDB(), graphID, 
-				getWrappedDB().retrieveGraph(graphID, MutableGraph::new));
+				getWrappedDB().retrieveGraph(graphID));
 		getWrappedDB().deleteGraph(graphID);
 	}
 }

@@ -25,12 +25,11 @@ public interface IndependentDBStatistic extends DBStatistic {
             private final AtomicInteger count = new AtomicInteger();
 
             public Double get() {
-                GraphFactory gf = ImmutableGraph::new;
                 int dbsize = db.getDatabaseSize();
                 Set<Feature> features = new HashSet<>();
                 db.getGraphIDStream()
                         .forEach(id -> {
-                            Graph g = db.retrieveGraph(id, gf);
+                            Graph g = db.retrieveGraph(id);
                             processGraph(g);
                             count.incrementAndGet();
                         });

@@ -2,17 +2,9 @@ package net.sourcedestination.sai.db;
 
 import java.util.*;
 import java.util.stream.Stream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.AccessDeniedException; 
 
 import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;
-import net.sourcedestination.sai.graph.GraphFactory;
 import net.sourcedestination.sai.graph.MutableGraph;
 
 import com.google.common.collect.BiMap;
@@ -20,19 +12,13 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 import static net.sourcedestination.sai.graph.Graph.getFeature;
 import static net.sourcedestination.sai.graph.Graph.getIndexesFeature;
 import static net.sourcedestination.sai.graph.Graph.SAI_ID_NAME;
 import static net.sourcedestination.sai.graph.Graph.getIDFeature;
 
-// TODO: go over and look for more potential 1.8 updates
-
 public class BasicDBInterface implements DBInterface {
-	
-	private File dbfile;
-
 	private Map<Integer, Graph> db;
 	private Multimap<String, Feature> featuresWithName;
 	private BiMap<Integer,Feature> featureIDs;
@@ -49,166 +35,9 @@ public class BasicDBInterface implements DBInterface {
 		graphsWithFeature = HashMultimap.create();
 	}
 
-	public BasicDBInterface(File dbfile) throws AccessDeniedException {
-		this();
-		this.dbfile = dbfile;
-
-		if(dbfile == null || !dbfile.exists() || !dbfile.canRead())
-			throw new AccessDeniedException(dbfile.getAbsolutePath());
-
-		try {
-			nextFeatureID = 0;
-			nextGraphID = 0;
-			BufferedReader in = new BufferedReader(new FileReader(dbfile));
-			int numFeatureNames = Integer.parseInt(in.readLine());
-
-			//read in features
-			for(int i=0; i<numFeatureNames; i++) {
-				Scanner lin = new Scanner(in.readLine());
-				lin.useDelimiter(",");
-				final String name = lin.next();
-				while(lin.hasNext()) {
-					final int fid = lin.nextInt();
-					final String value = lin.next();
-					if(nextFeatureID <= fid) nextFeatureID = fid+1;
-					Feature f = new Feature(name, value);
-					featuresWithName.put(name, f);
-					featureIDs.put(fid, f);
-				}
-				lin.close();
-			}
-			//read in graphs
-
-			int numGraphs = Integer.parseInt(in.readLine());
-			for(int i=0; i<numGraphs; i++) {
-				//get general graph into
-				String line = in.readLine();
-				Scanner lin = new Scanner(line);
-				lin.useDelimiter(",");
-				int gid = lin.nextInt();
-				int numNodes = lin.nextInt();
-				int numEdges = lin.nextInt();
-				MutableGraph g = new MutableGraph();
-				while(lin.hasNext()) {
-					Feature f = featureIDs.get(lin.nextInt());
-					g.addFeature(f);
-				}
-				lin.close();
-
-				//get graph nodes
-				for(int j=0; j<numNodes; j++) {
-					line = in.readLine();
-					lin = new Scanner(line);
-					lin.useDelimiter(",");
-					final int nid = lin.nextInt();
-					g.addNode(nid);
-					while(lin.hasNext()) {
-						Feature f = featureIDs.get(lin.nextInt());
-						g.addNodeFeature(nid, f);
-						graphsWithFeatureName.put(f.getName(), gid);
-						graphsWithFeature.put(f, gid);
-					}
-					lin.close();
-				}
-
-				//get graph edges
-				for(int j=0; j<numEdges; j++) {
-					lin = new Scanner(in.readLine());
-					lin.useDelimiter(",");
-					final int eid = lin.nextInt();
-					final int nid1 = lin.nextInt();
-					final int nid2 = lin.nextInt();
-					g.addEdge(eid, nid1, nid2);
-					while(lin.hasNext()) {
-						Feature f = featureIDs.get(lin.nextInt());
-						g.addEdgeFeature(eid, f);
-					}
-					lin.close();
-				}
-				replaceGraph(gid, g);
-			}
-			in.close();
-		} catch (NumberFormatException | InputMismatchException e) {
-			e.printStackTrace();
-			throw new AccessDeniedException(dbfile.getAbsolutePath(), 
-					null, "formatting error when reading file");
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new AccessDeniedException(dbfile.getAbsolutePath(), 
-					null, "I/O error when reading file");
-		} catch (NoSuchElementException e) {
-			e.printStackTrace();
-			throw new AccessDeniedException(dbfile.getAbsolutePath(), 
-					null, "formatting error when reading file");
-		}
-	}
-
-	public void setDBFile(File dbfile) throws AccessDeniedException {
-		this.dbfile = dbfile;
-		//check for write access
-		if((!dbfile.canWrite() && dbfile.exists()) ||
-				(!dbfile.getParentFile().canWrite() && !dbfile.exists())) {
-			throw new AccessDeniedException(dbfile.getAbsolutePath());
-		}
-	}
-
-	public File getDBFile() { return dbfile; }
-
-	/** saves database details completely to the db file 
-	 * provided to the constructor.
-	 */
 	@Override
 	public void disconnect() {
-		try {
-		PrintWriter out = new PrintWriter(dbfile);
-
-		// destroy duplicated information
-		graphsWithFeatureName = null;
-		graphsWithFeature = null;
-
-
-		//write features to file
-		out.println(featuresWithName.keySet().size()); // start with number of features
-		for(String name : featuresWithName.keySet()) {
-			out.print(name);
-			for(Feature f : featuresWithName.get(name)) {
-				out.print("," + lookupID(f));
-				out.print("," + f.getValue());
-			}
-			out.print("\n");
-		}
-		featuresWithName = null; 
-
-		//write graphs to file
-		out.print(db.keySet().size() + "\n");
-		for(int gid : db.keySet()) {
-			Graph g = retrieveGraph(gid, MutableGraph::new);
-			//print out general graph info on one line
-			out.print(gid+",");
-			out.print(g.getNodeIDs().count()+",");
-			out.print(g.getEdgeIDs().count());
-			g.getFeatures().forEach(f -> out.print("," + lookupID(f)));
-			out.print("\n");
-			//print a line for each node
-			g.getNodeIDs().forEach(n -> {
-				out.print(n);
-				g.getNodeFeatures(n).forEach(f -> out.print("," + lookupID(f)));
-				out.print("\n");
-			});
-			//print a line for each edge
-			g.getEdgeIDs().forEach(e -> {
-				out.print(e+","+g.getEdgeSourceNodeID(e)+","+g.getEdgeTargetNodeID(e));
-				g.getEdgeFeatures(e).forEach(f -> out.print("," + lookupID(f)));
-				out.print("\n");
-			});
-		}
-		db = null;
-		featureIDs = null;
-
-		out.close();
-		} catch (FileNotFoundException e) {
-			// TODO: use exception here?
-		}
+		// does nothing
 	}
 
 	private int lookupID(Feature f) {
@@ -227,16 +56,8 @@ public class BasicDBInterface implements DBInterface {
 	}
 
 	@Override
-	public <G extends Graph> G retrieveGraph(int graphID, GraphFactory<G> f) {
-		G g =  f.copy(db.get(graphID));
-		db.put(graphID, g);
-		return g;
-	}
-
-
-	@SuppressWarnings("unchecked")
-	public <G extends Graph> G retrieveGraph(int graphID) {
-		return (G) db.get(graphID);
+	public Graph retrieveGraph(int graphID) {
+		return db.get(graphID);
 	}
 
 	@Override

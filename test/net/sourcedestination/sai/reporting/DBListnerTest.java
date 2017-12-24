@@ -236,7 +236,7 @@ public class DBListnerTest {
 		assertEquals(0, log.getNumDeletionRecords());
 		assertEquals(0, log.getNumAdditionRecords());
 		
-		Graph g1 = db.retrieveGraph(1, MutableGraph::new);
+		Graph g1 = db.retrieveGraph(1);
 		assertEquals(1, log.getNumQueryRecords());
 		assertEquals(0, log.getNumDeletionRecords());
 		assertEquals(0, log.getNumAdditionRecords());
@@ -245,7 +245,7 @@ public class DBListnerTest {
 		assertTrue(q1.getDB() == orig);
 		assertEquals(Sets.newHashSet(1), q1.getRetrievedGraphIDs().collect(Collectors.toSet()));
 		
-		Graph g2 = db.retrieveGraph(2, MutableGraph::new);
+		Graph g2 = db.retrieveGraph(2);
 		assertEquals(2, log.getNumQueryRecords());
 		assertEquals(0, log.getNumDeletionRecords());
 		assertEquals(0, log.getNumAdditionRecords());
@@ -254,7 +254,7 @@ public class DBListnerTest {
 		assertTrue(q2.getDB() == orig);
 		assertEquals(Sets.newHashSet(2), q2.getRetrievedGraphIDs().collect(Collectors.toSet()));
 		
-		Graph g3 = db.retrieveGraph(3, MutableGraph::new);
+		Graph g3 = db.retrieveGraph(3);
 		assertEquals(3, log.getNumQueryRecords());
 		assertEquals(0, log.getNumDeletionRecords());
 		assertEquals(0, log.getNumAdditionRecords());
@@ -263,7 +263,7 @@ public class DBListnerTest {
 		assertTrue(q3.getDB() == orig);
 		assertEquals(Sets.newHashSet(3), q3.getRetrievedGraphIDs().collect(Collectors.toSet()));
 		
-		Graph g4 = db.retrieveGraph(4, MutableGraph::new);
+		Graph g4 = db.retrieveGraph(4);
 		assertEquals(4, log.getNumQueryRecords());
 		assertEquals(0, log.getNumDeletionRecords());
 		assertEquals(0, log.getNumAdditionRecords());

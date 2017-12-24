@@ -62,20 +62,35 @@ public interface GraphRetriever<DB extends DBInterface> {
 		logger.info("creating phase-1 retriever using index generator");
 		return (db, q) -> ibRetriever.retrieve(db, indexGenerator.apply(q).stream());
 	}
-	
+
+	public static <DB extends DBInterface> Stream<Graph> twoPhasedRetrieval(
+			final GraphRetriever<DB> phase1,
+			DB db,
+			final Comparator<Graph> ordering,
+			Graph query,
+			final int window1,
+			final int window2) {
+		return phase1.retrieve(db, query) // TODO: should phase 1 be aware of window1?
+				.limit(window1)
+				.map(graphID -> db.retrieveGraph(graphID))
+				.sorted(ordering) // TODO: sorting should definitely be aware of window2
+				.limit(window2);
+
+	}
+
 	public static <G extends Graph, DB extends DBInterface> Stream<G> twoPhasedRetrieval(
 			final GraphRetriever<DB> phase1,
-			DB db, 
-    		GraphFactory<G> graphFactory,
-    		final Comparator<G> ordering,
-    		G query,
-    		final int window1,
-    		final int window2) {
-				return phase1.retrieve(db, query) // TODO: should phase 1 be aware of window1?
-				  .limit(window1)
-				  .map(graphID -> db.retrieveGraph(graphID, graphFactory))
-				  .sorted(ordering) // TODO: sorting should definitely be aware of window2
-				  .limit(window2);
-			
+			DB db,
+			GraphFactory<G> graphFactory,
+			final Comparator<G> ordering,
+			G query,
+			final int window1,
+			final int window2) {
+		return phase1.retrieve(db, query) // TODO: should phase 1 be aware of window1?
+				.limit(window1)
+				.map(graphID -> graphFactory.copy(db.retrieveGraph(graphID)))
+				.sorted(ordering) // TODO: sorting should definitely be aware of window2
+				.limit(window2);
+
 	}
 }

@@ -34,8 +34,8 @@ public class DBWrapper implements DBInterface {
 	}
 
 	@Override
-	public <G extends Graph> G retrieveGraph(int graphID, GraphFactory<G> f) {
-		return db.retrieveGraph(graphID, f);
+	public Graph retrieveGraph(int graphID) {
+		return db.retrieveGraph(graphID);
 	}
 
 	@Override

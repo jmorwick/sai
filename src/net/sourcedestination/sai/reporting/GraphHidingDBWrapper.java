@@ -23,11 +23,11 @@ public class GraphHidingDBWrapper extends DBWrapper {
     }
 
     @Override
-    public <G extends Graph> G retrieveGraph(int graphID, GraphFactory<G> f) {
+    public Graph retrieveGraph(int graphID) {
         if(hiddenGraphs.contains(graphID))
             return null;
 
-        return getWrappedDB().retrieveGraph(graphID, f);
+        return getWrappedDB().retrieveGraph(graphID);
     }
 
     @Override
