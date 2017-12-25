@@ -52,11 +52,11 @@ import com.google.common.collect.Multimap;
 
 @FunctionalInterface
 public interface MatchingGenerator<G extends Graph> extends
-		Function2<G, G, Stream<GraphMatching>> {
+		Function2<G, G, Stream<GraphMatching<G>>> {
 
 	/** gerenates a matching object including only node matches given a BiMap of the node matching */
 	public static <G extends Graph> GraphMatching<G> createBasicNodeMatching(
-	        final G g1, final G g2,
+	        final Graph g1, final Graph g2,
 			BiMap<Integer,Integer> nodeMatch) {
 		final BiMap<Integer,Integer> copyNodeMatch = 
 				ImmutableBiMap.copyOf(nodeMatch);
