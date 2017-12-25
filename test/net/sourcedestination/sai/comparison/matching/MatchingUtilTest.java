@@ -221,4 +221,17 @@ public class MatchingUtilTest {
 		assertEquals((Integer)4, m.getMatchedEdgeInGraph2(4));
 	}
 
+
+
+	@Test
+	public void testGetMapQuality() throws AccessDeniedException {
+
+	}
+
+
+	@Test
+	public void testGetClosestGraphs() throws AccessDeniedException {
+
+	}
+
 }

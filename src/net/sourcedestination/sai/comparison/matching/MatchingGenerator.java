@@ -330,10 +330,4 @@ public interface MatchingGenerator<G extends Graph> extends
 				return toStream(i);
 	}
 
-    public static <G extends Graph> GraphMatching<G> getBestMatching(
-            Stream<GraphMatching<G>> s,
-            MatchingEvaluator<G> eval) {
-        return argmax(eval, s);
-    }
-
 }
