@@ -255,10 +255,10 @@ public interface MatchingGenerator<G extends Graph> extends
 	        G g1, G g2,
             final NodeCompatabilityChecker<G> ncc,
             final EdgeCompatibilityChecker<G> ecc) {
-				final Multimap<Integer,Integer> possibilities = 
+				final Multimap<Integer,Integer> possibilities =
 						getNodeMatchingPossibilities(ncc, g1, g2);
 
-				//put node ID's in an array to insure they remain in the same order
+				//put node ID's in an array
 				List<Integer> nodeIDsTemp = Lists.newArrayList();
 				g1.getNodeIDs().forEach(n1-> {
 					if(possibilities.containsKey(n1))
@@ -266,10 +266,12 @@ public interface MatchingGenerator<G extends Graph> extends
 				});
 				final Integer[] nodeIDs = nodeIDsTemp.toArray(new Integer[nodeIDsTemp.size()]);
 
+
 				//create an iterator for the possible complete mappings
 				Iterator<GraphMatching<G>> i = new Iterator<GraphMatching<G>>() {
 					private int[] currentMap = new int[nodeIDs.length];
 					private GraphMatching<G> nextMatching = nextMatching();
+
 
 					@Override
 					public boolean hasNext() {
@@ -286,6 +288,7 @@ public interface MatchingGenerator<G extends Graph> extends
 					}
 
 					public GraphMatching<G> nextMatching() {
+
 						BiMap<Integer,Integer> nodeMap = null;
 						while(nodeMap == null && currentMap != null) {
 							nodeMap = HashBiMap.create();
@@ -303,7 +306,7 @@ public interface MatchingGenerator<G extends Graph> extends
 								if(nodeMap.containsValue(mapToNode)) {
 									//don't map two g1 nodes to the same g2 node
 									//nodeMap = null;
-									//break;
+									//break
 									continue;
 								}
 								nodeMap.put(nodeIDs[i], mapToNode);

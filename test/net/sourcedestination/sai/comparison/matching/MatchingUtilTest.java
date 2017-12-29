@@ -13,11 +13,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.collect.Multimap;
 import net.sourcedestination.funcles.predicate.Predicate2;
 import net.sourcedestination.funcles.tuple.Pair;
 import net.sourcedestination.sai.comparison.compatibility.EdgeCompatibilityChecker;
 import net.sourcedestination.sai.comparison.compatibility.FeatureCompatibilityChecker;
 import net.sourcedestination.sai.comparison.compatibility.FeatureSetCompatibilityCheckers;
+import net.sourcedestination.sai.comparison.compatibility.NodeCompatabilityChecker;
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
 import net.sourcedestination.sai.graph.Feature;
@@ -36,11 +38,42 @@ public class MatchingUtilTest {
             FeatureSetCompatibilityCheckers.checkFeaturesGreedy1To1(
                     FeatureCompatibilityChecker::areLexicallyCompatible, fs1, fs2);
 
-	@Test
-	public void testBasicNodeMatching() throws AccessDeniedException {
-		DBInterface db = SampleDBs.getEmptyDB();
-		Graph g1 = SampleGraphs.getSmallGraph1();
-		Graph g2 = SampleGraphs.getSmallGraph3();
+
+
+    @Test
+    public void testMatchingPossibilities() throws AccessDeniedException {
+        Graph graph1 = SampleGraphs.getSmallGraph1();
+        Graph graph2 = SampleGraphs.getSmallGraph2();
+        Graph graph5 = SampleGraphs.getSmallGraph5();
+        Graph graph6 = SampleGraphs.getSmallGraph6();
+        NodeCompatabilityChecker<Graph> ncc = NodeCompatabilityChecker
+                .useGenericFeatureChecker(FeatureSetCompatibilityCheckers::checkFeaturesGreedyManyTo1);
+       Multimap<Integer,Integer> possibilities = null;
+
+        possibilities = MatchingGenerator.getNodeMatchingPossibilities(ncc, graph1, graph1);
+        assertEquals(Sets.newHashSet(1), possibilities.get(1));
+        assertEquals(Sets.newHashSet(2), possibilities.get(2));
+        assertEquals(Sets.newHashSet(3), possibilities.get(3));
+        assertEquals(Sets.newHashSet(4), possibilities.get(4));
+
+        possibilities = MatchingGenerator.getNodeMatchingPossibilities(ncc, graph5, graph5);
+        assertTrue(ncc.apply(graph5, graph5, 1, 1));
+        assertTrue(ncc.apply(graph5, graph5, 2, 2));
+        assertTrue(ncc.apply(graph5, graph5, 2, 3));
+        assertTrue(ncc.apply(graph5, graph5, 3, 2));
+        assertTrue(ncc.apply(graph5, graph5, 3, 3));
+        assertTrue(ncc.apply(graph5, graph5, 4, 4));
+        assertEquals(Sets.newHashSet(1), possibilities.get(1));
+        assertEquals(Sets.newHashSet(2, 3), possibilities.get(2));
+        assertEquals(Sets.newHashSet(2, 3), possibilities.get(3));
+        assertEquals(Sets.newHashSet(4), possibilities.get(4));
+    }
+
+    @Test
+    public void testBasicNodeMatching() throws AccessDeniedException {
+        DBInterface db = SampleDBs.getEmptyDB();
+        Graph g1 = SampleGraphs.getSmallGraph1();
+        Graph g2 = SampleGraphs.getSmallGraph3();
 		BiMap<Integer,Integer> nodeMatch = HashBiMap.create();
 
 		GraphMatching m = createBasicNodeMatching(g1, g2, nodeMatch);
@@ -85,8 +118,6 @@ public class MatchingUtilTest {
 		assertEquals((Integer)1, m.getMatchedNodeInGraph2(2));
 		assertEquals(null, m.getMatchedEdgeInGraph1(1));
 		assertEquals(null, m.getMatchedEdgeInGraph2(1));
-		
-		
 	}
 
 	@Test
@@ -221,11 +252,51 @@ public class MatchingUtilTest {
 		assertEquals((Integer)4, m.getMatchedEdgeInGraph2(4));
 	}
 
-
-
 	@Test
 	public void testGetMapQuality() throws AccessDeniedException {
+        Graph graph1 = SampleGraphs.getSmallGraph1();
+        Graph graph2 = SampleGraphs.getSmallGraph2();
+        Graph graph5 = SampleGraphs.getSmallGraph5();
+        Graph graph6 = SampleGraphs.getSmallGraph6();
+        Graph graph7 = SampleGraphs.getSmallGraph7();
+        Graph graph8 = SampleGraphs.getSmallGraph8();
 
+		NodeCompatabilityChecker<Graph> ncc = NodeCompatabilityChecker
+				.useGenericFeatureChecker(FeatureSetCompatibilityCheckers::checkFeaturesGreedyManyTo1);
+
+		EdgeCompatibilityChecker<Graph> ecc = EdgeCompatibilityChecker
+				.useGenericFeatureChecker(FeatureSetCompatibilityCheckers::checkFeaturesGreedyManyTo1);
+
+		MatchingGenerator<Graph> gen = (g1, g2) -> MatchingGenerator.generateAllMatchings(g1, g2, ncc, ecc);
+
+		MatchingEvaluator<Graph> eval = new EdgeCountMatchingEvaluator();
+
+		double matchQuality = MatchingEvaluator.getMapQuality(gen.apply(graph1, graph1), eval);
+		assertTrue("matchQuality unexpected: " + matchQuality,
+                matchQuality > 0.999999 & matchQuality < 1.00000001);
+
+		matchQuality = MatchingEvaluator.getMapQuality(gen.apply(graph2, graph2), eval);
+		assertTrue("matchQuality unexpected: " + matchQuality,
+                matchQuality > 0.999999 & matchQuality < 1.00000001);
+
+		matchQuality = MatchingEvaluator.getMapQuality(gen.apply(graph1, graph2), eval);
+		assertTrue("matchQuality unexpected: " + matchQuality,
+                matchQuality > 0.74999999 & matchQuality < 0.7500000001);
+
+
+        matchQuality = MatchingEvaluator.getMapQuality(gen.apply(graph5, graph5), eval);
+        assertTrue("matchQuality unexpected: " + matchQuality,
+                matchQuality > 0.999999 & matchQuality < 1.00000001);
+
+        Set<GraphMatching<Graph>> mp = gen.apply(graph5, graph6).collect(Collectors.toSet());
+        matchQuality = MatchingEvaluator.getMapQuality(gen.apply(graph5, graph6), eval);
+        assertTrue("matchQuality unexpected: " + matchQuality,
+                matchQuality > 0.999999 & matchQuality < 1.00000001);
+
+        mp = gen.apply(graph7, graph8).collect(Collectors.toSet());
+        matchQuality = MatchingEvaluator.getMapQuality(gen.apply(graph5, graph6), eval);
+        assertTrue("matchQuality unexpected: " + matchQuality,
+                matchQuality > 0.999999 & matchQuality < 1.00000001);
 	}
 
 

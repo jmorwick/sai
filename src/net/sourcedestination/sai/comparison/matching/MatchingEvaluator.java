@@ -15,14 +15,16 @@ import static net.sourcedestination.funcles.tuple.Tuple.makeTuple;
 @FunctionalInterface
 public interface MatchingEvaluator<G extends Graph> extends Function<GraphMatching<G>, Double> {
 
-// TODO: add logging for reports
+    // TODO: add logging for reports
     public static <G extends Graph> double getMapQuality(
             Stream<GraphMatching<G>> s,
             MatchingEvaluator<G> eval) {
         GraphMatching<G> best = argmax(eval, s);
+        // TODO: log map
         return eval.apply(best);
     }
 
+    // TODO: add logging for reports
     // TODO: test
     public static <G extends Graph> Stream<G> getClosestGraphs(G query,
                                                       Stream<G> graphs,
@@ -32,6 +34,7 @@ public interface MatchingEvaluator<G extends Graph> extends Function<GraphMatchi
         return graphs
                 .map(g -> makeTuple(g, getMapQuality(gen.apply(query, g), eval))) // pair with quality
                 .sorted(Comparator.comparing(Tuple2::_2)) // sort by quality
+                // TODO: log result w/ quality
                 .map(Tuple2::_1)  // remove quality
                 .limit(limit);  // take only the top 'limit' graphs
     }

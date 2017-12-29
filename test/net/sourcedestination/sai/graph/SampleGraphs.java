@@ -218,4 +218,108 @@ public class SampleGraphs {
       return g;
     }
 
+
+	public static Graph getSmallGraph5() {
+		MutableGraph g = new MutableGraph();
+		g.addNode(1);
+		g.addNodeFeature(1, new Feature("test", "a"));
+		g.addNode(2);
+		g.addNodeFeature(2, new Feature("test", "b"));
+		g.addNode(3);
+		g.addNodeFeature(3, new Feature("test", "b"));
+		g.addNode(4);
+		g.addNodeFeature(4, new Feature("test", "c"));
+
+		g.addEdge(1, 1, 2);
+		g.addEdgeFeature(1, new Feature("test", "a"));
+		g.addEdge(2, 2, 3);
+		g.addEdgeFeature(2, new Feature("test", "a"));
+		g.addEdge(3, 3, 2);
+		g.addEdgeFeature(3, new Feature("test", "a"));
+		g.addEdge(4, 4, 3);
+		g.addEdgeFeature(4, new Feature("test", "a"));
+		return g;
+	}
+
+
+	public static Graph getSmallGraph6() {
+		MutableGraph g = new MutableGraph();
+		g.addNode(1);
+		g.addNodeFeature(1, new Feature("test", "c"));
+		g.addNode(2);
+		g.addNodeFeature(2, new Feature("test", "b"));
+		g.addNode(3);
+		g.addNodeFeature(3, new Feature("test", "b"));
+		g.addNode(4);
+		g.addNodeFeature(4, new Feature("test", "a"));
+
+		g.addEdge(1, 1, 2);
+		g.addEdgeFeature(1, new Feature("test", "a"));
+		g.addEdge(2, 2, 3);
+		g.addEdgeFeature(2, new Feature("test", "a"));
+		g.addEdge(3, 3, 2);
+		g.addEdgeFeature(3, new Feature("test", "a"));
+		g.addEdge(4, 4, 3);
+		g.addEdgeFeature(4, new Feature("test", "a"));
+		return g;
+	}
+
+
+
+
+	public static Graph getSmallGraph7() {
+		MutableGraph g = new MutableGraph();
+		g.addNode(1);
+		g.addNodeFeature(1, new Feature("test", "a"));
+		g.addNode(2);
+		g.addNodeFeature(2, new Feature("test", "a"));
+		g.addNode(3);
+		g.addNodeFeature(3, new Feature("test", "a"));
+		g.addNode(4);
+		g.addNodeFeature(4, new Feature("test", "a"));
+
+		g.addEdge(1, 1, 2);
+		g.addEdge(2, 2, 3);
+		g.addEdge(3, 3, 4);
+		g.addEdge(4, 4, 1);
+
+
+		g.addEdge(5, 1, 4);
+		g.addEdge(6, 4, 3);
+		g.addEdge(7, 3, 2);
+		g.addEdge(8, 2, 1);
+
+		g.addEdge(9, 1, 3);
+		g.addEdge(10, 3, 1);
+		return g;
+	}
+
+	public static Graph getSmallGraph8() {
+		MutableGraph g = new MutableGraph();
+		g.addNode(1);
+		g.addNodeFeature(1, new Feature("test", "a"));
+		g.addNode(2);
+		g.addNodeFeature(2, new Feature("test", "a"));
+		g.addNode(3);
+		g.addNodeFeature(3, new Feature("test", "a"));
+		g.addNode(4);
+		g.addNodeFeature(4, new Feature("test", "a"));
+
+		g.addEdge(1, 1, 2);
+		g.addEdge(2, 2, 3);
+		g.addEdge(3, 3, 4);
+		g.addEdge(4, 4, 1);
+
+
+		g.addEdge(5, 1, 4);
+		g.addEdge(6, 4, 3);
+		g.addEdge(7, 3, 2);
+		g.addEdge(8, 2, 1);
+
+		g.addEdge(9, 2, 4);
+		g.addEdge(10, 4, 2);
+		return g;
+	}
+
+
 }
