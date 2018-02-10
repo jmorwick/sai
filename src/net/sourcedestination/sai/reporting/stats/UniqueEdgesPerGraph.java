@@ -7,8 +7,10 @@ import net.sourcedestination.sai.graph.Graph;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**  TODO: add test
- *   TODO: comment / license
+/**
+ * A DB statistic that can be used to calculate the
+ * number of unique edges in a given database of graphs.
+ * Created by amorehead on 2/7/18.
  */
 public class UniqueEdgesPerGraph implements IndependentDBStatistic {
 
@@ -19,6 +21,8 @@ public class UniqueEdgesPerGraph implements IndependentDBStatistic {
         this.edgeTypes = ConcurrentHashMap.newKeySet();
         this.featureNames = null;
     }
+
+    // The following methods are no longer needed due to this class' current implementation.
     public UniqueEdgesPerGraph(Set<String> featureNames) {
         this.edgeTypes = ConcurrentHashMap.newKeySet();
         this.featureNames = featureNames;
@@ -29,16 +33,20 @@ public class UniqueEdgesPerGraph implements IndependentDBStatistic {
                 featureNames.contains(f.getName());   // it's included in the feature names of interest
     }
 
-    public void processGraph(Graph g) {
+    // This returns the result we are looking for.
+    public double getResult() {
+        return edgeTypes.size();
+    }
+
+    // This method represents the main functionality of this class.
+    public double processGraph(Graph g) {
         g.getEdgeIDs()
                 .map(eid -> Triple.makeTriple(
                         g.getNodeFeaturesSet(g.getEdgeSourceNodeID(eid)),
                         g.getNodeFeaturesSet(g.getEdgeTargetNodeID(eid)),
                         g.getEdgeFeaturesSet(eid)))
                 .forEach(edgeTypes::add);
+        return getResult();
     }
 
-    public double getResult() {
-        return edgeTypes.size();
-    }
 }
