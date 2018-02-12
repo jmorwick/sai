@@ -2,10 +2,10 @@ package net.sourcedestination.sai.reporting.stats;
 
 import net.sourcedestination.sai.graph.Graph;
 
-/* A DB statistic that finds the ratio of isolated nodes, those with
- degree zero, to the total number of nodes in the entire graph.
- Created by amorehead on 2/9/18. */
-public class PercentageOfIsolatedPoints implements IndependentDBStatistic {
+/* A DB statistic that finds the ratio of end points, those with
+ degree one, to the total number of nodes in the entire graph.
+ Created by amorehead on 2/12/18. */
+public class PercentageOfEndPoints implements IndependentDBStatistic {
 
     @Override
     public double processGraph(Graph g) {
@@ -14,8 +14,8 @@ public class PercentageOfIsolatedPoints implements IndependentDBStatistic {
         return totalNodes == 0 ? 0.0 :
                 g.getNodeIDs()
                         /* The following finds the quotient of dividing the number
-                        of nodes with degree zero by the total number of nodes. */
-                        .filter(nid -> (double) g.getIncidentEdges(nid).count() == 0)
+                        of nodes with degree one by the total number of nodes. */
+                        .filter(nid -> (double) g.getIncidentEdges(nid).count() == 1)
                         .count() / (double) totalNodes;
     }
 }

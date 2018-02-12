@@ -35,6 +35,7 @@ public class UniqueAttributesPerGraph implements IndependentDBStatistic {
         return discoveredFeatures.size();
     }
 
+    @Override
     // This method represents the main functionality of this class.
     public double processGraph(Graph g) {
         g.getFeatures().filter(this::isFeatureOfInterest)

@@ -34,7 +34,6 @@ public interface IndependentDBStatistic extends DBStatistic {
                 if (dbsize > 0) return (double) total / dbsize;
                 return 0.0;
             }
-
         };
     }
 }
