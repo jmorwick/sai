@@ -7,6 +7,7 @@ import net.sourcedestination.sai.graph.Graph;
  Created by amorehead on 1/31/18. */
 public class AverageDegreePerGraph implements IndependentDBStatistic {
 
+    @Override
     public double processGraph(Graph g) {
 
         // The following represents the processing of a stream of integers.
@@ -16,7 +17,5 @@ public class AverageDegreePerGraph implements IndependentDBStatistic {
                  of integers representing a given graph's incidental edges. If the number of edges or
                  nodes in the graph is none, then the integer "0" is returned. */
                 .mapToInt(nid -> (int) g.getIncidentEdges(nid).count()).average()).orElse(0);
-
     }
-
 }

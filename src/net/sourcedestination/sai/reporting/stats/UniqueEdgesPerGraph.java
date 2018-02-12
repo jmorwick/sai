@@ -38,6 +38,7 @@ public class UniqueEdgesPerGraph implements IndependentDBStatistic {
         return edgeTypes.size();
     }
 
+    @Override
     // This method represents the main functionality of this class.
     public double processGraph(Graph g) {
         g.getEdgeIDs()
@@ -48,5 +49,4 @@ public class UniqueEdgesPerGraph implements IndependentDBStatistic {
                 .forEach(edgeTypes::add);
         return getResult();
     }
-
 }
