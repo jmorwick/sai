@@ -6,8 +6,8 @@ import net.sourcedestination.sai.task.Task;
 import java.util.function.Function;
 
 /**
- *   TODO: comment / license
+ * TODO: comment / license
  */
-public interface DBStatistic extends Function<DBInterface,Task<Double>> {
+public interface DBStatistic extends Function<DBInterface, Task<Double>> {
 
 }

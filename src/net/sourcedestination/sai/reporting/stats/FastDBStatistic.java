@@ -11,11 +11,15 @@ public abstract class FastDBStatistic implements DBStatistic {
     public abstract double computeStat(DBInterface db);
 
     public Task<Double> apply(DBInterface db) {
-        return new Task<Double> () {
-            public Double get() { return computeStat(db); }
+        return new Task<Double>() {
+            public Double get() {
+                return computeStat(db);
+            }
 
             @Override
-            public double getPercentageDone() { return 100.0; }
+            public double getPercentageDone() {
+                return 100.0;
+            }
         };
     }
 }
