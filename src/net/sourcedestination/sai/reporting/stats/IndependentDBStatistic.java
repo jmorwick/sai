@@ -22,17 +22,14 @@ public interface IndependentDBStatistic extends DBStatistic {
     public default Task<Double> apply(DBInterface db) {
         IndependentDBStatistic self = this;
         return new Task<Double>() {
-            private final AtomicInteger count = new AtomicInteger();
+            private final AtomicInteger progressCounter = new AtomicInteger();
 
             public Double get() {
-                int dbsize = db.getDatabaseSize();
-                long total = db.getGraphIDStream()
+                return db.getGraphIDStream()
                         .map(id -> db.retrieveGraph(id))
-                        .peek(g -> count.incrementAndGet()) // This increments the progress counter.
-                        .map(self::processGraph)
-                        .count();
-                if (dbsize > 0) return (double) total / dbsize;
-                return 0.0;
+                        .peek(g -> progressCounter.incrementAndGet()) // This increments the progress counter.
+                        .mapToDouble(self::processGraph)
+                        .average().orElse(0);
             }
         };
     }
