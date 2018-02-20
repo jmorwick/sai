@@ -25,7 +25,7 @@ public class AverageClusteringCoefficientTest {
         AverageClusteringCoefficient stat = new AverageClusteringCoefficient();
 
         // The last parameter for "assertEquals" represents the amount of error allowed for the test results.
-        assertEquals(0, stat.processGraph(db.retrieveGraph(1)), 0);
+        assertEquals(2, stat.processGraph(db.retrieveGraph(1)), 0);
     }
 
 }

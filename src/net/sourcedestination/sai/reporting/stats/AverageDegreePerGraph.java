@@ -2,8 +2,8 @@ package net.sourcedestination.sai.reporting.stats;
 
 import net.sourcedestination.sai.graph.Graph;
 
-/* A DB statistic that can be calculated by
- averaging the edges of a graph in a given database.
+/* A DB statistic that computes the
+ average degree of the nodes in a given graph.
  Created by amorehead on 1/31/18. */
 public class AverageDegreePerGraph implements IndependentDBStatistic {
 

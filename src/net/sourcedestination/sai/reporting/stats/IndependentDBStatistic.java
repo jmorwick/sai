@@ -7,10 +7,10 @@ import net.sourcedestination.sai.task.Task;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A DB statistic template interface that can be
+ * A DB statistic template interface that is
  * implemented by DB statistic subclasses in order
- * to apply a customized "processGraph" method to
- * every graph in a given database.
+ * for a customized "processGraph" method to be
+ * applied to every graph in a given database.
  * Created by amorehead on 2/7/18.
  */
 
