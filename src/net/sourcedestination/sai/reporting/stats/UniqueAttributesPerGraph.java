@@ -6,8 +6,8 @@ import net.sourcedestination.sai.graph.Graph;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-/* A DB statistic that can be used to calculate the
- number of unique attributes in a given database of graphs.
+/* A DB statistic that can be used to compute the
+ number of unique attributes for a given graph.
  Created by amorehead on 1/31/18. */
 public class UniqueAttributesPerGraph implements IndependentDBStatistic {
 

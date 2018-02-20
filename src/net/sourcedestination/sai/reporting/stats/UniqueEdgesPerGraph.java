@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A DB statistic that can be used to calculate the
- * number of unique edges in a given database of graphs.
+ * A DB statistic that can be used to compute the
+ * number of unique edges for a given graph.
  * Created by amorehead on 2/7/18.
  */
 public class UniqueEdgesPerGraph implements IndependentDBStatistic {
