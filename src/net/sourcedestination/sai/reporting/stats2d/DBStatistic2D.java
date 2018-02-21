@@ -7,7 +7,7 @@ import net.sourcedestination.sai.task.Task;
 import java.util.Set;
 import java.util.function.Function;
 
-/** DBStatistic implementations are used as plugins for determining statistics about databases of structures.
+/** DBMetric implementations are used as plugins for determining statistics about databases of structures.
  * These statistics are determined to understand when some retrieval / indexing algorithms may be preferable.
  *
  *   TODO: comment / license

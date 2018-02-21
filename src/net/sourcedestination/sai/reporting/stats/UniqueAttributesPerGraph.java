@@ -6,10 +6,10 @@ import net.sourcedestination.sai.graph.Graph;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-/* A DB statistic that can be used to compute the
+/* A DB metric that can be used to compute the
  number of unique attributes for a given graph.
  Created by amorehead on 1/31/18. */
-public class UniqueAttributesPerGraph implements IndependentDBStatistic {
+public class UniqueAttributesPerGraph implements IndependentDBMetric {
 
     private final Set<String> featureNames;
     private Set<Feature> discoveredFeatures;
@@ -19,7 +19,7 @@ public class UniqueAttributesPerGraph implements IndependentDBStatistic {
         this.featureNames = null;
     }
 
-    // The following are no longer needed for the current implementation of this class.
+    // The following constructor is no longer needed for the current implementation of this metric class.
     public UniqueAttributesPerGraph(Set<String> featureNames) {
         this.discoveredFeatures = ConcurrentHashMap.newKeySet();
         this.featureNames = featureNames;

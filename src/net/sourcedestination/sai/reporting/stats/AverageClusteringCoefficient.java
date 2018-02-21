@@ -5,10 +5,10 @@ import net.sourcedestination.sai.graph.Graph;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-/* A DB statistic that computes the average
+/* A DB metric that computes the average
  local clustering coefficient for a given graph.
  Created by amorehead on 2/20/18. */
-public class AverageClusteringCoefficient implements IndependentDBStatistic {
+public class AverageClusteringCoefficient implements IndependentDBMetric {
 
     @Override
     public double processGraph(Graph g) {
@@ -30,7 +30,6 @@ public class AverageClusteringCoefficient implements IndependentDBStatistic {
                     /* The following checks to see if a given graph contains the
                      two previously-described adjacent edges to the current node. */
                     if (g.hasEdge(u) && g.hasEdge(w)) actualTriangles.getAndIncrement();
-
                 });
 
             });

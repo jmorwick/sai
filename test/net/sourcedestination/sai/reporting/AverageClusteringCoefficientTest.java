@@ -10,7 +10,7 @@ import java.nio.file.AccessDeniedException;
 import static org.junit.Assert.assertEquals;
 
 /* This is a test class for "AverageClusteringCoefficient". It passes if and only
- if the statistic is fully accurate on the small graph database provided.
+ if the metric is fully accurate on the small graph database provided.
  Written by amorehead on 2/13/2018. */
 public class AverageClusteringCoefficientTest {
 
@@ -21,7 +21,7 @@ public class AverageClusteringCoefficientTest {
          "AverageClusteringCoefficient" class is implemented correctly or not. */
         DBInterface db = SampleDBs.smallGraphsDB();
 
-        // This allows us to test the statistic's class.
+        // This allows us to test the metric's class.
         AverageClusteringCoefficient stat = new AverageClusteringCoefficient();
 
         // The last parameter for "assertEquals" represents the amount of error allowed for the test results.
