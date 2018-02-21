@@ -10,7 +10,7 @@ import java.nio.file.AccessDeniedException;
 import static org.junit.Assert.assertEquals;
 
 /* This is a test class for "PercentageofEndPoints". It passes if and only
- if the statistic is fully accurate on the small graph database provided.
+ if the metric is fully accurate on the small graph database provided.
  Created by amorehead on 2/12/2018. */
 public class PercentageOfEndPointsTest {
 
@@ -22,7 +22,7 @@ public class PercentageOfEndPointsTest {
           correctly or not. */
         DBInterface db = SampleDBs.smallGraphsDB();
 
-        // This allows us to test the statistic's class.
+        // This allows us to test the metric's class.
         PercentageOfEndPoints stat = new PercentageOfEndPoints();
 
         // The last parameter for "assertEquals" represents the amount of error allowed for the test results.

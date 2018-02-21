@@ -2,10 +2,10 @@ package net.sourcedestination.sai.reporting.stats;
 
 import net.sourcedestination.sai.graph.Graph;
 
-/* A DB statistic that finds the ratio of end points, those with
+/* A DB metric that finds the ratio of end points, those with
  degree one, to the total number of nodes in the entire graph.
  Created by amorehead on 2/12/18. */
-public class PercentageOfEndPoints implements IndependentDBStatistic {
+public class PercentageOfEndPoints implements IndependentDBMetric {
 
     @Override
     public double processGraph(Graph g) {
