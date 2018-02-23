@@ -3,8 +3,9 @@ package net.sourcedestination.sai.reporting.stats;
 import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 /* A DB metric that can be used to compute the
  number of unique attributes for a given graph.
@@ -12,17 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UniqueAttributesPerGraph implements IndependentDBMetric {
 
     private final Set<String> featureNames;
-    private Set<Feature> discoveredFeatures;
 
     public UniqueAttributesPerGraph() {
-        this.discoveredFeatures = ConcurrentHashMap.newKeySet();
         this.featureNames = null;
-    }
-
-    // The following constructor is no longer needed for the current implementation of this metric class.
-    public UniqueAttributesPerGraph(Set<String> featureNames) {
-        this.discoveredFeatures = ConcurrentHashMap.newKeySet();
-        this.featureNames = featureNames;
     }
 
     public boolean isFeatureOfInterest(Feature f) {
@@ -30,14 +23,12 @@ public class UniqueAttributesPerGraph implements IndependentDBMetric {
                 featureNames.contains(f.getName());   // it's included in the feature names of interest
     }
 
-    // This returns the result we are looking for.
-    public double getResult() {
-        return discoveredFeatures.size();
-    }
-
     @Override
     // This method represents the main functionality of this class.
     public double processGraph(Graph g) {
+        Logger log = Logger.getLogger(UniqueEdgesPerGraph.class.getName());
+        Set<Feature> discoveredFeatures = new HashSet<>();
+
         g.getFeatures().filter(this::isFeatureOfInterest)
                 .forEach(discoveredFeatures::add);
         g.getNodeIDs()
@@ -51,6 +42,9 @@ public class UniqueAttributesPerGraph implements IndependentDBMetric {
                 .forEach(s -> s
                         .filter(this::isFeatureOfInterest)
                         .forEach(discoveredFeatures::add));
-        return getResult();
+
+        log.info("Unique attributes per graph: " + discoveredFeatures.size()
+                + " (currently not displaying in WebLab)");
+        return discoveredFeatures.size();
     }
 }
