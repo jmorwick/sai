@@ -21,7 +21,7 @@ public class PercentageOfIsolatedPoints implements IndependentDBMetric {
         totalNodes = (g.getNodeIDs()
                 /* The following finds the quotient of dividing the number
                 of nodes with degree zero by the total number of nodes. */
-                .filter(nid -> ((int) g.getIncidentEdges(nid).count()) == 0)
+                .filter(nid -> g.getIncidentEdges(nid).count() == 0.0)
                 .count() / totalNodes);
 
         log.info("Percentage of isolated points: " + totalNodes + " (currently not displaying in WebLab)");

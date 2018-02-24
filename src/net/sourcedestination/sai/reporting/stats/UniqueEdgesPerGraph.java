@@ -6,19 +6,17 @@ import net.sourcedestination.sai.graph.Graph;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * A DB metric that can be used to compute the
  * number of unique edges for a given graph.
- * Created by amorehead on 2/7/18.
+ * Created by amorehead on 2/23/18.
  */
 public class UniqueEdgesPerGraph implements IndependentDBMetric {
 
     @Override
     // This method represents the main functionality of this class.
     public double processGraph(Graph g) {
-        Logger log = Logger.getLogger(UniqueEdgesPerGraph.class.getName());
         Set<Triple<Set<Feature>>> edgeTypes = new HashSet<>();
 
         g.getEdgeIDs()
@@ -28,7 +26,6 @@ public class UniqueEdgesPerGraph implements IndependentDBMetric {
                         g.getEdgeFeaturesSet(eid)))
                 .forEach(edgeTypes::add);
 
-        log.info("Unique edges per graph: " + edgeTypes.size() + " (currently displaying in WebLab)");
         return edgeTypes.size();
     }
 }

@@ -5,11 +5,10 @@ import net.sourcedestination.sai.graph.Graph;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /* A DB metric that can be used to compute the
  number of unique attributes for a given graph.
- Created by amorehead on 1/31/18. */
+ Created by amorehead on 2/23/18. */
 public class UniqueAttributesPerGraph implements IndependentDBMetric {
 
     private final Set<String> featureNames;
@@ -19,14 +18,15 @@ public class UniqueAttributesPerGraph implements IndependentDBMetric {
     }
 
     public boolean isFeatureOfInterest(Feature f) {
-        return featureNames == null ||  // all features are of interest
-                featureNames.contains(f.getName());   // it's included in the feature names of interest
+        // The following indicates that all features are of interest.
+        return featureNames == null ||
+                // The following indicates that the metric is included in the featureNames of interest.
+                featureNames.contains(f.getName());
     }
 
     @Override
     // This method represents the main functionality of this class.
     public double processGraph(Graph g) {
-        Logger log = Logger.getLogger(UniqueEdgesPerGraph.class.getName());
         Set<Feature> discoveredFeatures = new HashSet<>();
 
         g.getFeatures().filter(this::isFeatureOfInterest)
@@ -43,8 +43,6 @@ public class UniqueAttributesPerGraph implements IndependentDBMetric {
                         .filter(this::isFeatureOfInterest)
                         .forEach(discoveredFeatures::add));
 
-        log.info("Unique attributes per graph: " + discoveredFeatures.size()
-                + " (currently not displaying in WebLab)");
         return discoveredFeatures.size();
     }
 }
