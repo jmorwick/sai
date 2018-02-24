@@ -21,7 +21,7 @@ public class PercentageOfEndPoints implements IndependentDBMetric {
         totalNodes = g.getNodeIDs()
                 /* The following finds the quotient of dividing the number
                 of nodes with degree one by the total number of nodes. */
-                .filter(nid -> ((int) g.getIncidentEdges(nid).count()) == 1)
+                .filter(nid -> g.getIncidentEdges(nid).count() == 1)
                 .count() / totalNodes;
 
         log.info("Percentage of end points: " + totalNodes + " (currently not displaying in WebLab)");
