@@ -34,27 +34,15 @@
       <constructor-arg index="1" ref="basic-feature-count"/>
     </bean>
     <!-- statistics -->
-    <bean id="Database Size:" class="net.sourcedestination.sai.reporting.stats.DBSize"/>
-    <bean id="Average Degree Per Graph:" class="net.sourcedestination.sai.reporting.stats.AverageDegreePerGraph"/>
-    <bean id="Percentage Of Isolated Points Per Graph:" class="net.sourcedestination.sai.reporting.stats.PercentageOfIsolatedPoints"/>
-    <bean id="Percentage Of End Points Per Graph:" class="net.sourcedestination.sai.reporting.stats.PercentageOfEndPoints"/>
     <bean id="Average Clustering Coefficient Per Graph:" class="net.sourcedestination.sai.reporting.stats.AverageClusteringCoefficient"/>
-   <!-- <bean id="conencted" class="net.sourcedestination.sai.rhog.stats.ConnectedStat"/>  /-->
-   <!--  <bean id="bridges" class="net.sourcedestination.sai.rhog.stats.BridgesStat"/> /-->
-    <bean id="Unique Attributes Per Graph:" class="net.sourcedestination.sai.reporting.stats.UniqueAttributesPerGraph">
-        <constructor-arg>
-            <set>
-                <value>test</value>
-            </set>
-        </constructor-arg>
-    </bean>
-    <bean id="Unique Edges Per Graph:" class="net.sourcedestination.sai.reporting.stats.UniqueEdgesPerGraph">
-        <constructor-arg>
-            <set>
-                <value>test</value>
-            </set>
-        </constructor-arg>
-    </bean>
+    <bean id="Average Degree Per Graph:" class="net.sourcedestination.sai.reporting.stats.AverageDegreePerGraph"/>
+    <!--  <bean id="Bridges: " class="net.sourcedestination.sai.rhog.stats.BridgesStat"/> /-->
+    <!-- <bean id="Connected: " class="net.sourcedestination.sai.rhog.stats.ConnectedStat"/>  /-->
+    <bean id="Database Size:" class="net.sourcedestination.sai.reporting.stats.DBSize"/>
+    <bean id="Percentage Of End Points Per Graph:" class="net.sourcedestination.sai.reporting.stats.PercentageOfEndPoints"/>
+    <bean id="Percentage Of Isolated Points Per Graph:" class="net.sourcedestination.sai.reporting.stats.PercentageOfIsolatedPoints"/>
+    <bean id="Unique Attributes Per Graph:" class="net.sourcedestination.sai.reporting.stats.UniqueAttributesPerGraph"/>
+    <bean id="Unique Edges Per Graph:" class="net.sourcedestination.sai.reporting.stats.UniqueEdgesPerGraph"/>
 
     <!-- graph serialization -->
     <bean id="sai-json-serializer" class="net.sourcedestination.sai.graph.SaiGraphJsonSerializer" />
