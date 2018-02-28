@@ -177,7 +177,7 @@ public interface Graph {
      */
     public default Stream<Integer> getIncidentEdges(int nid) {
         return getEdgeIDs()
-                .filter(eid -> getEdgeTargetNodeID(nid) == eid || getEdgeSourceNodeID(nid) == eid);
+                .filter(eid -> getEdgeTargetNodeID(eid) == nid || getEdgeSourceNodeID(eid) == nid);
     }
 
     /* The following method indicates whether a given
