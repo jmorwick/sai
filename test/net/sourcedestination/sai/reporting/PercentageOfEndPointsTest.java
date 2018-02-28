@@ -2,6 +2,8 @@ package net.sourcedestination.sai.reporting;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
+import net.sourcedestination.sai.graph.Graph;
+import net.sourcedestination.sai.graph.SaiGraphJsonDeserializer;
 import net.sourcedestination.sai.reporting.stats.PercentageOfEndPoints;
 import org.junit.Test;
 
@@ -26,6 +28,7 @@ public class PercentageOfEndPointsTest {
         PercentageOfEndPoints stat = new PercentageOfEndPoints();
 
         // The last parameter for "assertEquals" represents the amount of error allowed for the test results.
-        assertEquals(0, stat.processGraph(db.retrieveGraph(1)), 0);
+        assertEquals(0.25, stat.processGraph(db.retrieveGraph(1)), 0);
+
     }
 }

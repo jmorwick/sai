@@ -4,7 +4,6 @@ import net.sourcedestination.sai.graph.Graph;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
 
 /* A DB metric that computes the average
  local clustering coefficient for a given graph.
@@ -13,7 +12,6 @@ public class AverageClusteringCoefficient implements IndependentDBMetric {
 
     @Override
     public double processGraph(Graph g) {
-        Logger log = Logger.getLogger(UniqueEdgesPerGraph.class.getName());
 
         // The following creates an atomic double for storing the number of triangles found in a given graph.
         AtomicReference<Double> totalTriangles = new AtomicReference<>((double) 0);
@@ -41,9 +39,6 @@ public class AverageClusteringCoefficient implements IndependentDBMetric {
                 totalTriangles.updateAndGet(t -> t + (1.0 * actualTriangles.get() / possibleTriangles));
         });
 
-        // The following returns the average local clustering coefficient of a given graph.
-        log.info("Average clustering coefficient: " + totalTriangles.get() / (g.getNodeIDs().count())
-                + " (currently not displaying in WebLab)");
         return totalTriangles.get() / (g.getNodeIDs().count());
 
     }
