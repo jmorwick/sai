@@ -4,11 +4,12 @@ import net.sourcedestination.sai.graph.Graph;
 
 /* A DB metric that finds the ratio of isolated nodes, those with
  degree zero, to the total number of nodes in the entire graph.
- Created by amorehead on 2/9/18. */
+ Created by amorehead on 3/1/18. */
 public class PercentageOfIsolatedPoints implements IndependentDBMetric {
 
     @Override
     public double processGraph(Graph g) {
+
         double totalNodes = (g.getNodeIDs().count());
 
         // The following is a simple check to see if there are any nodes in a given graph.

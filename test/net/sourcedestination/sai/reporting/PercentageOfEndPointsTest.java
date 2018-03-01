@@ -2,8 +2,6 @@ package net.sourcedestination.sai.reporting;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
-import net.sourcedestination.sai.graph.Graph;
-import net.sourcedestination.sai.graph.SaiGraphJsonDeserializer;
 import net.sourcedestination.sai.reporting.stats.PercentageOfEndPoints;
 import org.junit.Test;
 
