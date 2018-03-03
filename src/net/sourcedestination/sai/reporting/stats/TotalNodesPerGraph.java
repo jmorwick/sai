@@ -5,7 +5,7 @@ import net.sourcedestination.sai.graph.Graph;
 /* A DB metric that computes the
  total number of nodes in a given graph.
  Created by amorehead on 3/2/18. */
-public class TotalNodes implements IndependentDBMetric {
+public class TotalNodesPerGraph implements IndependentDBMetric {
 
     @Override
     public double processGraph(Graph g) {
