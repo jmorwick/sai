@@ -1,4 +1,4 @@
-package net.sourcedestination.sai.reporting.stats;
+package net.sourcedestination.sai.reporting.metrics;
 
 import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;

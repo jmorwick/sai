@@ -1,4 +1,4 @@
-package net.sourcedestination.sai.reporting.stats;
+package net.sourcedestination.sai.reporting.metrics;
 
 import net.sourcedestination.funcles.tuple.Triple;
 import net.sourcedestination.sai.graph.Feature;
