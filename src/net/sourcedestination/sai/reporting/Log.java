@@ -39,6 +39,7 @@ public class Log {
 	private final List<QueryRecord> queries = new ArrayList<>();
 	private final List<AdditionRecord> additions = new ArrayList<>();
 	private final List<DeletionRecord> deletions = new ArrayList<>();
+	private final List<ClassificationRecord> classifications = new ArrayList<>();
 	
 	
 	/** Constructs a new Log object which is ready to record data from a task.
@@ -72,6 +73,7 @@ public class Log {
 		this.queries.addAll(log.queries);
 		this.additions.addAll(log.additions);
 		this.deletions.addAll(log.deletions);
+		this.classifications.addAll(log.classifications);
 	}
 	
 	/** adds a new record of a query being made to this log. 
@@ -115,6 +117,10 @@ public class Log {
 	 */
 	public void recordDataPoint(String plotName, double x, double y, double z) {
 		plots3d.put(plotName, Triple.makeTriple(x, y, z));
+	}
+
+	public void recordClassification(DBInterface db, int gid, String result, String expected) {
+		classifications.add(new ClassificationRecord(db, gid, result, expected));
 	}
 	
 	/** returns the name of the task for which this log is recording data.
