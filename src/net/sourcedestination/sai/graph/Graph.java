@@ -182,5 +182,7 @@ public interface Graph {
 
     /* The following method indicates whether a given
      graph contains a specified edge. Still under development. */
-    boolean hasEdge(Integer u);
+    public default boolean hasEdge(int eid) {
+        return this.getEdgeIDs().anyMatch(eid2 -> eid2 == eid);
+    }
 }

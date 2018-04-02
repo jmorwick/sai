@@ -75,12 +75,6 @@ public class MutableGraph implements Graph {
         return edgeContents.get(e)._2;
     }
 
-    /* The following method indicates whether a given
-     graph contains a specified edge. Still under development. */
-    public boolean hasEdge(Integer u) {
-        return getEdgeIDs().anyMatch(eid -> eid.equals(u));
-    }
-
     public void addNode(final int nid) {
         if (nodes.contains(nid))
             throw new IllegalArgumentException(nid + " is already a node id");

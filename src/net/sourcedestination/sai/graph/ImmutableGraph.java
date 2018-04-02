@@ -82,13 +82,6 @@ public class ImmutableGraph implements Graph {
     public int getEdgeTargetNodeID(int e) {
         return edgeContents.get(e)._2;
     }
-
-    /* The following method indicates whether a given
-     graph contains a specified edge. Still under development. */
-    public boolean hasEdge(Integer u) {
-        return getEdgeIDs().anyMatch(eid -> eid.equals(u));
-    }
-
     @Override
     public Stream<Feature> getNodeFeatures(int n) {
         return nodeFeatures.get(n).stream();
