@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 /*
  The core graph interface for use within SAI.
- Restructured and reformatted by amorehead on 2/20/18.
+ New methods added by amorehead on 4/9/18.
 */
 
 public interface Graph {
@@ -181,8 +181,22 @@ public interface Graph {
     }
 
     /* The following method indicates whether a given
-     graph contains a specified edge. Still under development. */
+     graph contains a specified node. */
+    public default boolean hasNode(int nid) {
+        return this.getNodeIDs().anyMatch(nid2 -> nid == nid2);
+    }
+
+    /* The following method indicates whether a given
+     graph contains a specified edge. */
     public default boolean hasEdge(int eid) {
-        return this.getEdgeIDs().anyMatch(eid2 -> eid2 == eid);
+        return this.getEdgeIDs().anyMatch(eid2 -> eid == eid2);
+    }
+
+    /* The following method determines whether or not two
+     given nodes are connected to each other by an edge. */
+    public default boolean areConnectedNodes(int nid1, int nid2) {
+        return ((this.hasNode(nid1) && this.hasNode(nid2))
+                && (this.getEdgeIDs().anyMatch(eid -> this.getIncidentEdges(nid1).anyMatch(eid::equals)
+                && this.getIncidentEdges(nid2).anyMatch(eid::equals))));
     }
 }

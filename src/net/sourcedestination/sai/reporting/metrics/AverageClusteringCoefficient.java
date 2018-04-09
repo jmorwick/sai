@@ -5,41 +5,46 @@ import net.sourcedestination.sai.graph.Graph;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-/* A DB metric that computes the average
- local clustering coefficient for a given graph.
- Created by amorehead on 2/20/18. */
+/* A DB metric that computes the local average
+ clustering coefficient for a given graph.
+ Created by amorehead on 4/9/18. */
 public class AverageClusteringCoefficient implements IndependentDBMetric {
 
     @Override
     public double processGraph(Graph g) {
 
         // The following creates an atomic double for storing the number of triangles found in a given graph.
-        AtomicReference<Double> totalTriangles = new AtomicReference<>((double) 0);
+        AtomicReference<Double> clusteringCoefficients = new AtomicReference<>((double) 0);
 
         // The following iterates through each node in a given graph.
         g.getNodeIDs().forEach(n -> {
             // The following accumulates the local clustering coefficient of node "n".
             int degreeOfCurrentNode = ((int) g.getIncidentEdges(n).count());
-            int possibleTriangles = (degreeOfCurrentNode * (degreeOfCurrentNode - 1));
-            AtomicInteger actualTriangles = new AtomicInteger();
+            AtomicInteger numberOfNeighborEdgesOfInterest = new AtomicInteger();
 
-            g.getIncidentEdges(n).forEach(u -> { // This represents the first adjacent edge to the current node "n".
+            g.getNodeIDs().forEach(u -> { // This represents the first adjacent edge to the current node "n".
 
-                g.getIncidentEdges(n).forEach(w -> { // This represents the second adjacent edge to the current node "n".
+                g.getNodeIDs().forEach(w -> { // This represents the second adjacent edge to the current node "n".
 
-                    /* The following checks to see if a given graph contains the
-                     two previously-described adjacent edges to the current node. */
-                    if (g.hasEdge(u) && g.hasEdge(w)) actualTriangles.getAndIncrement();
+                    /* The following checks to see if a given graph contains an edge
+                     between the two previously-described adjacent nodes to the current node. */
+                    if (g.areConnectedNodes(u, w))
+                        numberOfNeighborEdgesOfInterest.getAndIncrement();
                 });
 
             });
 
-            // The following updates the total number of triangles found.
-            if (possibleTriangles > 0)
-                totalTriangles.updateAndGet(t -> t + (1.0 * actualTriangles.get() / possibleTriangles));
+            // The following handles a divide-by-zero error while also calculating the clustering coefficient for a given node "n".
+            double clusteringCoefficient = ((degreeOfCurrentNode - 1 != 0) && (degreeOfCurrentNode != 0)
+                    && (numberOfNeighborEdgesOfInterest.get() - 1 != 0) && (numberOfNeighborEdgesOfInterest.get() != 0))
+                    ? ((double) (2 * numberOfNeighborEdgesOfInterest.get())) / ((double) (degreeOfCurrentNode * (degreeOfCurrentNode - 1))) : 0;
+
+            // The following updates the total number of clustering coefficients found.
+            clusteringCoefficients.getAndUpdate(t -> t + clusteringCoefficient);
         });
 
-        return totalTriangles.get() / (g.getNodeIDs().count());
+        // The following returns the average clustering coefficient of a given graph "g".
+        return clusteringCoefficients.get() / (g.getNodeIDs().count());
 
     }
 
