@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * A DB metric that can be used to compute the
  * number of unique edges for a given graph.
- * Created by amorehead on 2/23/18.
+ * Updated by amorehead on 4/13/18.
  */
 public class UniqueEdgesPerGraph implements IndependentDBMetric {
 

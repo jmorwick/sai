@@ -2,12 +2,13 @@ package net.sourcedestination.sai.reporting.metrics;
 
 import net.sourcedestination.sai.graph.Graph;
 
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /* A DB metric that computes the local average
  clustering coefficient for a given graph.
- Created by amorehead on 4/9/18. */
+ Updated by amorehead on 4/13/18. */
 public class AverageClusteringCoefficient implements IndependentDBMetric {
 
     @Override
@@ -18,26 +19,36 @@ public class AverageClusteringCoefficient implements IndependentDBMetric {
 
         // The following iterates through each node in a given graph.
         g.getNodeIDs().forEach(n -> {
-            // The following accumulates the local clustering coefficient of node "n".
+
+            // The following stores the degree of the current node "n".
             int degreeOfCurrentNode = ((int) g.getIncidentEdges(n).count());
+
+            // The following creates an empty set to hold the neighbors of node "n".
+            ArrayList<Integer> neighborsOfN = new ArrayList<>();
+
+            // The following adds node neighbors to the previously-created set.
+            g.getIncidentFromEdges(n).forEach(eid -> neighborsOfN.add(g.getEdgeSourceNodeID(eid)));
+
+            // The following creates an empty atomic integer data structure instance.
             AtomicInteger numberOfNeighborEdgesOfInterest = new AtomicInteger();
 
-            g.getNodeIDs().forEach(u -> { // This represents the first adjacent edge to the current node "n".
+            /*
+            // The following increments the number of edges between neighboring nodes of the current node "n" (if applicable).
+            for (int i = 0; i < neighborsOfN.size() - 1; i++) {
 
-                g.getNodeIDs().forEach(w -> { // This represents the second adjacent edge to the current node "n".
+                if ((g.getIncidentToEdges(neighborsOfN.get(i)).anyMatch(g.getIncidentFromEdges(neighborsOfN.get(i + 1)))) ||
 
-                    /* The following checks to see if a given graph contains an edge
-                     between the two previously-described adjacent nodes to the current node. */
-                    if (g.areConnectedNodes(u, w))
-                        numberOfNeighborEdgesOfInterest.getAndIncrement();
-                });
+                        (g.getIncidentFromEdges(neighborsOfN.get(i)).anyMatch(g.getIncidentToEdges(neighborsOfN.get(i + 1))))) {
 
-            });
+                    numberOfNeighborEdgesOfInterest.incrementAndGet();
+                }
+            }
+            */
 
             // The following handles a divide-by-zero error while also calculating the clustering coefficient for a given node "n".
-            double clusteringCoefficient = ((degreeOfCurrentNode - 1 != 0) && (degreeOfCurrentNode != 0)
-                    && (numberOfNeighborEdgesOfInterest.get() - 1 != 0) && (numberOfNeighborEdgesOfInterest.get() != 0))
-                    ? ((double) (2 * numberOfNeighborEdgesOfInterest.get())) / ((double) (degreeOfCurrentNode * (degreeOfCurrentNode - 1))) : 0;
+            double clusteringCoefficient = ((degreeOfCurrentNode != 0) && (degreeOfCurrentNode - 1 != 0))
+                    ? ((double) (2 * numberOfNeighborEdgesOfInterest.get())) / ((double) (degreeOfCurrentNode * (degreeOfCurrentNode - 1)))
+                    : 0;
 
             // The following updates the total number of clustering coefficients found.
             clusteringCoefficients.getAndUpdate(t -> t + clusteringCoefficient);
