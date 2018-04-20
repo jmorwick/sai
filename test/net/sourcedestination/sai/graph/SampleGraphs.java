@@ -34,7 +34,7 @@ public class SampleGraphs {
       return g;
     }
 
-    
+
     public static Graph getSmallGraph2() {
         MutableGraph g = new MutableGraph();
         g.addNode(1);
@@ -57,7 +57,7 @@ public class SampleGraphs {
     }
 
 
-    public static Graph getMultigraph1() {
+    static Graph getMultigraph1() {
 
         MutableGraph g = new MutableGraph();
         g.addNode(1);
@@ -100,35 +100,35 @@ public class SampleGraphs {
 			g2.removeFeature(getFeature(g2.getFeatures(), "indexes"));
 		if(getFeature(g2.getFeatures(), "index") != null)
 			g2.removeFeature(getFeature(g2.getFeatures(), "index"));
-		
+
 		assertEquals(
-				g1.getNodeIDs().collect(toSet()), 
+				g1.getNodeIDs().collect(toSet()),
 				g2.getNodeIDs().collect(toSet()));
 		assertEquals(
-				g1.getEdgeIDs().collect(toSet()), 
+				g1.getEdgeIDs().collect(toSet()),
 				g2.getEdgeIDs().collect(toSet()));
-		Predicate<Feature> p = 
-				f -> 
+		Predicate<Feature> p =
+				f ->
 					!f.getName().equals(SAI_ID_NAME) &&
 					!f.getName().equals(INDEXES_FEATURE_NAME);
 		assertEquals(
 				g1.getFeatures().filter(p).collect(toSet()),
 				g2.getFeatures().filter(p).collect(toSet()));
-		
-		g1.getNodeIDs().forEach(nodeID -> 
+
+		g1.getNodeIDs().forEach(nodeID ->
 			assertEquals(g1.getNodeFeatures(nodeID).collect(toSet()),
 					g2.getNodeFeatures(nodeID).collect(toSet())));
-		
+
 		g1.getEdgeIDs().forEach(edgeID-> {
-			assertEquals(g1.getNodeFeatures(edgeID).collect(toSet()), 
+			assertEquals(g1.getNodeFeatures(edgeID).collect(toSet()),
 					g2.getNodeFeatures(edgeID).collect(toSet()));
-			assertEquals(g1.getEdgeSourceNodeID(edgeID), 
+			assertEquals(g1.getEdgeSourceNodeID(edgeID),
 				     g2.getEdgeSourceNodeID(edgeID));
-			assertEquals(g1.getEdgeTargetNodeID(edgeID), 
+			assertEquals(g1.getEdgeTargetNodeID(edgeID),
 				     g2.getEdgeTargetNodeID(edgeID));
 		});
 	}
-	
+
 
 	public static String toString(Graph g1) {
 		StringBuilder ret = new StringBuilder();
@@ -175,7 +175,7 @@ public class SampleGraphs {
 	      g.addEdge(5, 5, 6);
 	      return g;
 	}
-	
+
 
 	public static Graph getSmallSymmetricTree() {
 	      MutableGraph g = new MutableGraph();
@@ -213,7 +213,7 @@ public class SampleGraphs {
       g.addNodeFeature(2, new Feature("test", n2Val));
       g.addEdge(1, 1, 2);
       g.addEdgeFeature(1, new Feature("test", edgeVal));
-      
+
       g.addFeature(INDEX);
       return g;
     }
@@ -321,5 +321,33 @@ public class SampleGraphs {
 		return g;
 	}
 
+	public static Graph getSmallGraph9() {
+		MutableGraph g = new MutableGraph();
+		g.addNode(1);
+		g.addNodeFeature(1, new Feature("test", "a"));
+		g.addNode(2);
+		g.addNodeFeature(2, new Feature("test", "a"));
+		g.addNode(3);
+		g.addNodeFeature(3, new Feature("test", "a"));
+		g.addNode(4);
+		g.addNodeFeature(4, new Feature("test", "a"));
+		/* g.addNode(5);
+		g.addNodeFeature(5, new Feature("test", "a")); */
+
+		g.addEdge(1, 1, 2);
+		g.addEdge(2, 2, 1);
+		g.addEdge(3	, 2, 3);
+		g.addEdge(4, 3, 2);
+		g.addEdge(5, 3, 1);
+		g.addEdge(6, 1, 3);
+		g.addEdge(7, 3, 4);
+		g.addEdge(8, 4, 3);
+		/* g.addEdge(9, 2, 5);
+        g.addEdge(10, 5, 2);
+        g.addEdge(11, 3, 5);
+        g.addEdge(12, 5, 3); */
+
+        return g;
+	}
 
 }

@@ -11,11 +11,11 @@ import static org.junit.Assert.assertEquals;
 
 /* This is a test class for "AverageClusteringCoefficient". It passes if and only
  if the metric is fully accurate on the small graph database provided.
- Written by amorehead on 4/13/2018. */
+ Written by amorehead on 4/20/2018. */
 public class AverageClusteringCoefficientTest {
 
     @Test
-    public void testLexicalCompatibility() throws AccessDeniedException {
+    public void testLexicalCompatibility() {
 
         /* This is a method that tests whether or not the
          "AverageClusteringCoefficient" class is implemented correctly or not. */
@@ -25,7 +25,7 @@ public class AverageClusteringCoefficientTest {
         AverageClusteringCoefficient stat = new AverageClusteringCoefficient();
 
         // The last parameter for "assertEquals" represents the amount of error allowed for the test results.
-        assertEquals(0, stat.processGraph(db.retrieveGraph(1)), 0);
+        assertEquals(0.58, stat.processGraph(db.retrieveGraph(9)), 0.005);
     }
 
 }

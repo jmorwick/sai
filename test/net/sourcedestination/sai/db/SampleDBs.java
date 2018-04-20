@@ -16,6 +16,11 @@ public class SampleDBs {
 		db.addGraph(SampleGraphs.getSmallGraph2());
 		db.addGraph(SampleGraphs.getSmallGraph3());
 		db.addGraph(SampleGraphs.getSmallGraph4());
+		db.addGraph(SampleGraphs.getSmallGraph5());
+		db.addGraph(SampleGraphs.getSmallGraph6());
+		db.addGraph(SampleGraphs.getSmallGraph7());
+		db.addGraph(SampleGraphs.getSmallGraph8());
+		db.addGraph(SampleGraphs.getSmallGraph9());
 		return db;
 	}
 	
