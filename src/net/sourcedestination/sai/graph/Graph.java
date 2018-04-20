@@ -195,8 +195,6 @@ public interface Graph {
     /* The following method determines whether or not two
      given nodes are connected to each other by an edge. */
     public default boolean areConnectedNodes(int nid1, int nid2) {
-        return ((this.hasNode(nid1) && this.hasNode(nid2))
-                && (this.getEdgeIDs().anyMatch(eid -> this.getIncidentEdges(nid1).anyMatch(eid::equals)
-                && this.getIncidentEdges(nid2).anyMatch(eid::equals))));
+        return this.getIncidentEdges(nid1).anyMatch(eid -> this.getEdgeSourceNodeID(eid) == nid2 || this.getEdgeTargetNodeID(eid) == nid2);
     }
 }
