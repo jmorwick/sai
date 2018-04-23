@@ -322,6 +322,8 @@ public class SampleGraphs {
 	}
 
 	public static Graph getSmallGraph9() {
+    	// sample graph from: http://qasimpasta.info/data/uploads/sina-2015/calculating-clustering-coefficient.pdf
+
 		MutableGraph g = new MutableGraph();
 		g.addNode(1);
 		g.addNodeFeature(1, new Feature("test", "a"));

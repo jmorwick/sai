@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 public class AverageClusteringCoefficientTest {
 
     @Test
-    public void testLexicalCompatibility() {
+    public void testClusteringCoefficient1() {
 
         /* This is a method that tests whether or not the
          "AverageClusteringCoefficient" class is implemented correctly or not. */
