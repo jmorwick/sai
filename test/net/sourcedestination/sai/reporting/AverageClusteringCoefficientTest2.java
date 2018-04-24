@@ -5,14 +5,12 @@ import net.sourcedestination.sai.db.SampleDBs;
 import net.sourcedestination.sai.reporting.metrics.AverageClusteringCoefficient;
 import org.junit.Test;
 
-import java.nio.file.AccessDeniedException;
-
 import static org.junit.Assert.assertEquals;
 
 /* This is a test class for "AverageClusteringCoefficient". It passes if and only
  if the metric is fully accurate on the small graph database provided.
- Written by amorehead on 4/20/2018. */
-public class AverageClusteringCoefficientTest {
+ Written by amorehead on 4/24/2018. */
+public class AverageClusteringCoefficientTest2 {
 
     @Test
     public void testClusteringCoefficient1() {
@@ -25,7 +23,7 @@ public class AverageClusteringCoefficientTest {
         AverageClusteringCoefficient stat = new AverageClusteringCoefficient();
 
         // The last parameter for "assertEquals" represents the amount of error allowed for the test results.
-        assertEquals(7.0/12.0, stat.processGraph(db.retrieveGraph(9)), 0.005);
+        assertEquals(3.0 / 5.0, stat.processGraph(db.retrieveGraph(10)), 0.005);
     }
 
 }
