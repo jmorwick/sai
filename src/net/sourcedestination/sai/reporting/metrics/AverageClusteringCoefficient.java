@@ -41,17 +41,18 @@ public class AverageClusteringCoefficient implements IndependentDBMetric {
                 for (int secondNeighborOfN : neighborsOfN.get()) {
 
                     // The following increases the number of node triangles found at current node "n" in the given graph "g".
-                    if (g.areConnectedNodes(firstNeighborOfN, secondNeighborOfN) && firstNeighborOfN != secondNeighborOfN) {
+                    if (g.areConnectedNodes(firstNeighborOfN, secondNeighborOfN)
+                            && firstNeighborOfN != secondNeighborOfN) {
                         numberOfNodeTriangles++;
                     }
-
-                    /* The break here is necessary to ensure that "numberOfNodeTriangles" is not
-                     double-incremented (ex: [3, 2] & [2, 3] would each increment the counter otherwise). */
-                    break;
 
                 }
 
             }
+
+            /* The following takes into account the possibility of
+             double-counting node triangles by making an adjustment (if necessary). */
+            if (numberOfNodeTriangles > 0) numberOfNodeTriangles /= 2;
 
             // The following handles a divide-by-zero error while also calculating the clustering coefficient for a given node "n".
             double clusteringCoefficient = ((degreeOfCurrentNode != 0) && (degreeOfCurrentNode - 1 != 0))
