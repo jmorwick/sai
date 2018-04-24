@@ -2,6 +2,7 @@ package net.sourcedestination.sai.reporting.metrics;
 
 import net.sourcedestination.sai.graph.Graph;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -19,26 +20,26 @@ public class AverageClusteringCoefficient implements IndependentDBMetric {
          a running total of nodes' clustering coefficients. */
         final double[] clusteringCoefficients = {0};
 
-        // The following creates an empty atomic set of integers for use in the proceeding forEach loop.
-        AtomicReference<Set<Integer>> neighborsOfN = new AtomicReference<>();
+        // The following creates an initial array of a single set of integers for use in the proceeding forEach loop.
+        final Set<Integer>[] neighborsOfN = new Set[]{new HashSet<>()};
 
         // The following iterates through each node in a given graph.
         g.getNodeIDs().forEach(n -> {
 
             // The following stores all of the neighboring nodes of node "n" in a set.
-            neighborsOfN.set(g.getIncidentFromEdges(n).map(g::getEdgeSourceNodeID).collect(Collectors.toSet()));
+            neighborsOfN[0] = g.getIncidentFromEdges(n).map(g::getEdgeSourceNodeID).collect(Collectors.toSet());
 
             // The following finds "Kn", the degree of the current node "n".
-            int degreeOfCurrentNode = neighborsOfN.get().size();
+            int degreeOfCurrentNode = neighborsOfN[0].size();
 
             /* The following creates an integer instance to represent "Ln",
              the number of edges between the "Kn" neighbors of node "n". */
             int numberOfNodeTriangles = 0;
 
             // The following finds "Ln" for a given node "n".
-            for (int firstNeighborOfN : neighborsOfN.get()) {
+            for (int firstNeighborOfN : neighborsOfN[0]) {
 
-                for (int secondNeighborOfN : neighborsOfN.get()) {
+                for (int secondNeighborOfN : neighborsOfN[0]) {
 
                     // The following increases the number of node triangles found at current node "n" in the given graph "g".
                     if (g.areConnectedNodes(firstNeighborOfN, secondNeighborOfN)
