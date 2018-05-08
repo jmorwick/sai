@@ -2,11 +2,9 @@ package net.sourcedestination.sai.task;
 
 import java.util.function.Supplier;
 
-import net.sourcedestination.sai.reporting.Log;
-
-public class RepeatTask implements Supplier<Task<Log>> {
+public class RepeatTask implements Supplier<Task> {
 	
-	private final Supplier<Task<Log>> ti;
+	private final Supplier<Task> ti;
 	private final int iterations;
 	
 
@@ -15,31 +13,25 @@ public class RepeatTask implements Supplier<Task<Log>> {
 	 * @param ti creates the task to be repeatedly executed
 	 * @param iterations the number of times to repeat the task
 	 */
-	public RepeatTask(Supplier<Task<Log>> ti, int iterations) {
+	public RepeatTask(Supplier<Task> ti, int iterations) {
 		this.ti = ti;
 		this.iterations = iterations;
 	}
 
 
 	@Override
-	public Task<Log> get() {
+	public Task get() {
 
-		
-		return new Task<Log>() {
-
-			private Task<Log> currentTask;
+		return new Task() {
+			private Task currentTask;
 			private int i;
 			
 			@Override
-			public Log get() {
-				Log log = null;
+			public Object get() {
 				for(i=0; i<iterations; i++) {
 					currentTask = ti.get();
-					if(log == null)
-						log = currentTask.get();
-					else log.include(currentTask.get());
 				}
-				return log;
+				return null;
 			}
 			
 			public double getPercentageDone() {
@@ -50,8 +42,6 @@ public class RepeatTask implements Supplier<Task<Log>> {
 				return i;
 			}
 		};
-		
-
 	}
 
 }

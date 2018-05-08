@@ -4,13 +4,12 @@ import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.graph.Graph;
 import net.sourcedestination.sai.learning.ClassificationModel;
 import net.sourcedestination.sai.learning.ClassificationModelGenerator;
-import net.sourcedestination.sai.reporting.GraphHidingDBWrapper;
-import net.sourcedestination.sai.reporting.Log;
+import net.sourcedestination.sai.retrieval.GraphHidingDBWrapper;
 
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
-public class CrossValidatedClassificationExperiment implements Task<Log> {
+public class CrossValidatedClassificationExperiment implements Task {
 
     private int folds;
     private DBInterface dataset;
@@ -31,8 +30,8 @@ public class CrossValidatedClassificationExperiment implements Task<Log> {
         this.gen = gen;
     }
 
-    public Log get() {
-        Log log = new Log("Cross Validation Experiment");
+    @Override
+    public Object get() {
         int foldSize = dataset.getDatabaseSize() / folds;
         IntStream.range(0, folds-1)
             .parallel()
@@ -58,13 +57,7 @@ public class CrossValidatedClassificationExperiment implements Task<Log> {
                                 .limit(foldSize),
                         gen.apply(trainingSet, expectedClasses),
                         expectedClasses);
-
-                Log foldLog = foldExp.get();
-                synchronized (log) {
-                    log.include(foldLog);
-                }
             });
-
-        return log;
+        return null;
     }
 }

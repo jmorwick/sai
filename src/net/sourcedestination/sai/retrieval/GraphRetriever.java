@@ -41,14 +41,15 @@ import java.util.function.Function;
 @FunctionalInterface
 public interface GraphRetriever<DB extends DBInterface> {
 
-    public Stream<Integer> retrieve(DB db, Graph q);
+	static Logger logger = LogManager.getLogger(GraphRetriever.class);
+
+    Stream<Integer> retrieve(DB db, Graph q);
 
 	public static <DB extends DBInterface> GraphRetriever<DB> createPhase1Retriever(
 			GraphRetriever<DB> indexRetriever,
 			GraphIndexBasedRetriever ibRetriever
 			) {
 
-		Logger logger = LogManager.getLogger(GraphRetriever.class);
 		logger.info("creating phase-1 retriever using index retriever");
 		return (db, q) -> ibRetriever.retrieve(db, indexRetriever.retrieve(db, q));
 	}

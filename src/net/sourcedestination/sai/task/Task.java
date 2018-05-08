@@ -1,9 +1,6 @@
 package net.sourcedestination.sai.task;
 
-import java.util.concurrent.Callable;
 import java.util.function.Supplier;
-
-import net.sourcedestination.sai.reporting.Log;
 
 /** represents a loggable task executing over a SAI database.
  * 
@@ -17,7 +14,7 @@ public interface Task<T> extends Supplier<T> {
 	 * 
 	 * @return percentage (0.0 - 1.0) of the task remaining
 	 */
-	public default double getPercentageDone() {
+	default double getPercentageDone() {
 		return getTotalProgressUnits() != -1 ?
 				(double)getProgressUnits() / getTotalProgressUnits() :
 				0;
@@ -28,17 +25,17 @@ public interface Task<T> extends Supplier<T> {
 	 * 
 	 * @return number of work units completed by this task
 	 */
-	public default int getProgressUnits() {
+	default int getProgressUnits() {
 		return 0;
 	}
 
-	public default int getTotalProgressUnits() { return -1; }
+	default int getTotalProgressUnits() { return -1; }
 	
-	public default String getTaskName() {
+	default String getTaskName() {
 		return this.getClass().getCanonicalName();
 	}
 	
-	public default void cancel() {
+	default void cancel() {
 		
 	}
 }
