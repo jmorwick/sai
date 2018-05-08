@@ -22,6 +22,7 @@ public interface ComprehensiveDBMetric extends DBMetric {
         return new Task<Double>() {
             private final AtomicInteger count = new AtomicInteger();
 
+            @Override
             public Double get() {
                 int dbsize = db.getDatabaseSize();
                 Set<Feature> features = new HashSet<>();
