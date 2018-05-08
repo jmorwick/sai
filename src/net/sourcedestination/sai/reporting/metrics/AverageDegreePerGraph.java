@@ -9,7 +9,6 @@ public class AverageDegreePerGraph implements IndependentDBMetric {
 
     @Override
     public double processGraph(Graph g) {
-
         // The following initializes a double variable for later use.
         double averageDegree;
 
