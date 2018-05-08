@@ -2,6 +2,7 @@ package net.sourcedestination.sai.reporting;
 
 import com.google.common.collect.Sets;
 import net.sourcedestination.sai.db.BasicDBInterface;
+import net.sourcedestination.sai.retrieval.GraphHidingDBWrapper;
 import org.junit.Test;
 
 import java.nio.file.AccessDeniedException;

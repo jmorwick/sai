@@ -1,10 +1,9 @@
-package net.sourcedestination.sai.reporting;
+package net.sourcedestination.sai.retrieval;
 
 import com.google.common.collect.Sets;
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.DBWrapper;
 import net.sourcedestination.sai.graph.Graph;
-import net.sourcedestination.sai.graph.GraphFactory;
 
 import java.util.HashSet;
 import java.util.Set;
