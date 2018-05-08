@@ -23,6 +23,7 @@ public interface IndependentDBMetric extends DBMetric {
         IndependentDBMetric self = this;
         return new Task<Double>() {
             private final AtomicInteger progressCounter = new AtomicInteger();
+            private final int size = db.getDatabaseSize();
 
             public Double get() {
                 return db.getGraphIDStream()
@@ -32,6 +33,9 @@ public interface IndependentDBMetric extends DBMetric {
                         .mapToDouble(self::processGraph)
                         .average().orElse(0);
             }
+
+            @Override
+            public double getPercentageDone() { return ((double)progressCounter.get()) / size; }
         };
     }
 }
