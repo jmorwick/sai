@@ -2,7 +2,7 @@ package net.sourcedestination.sai.reporting;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
-import net.sourcedestination.sai.reporting.metrics.PercentageOfIsolatedPoints;
+import net.sourcedestination.sai.reporting.metrics.graph.PercentageOfIsolatedPoints;
 import org.junit.Test;
 
 import java.nio.file.AccessDeniedException;
@@ -26,6 +26,6 @@ public class PercentageOfIsolatedPointsTest {
         PercentageOfIsolatedPoints stat = new PercentageOfIsolatedPoints();
 
         // The last parameter for "assertEquals" represents the amount of error allowed for the test results.
-        assertEquals(0, stat.processGraph(db.retrieveGraph(1)), 0);
+        assertEquals(0, stat.apply(db.retrieveGraph(1)), 0);
     }
 }

@@ -1,8 +1,9 @@
-package net.sourcedestination.sai.reporting.metrics;
+package net.sourcedestination.sai.reporting.metrics.graph;
 
 import net.sourcedestination.funcles.tuple.Triple;
 import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;
+import net.sourcedestination.sai.reporting.metrics.graph.GraphMetric;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,11 +13,11 @@ import java.util.Set;
  * number of unique edges for a given graph.
  * Updated by amorehead on 4/13/18.
  */
-public class UniqueEdgesPerGraph implements IndependentDBMetric {
+public class UniqueEdgesPerGraph implements GraphMetric {
 
     @Override
     // This method represents the main functionality of this class.
-    public double processGraph(Graph g) {
+    public Double apply(Graph g) {
         Set<Triple<Set<Feature>>> edgeTypes = new HashSet<>();
 
         g.getEdgeIDs()
@@ -26,6 +27,6 @@ public class UniqueEdgesPerGraph implements IndependentDBMetric {
                         g.getEdgeFeaturesSet(eid)))
                 .forEach(edgeTypes::add);
 
-        return edgeTypes.size();
+        return (double)edgeTypes.size();
     }
 }

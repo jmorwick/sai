@@ -2,7 +2,7 @@ package net.sourcedestination.sai.reporting;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
-import net.sourcedestination.sai.reporting.metrics.UniqueEdgesPerGraph;
+import net.sourcedestination.sai.reporting.metrics.graph.UniqueEdgesPerGraph;
 import org.junit.Test;
 
 import java.nio.file.AccessDeniedException;
@@ -25,6 +25,6 @@ public class UniqueEdgesPerGraphTest {
         UniqueEdgesPerGraph stat = new UniqueEdgesPerGraph();
 
         // The last parameter for "assertEquals" represents the amount of error allowed for the test results.
-        assertEquals(4, stat.processGraph(db.retrieveGraph(1)), 0);
+        assertEquals(4, stat.apply(db.retrieveGraph(1)), 0);
     }
 }

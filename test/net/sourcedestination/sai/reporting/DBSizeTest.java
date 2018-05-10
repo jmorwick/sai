@@ -2,7 +2,7 @@ package net.sourcedestination.sai.reporting;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
-import net.sourcedestination.sai.reporting.metrics.DBSize;
+import net.sourcedestination.sai.reporting.metrics.db.DBSize;
 import org.junit.Test;
 
 import java.nio.file.AccessDeniedException;

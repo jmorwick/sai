@@ -1,14 +1,15 @@
-package net.sourcedestination.sai.reporting.metrics;
+package net.sourcedestination.sai.reporting.metrics.graph;
 
 import net.sourcedestination.sai.graph.Graph;
+import net.sourcedestination.sai.reporting.metrics.graph.GraphMetric;
 
 /* A DB metric that finds the ratio of isolated nodes, those with
  degree zero, to the total number of nodes in the entire graph.
  Created by amorehead on 3/1/18. */
-public class PercentageOfIsolatedPoints implements IndependentDBMetric {
+public class PercentageOfIsolatedPoints implements GraphMetric {
 
     @Override
-    public double processGraph(Graph g) {
+    public Double apply(Graph g) {
 
         double totalNodes = (g.getNodeIDs().count());
 

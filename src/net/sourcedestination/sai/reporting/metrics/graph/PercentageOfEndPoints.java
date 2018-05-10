@@ -1,14 +1,15 @@
-package net.sourcedestination.sai.reporting.metrics;
+package net.sourcedestination.sai.reporting.metrics.graph;
 
 import net.sourcedestination.sai.graph.Graph;
+import net.sourcedestination.sai.reporting.metrics.graph.GraphMetric;
 
-/* A DB metric that finds the ratio of end points, those with
+/* A graph metric that finds the ratio of end points, those with
  degree one, to the total number of nodes in the entire graph.
  Created by amorehead on 2/12/18. */
-public class PercentageOfEndPoints implements IndependentDBMetric {
+public class PercentageOfEndPoints implements GraphMetric {
 
     @Override
-    public double processGraph(Graph g) {
+    public Double apply(Graph g) {
         double totalNodes = (g.getNodeIDs().count());
 
         // The following is a simple check to see if there are any nodes in a given graph.

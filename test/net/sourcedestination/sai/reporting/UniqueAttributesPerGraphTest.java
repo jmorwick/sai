@@ -2,7 +2,7 @@ package net.sourcedestination.sai.reporting;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
-import net.sourcedestination.sai.reporting.metrics.UniqueAttributesPerGraph;
+import net.sourcedestination.sai.reporting.metrics.graph.UniqueAttributesPerGraph;
 import org.junit.Test;
 
 import java.nio.file.AccessDeniedException;
@@ -25,7 +25,7 @@ public class UniqueAttributesPerGraphTest {
         UniqueAttributesPerGraph stat = new UniqueAttributesPerGraph();
 
         // The last parameter for "assertEquals" represents the amount of error allowed for the test results.
-        assertEquals(5, stat.processGraph(db.retrieveGraph(1)), 0);
+        assertEquals(5, stat.apply(db.retrieveGraph(1)), 0);
     }
 
 }

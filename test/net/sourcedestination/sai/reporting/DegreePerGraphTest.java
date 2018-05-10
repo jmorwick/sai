@@ -2,28 +2,29 @@ package net.sourcedestination.sai.reporting;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
-import net.sourcedestination.sai.reporting.metrics.AverageClusteringCoefficient;
+import net.sourcedestination.sai.reporting.metrics.graph.DegreePerGraph;
 import org.junit.Test;
+
+import java.nio.file.AccessDeniedException;
 
 import static org.junit.Assert.assertEquals;
 
-/* This is a test class for "AverageClusteringCoefficient". It passes if and only
+/* This is a test class for "DegreePerGraph". It passes if and only
  if the metric is fully accurate on the small graph database provided.
- Written by amorehead on 4/24/2018. */
-public class AverageClusteringCoefficientTest3 {
+ Written by amorehead on 2/3/2018. */
+public class DegreePerGraphTest {
 
     @Test
-    public void testClusteringCoefficient1() {
+    public void testLexicalCompatibility() throws AccessDeniedException {
 
         /* This is a method that tests whether or not the
-         "AverageClusteringCoefficient" class is implemented correctly or not. */
+         "DegreePerGraph" class is implemented correctly or not. */
         DBInterface db = SampleDBs.smallGraphsDB();
 
         // This allows us to test the metric's class.
-        AverageClusteringCoefficient stat = new AverageClusteringCoefficient();
+        DegreePerGraph stat = new DegreePerGraph();
 
         // The last parameter for "assertEquals" represents the amount of error allowed for the test results.
-        assertEquals(3.0 / 6.0, stat.processGraph(db.retrieveGraph(11)), 0.005);
+        assertEquals(2, stat.apply(db.retrieveGraph(1)), 0);
     }
-
 }

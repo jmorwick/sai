@@ -1,14 +1,15 @@
-package net.sourcedestination.sai.reporting.metrics;
+package net.sourcedestination.sai.reporting.metrics.graph;
 
 import net.sourcedestination.sai.graph.Graph;
+import net.sourcedestination.sai.reporting.metrics.graph.GraphMetric;
 
 /* A DB metric that computes the
  average degree of the nodes in a given graph.
  Created by amorehead on 1/31/18. */
-public class AverageDegreePerGraph implements IndependentDBMetric {
+public class DegreePerGraph implements GraphMetric {
 
     @Override
-    public double processGraph(Graph g) {
+    public Double apply(Graph g) {
         // The following initializes a double variable for later use.
         double averageDegree;
 

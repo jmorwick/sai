@@ -1,6 +1,7 @@
-package net.sourcedestination.sai.reporting.metrics;
+package net.sourcedestination.sai.reporting.metrics.graph;
 
 import net.sourcedestination.sai.graph.Graph;
+import net.sourcedestination.sai.reporting.metrics.graph.GraphMetric;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -8,10 +9,10 @@ import java.util.stream.Collectors;
 /* A DB metric that computes the local average
  clustering coefficient for a given graph.
  Updated by amorehead on 4/24/18. */
-public class AverageClusteringCoefficient implements IndependentDBMetric {
+public class ClusteringCoefficient implements GraphMetric {
 
     @Override
-    public double processGraph(Graph g) {
+    public Double apply(Graph g) {
 
         /* The following creates a double array for storing
          a running total of nodes' clustering coefficients. */

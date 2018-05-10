@@ -1,4 +1,4 @@
-package net.sourcedestination.sai.reporting.metrics;
+package net.sourcedestination.sai.reporting.metrics.db;
 
 import net.sourcedestination.sai.db.DBInterface;
 

@@ -2,7 +2,7 @@ package net.sourcedestination.sai.reporting;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
-import net.sourcedestination.sai.reporting.metrics.PercentageOfEndPoints;
+import net.sourcedestination.sai.reporting.metrics.graph.PercentageOfEndPoints;
 import org.junit.Test;
 
 import java.nio.file.AccessDeniedException;
@@ -26,7 +26,7 @@ public class PercentageOfEndPointsTest {
         PercentageOfEndPoints stat = new PercentageOfEndPoints();
 
         // The last parameter for "assertEquals" represents the amount of error allowed for the test results.
-        assertEquals(0.25, stat.processGraph(db.retrieveGraph(1)), 0);
+        assertEquals(0.25, stat.apply(db.retrieveGraph(1)), 0);
 
     }
 }
