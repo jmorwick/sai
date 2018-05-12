@@ -102,7 +102,7 @@ public class BasicDBInterface implements DBInterface {
 	public void addIndex(int graphID, int indexGraphID) {
 		if(!db.containsKey(graphID) || !db.containsKey(indexGraphID))
 			throw new IllegalArgumentException("graphid doesn't exist");
-		MutableGraph ireplace = new MutableGraph(db.get(indexGraphID));
+		var ireplace = new MutableGraph(db.get(indexGraphID));
 		ireplace.addFeature(getIndexesFeature(graphID));
 		this.replaceGraph(indexGraphID, ireplace);
 	}
@@ -114,8 +114,8 @@ public class BasicDBInterface implements DBInterface {
 	 */
 	@Override
 	public int addGraph(Graph g1) {
-		MutableGraph g = new MutableGraph(g1);
-		int newGraphIDtemp;
+		var g = new MutableGraph(g1);
+		var newGraphIDtemp = 0;
 		if(getFeature(g.getFeatures(), SAI_ID_NAME) != null) {
 			newGraphIDtemp = Integer.parseInt(getFeature(g.getFeatures(), 
 					SAI_ID_NAME).getValue());
@@ -124,7 +124,7 @@ public class BasicDBInterface implements DBInterface {
 				System.out.println("!!!");
 			}
 		} else newGraphIDtemp = nextGraphID;
-		final int newGraphID = newGraphIDtemp;
+		final var newGraphID = newGraphIDtemp;
 
 
 		nextGraphID = Math.max(nextGraphID, newGraphID) + 1; // update next fresh graph id

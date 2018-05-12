@@ -43,8 +43,8 @@ public class MutableGraph implements Graph {
             g.getNodeFeatures(n).forEach(f -> addNodeFeature(n, f));
         });
         g.getEdgeIDs().forEach(e -> {
-            int fn = g.getEdgeSourceNodeID(e);
-            int tn = g.getEdgeTargetNodeID(e);
+            var fn = g.getEdgeSourceNodeID(e);
+            var tn = g.getEdgeTargetNodeID(e);
             addEdge(e, fn, tn);
             g.getEdgeFeatures(e).forEach(f -> addEdgeFeature(e, f));
         });

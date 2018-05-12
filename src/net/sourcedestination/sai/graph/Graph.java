@@ -100,7 +100,7 @@ public interface Graph {
      * @return
      */
     public default Feature getNodeFeature(int nid) {
-        Set<Feature> features = getNodeFeaturesSet(nid);
+        var features = getNodeFeaturesSet(nid);
         return features.size() == 1 ? features.iterator().next() : null;
     }
 
@@ -111,7 +111,7 @@ public interface Graph {
      * @return
      */
     public default Feature getEdgeFeature(int eid) {
-        Set<Feature> features = getEdgeFeaturesSet(eid);
+        var features = getEdgeFeaturesSet(eid);
         return features.size() == 1 ? features.iterator().next() : null;
     }
 
@@ -122,7 +122,7 @@ public interface Graph {
      * @return
      */
     public default Feature getNodeFeature(String featureName, int nid) {
-        Set<Feature> features = getNodeFeatures(nid)
+        var features = getNodeFeatures(nid)
                 .filter(f -> f.getName().equals(featureName))
                 .collect(Collectors.toSet());
         return features.size() == 1 ? features.iterator().next() : null;
@@ -135,14 +135,14 @@ public interface Graph {
      * @return
      */
     public default Feature getEdgeFeature(String featureName, int eid) {
-        Set<Feature> features = getEdgeFeatures(eid)
+        var features = getEdgeFeatures(eid)
                 .filter(f -> f.getName().equals(featureName))
                 .collect(Collectors.toSet());
         return features.size() == 1 ? features.iterator().next() : null;
     }
 
     public default <G extends Graph> G copyWithoutEdge(GraphFactory<G> gf, int edgeID) {
-        MutableGraph t = new MutableGraph(this);
+        var t = new MutableGraph(this);
         if (t.getEdgeIDs().anyMatch(eid -> eid == edgeID))
             t.removeEdge(edgeID);
         return gf.copy(t);

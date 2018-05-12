@@ -15,7 +15,7 @@ public final class Feature implements Comparable<Feature> {
 	@Override
 	public boolean equals(Object o) {
 		if(!(o instanceof Feature)) return false;
-		Feature f = (Feature)o;
+		var f = (Feature)o;
 		return f.name.equals(name) && f.value.equals(value);
 	}
 

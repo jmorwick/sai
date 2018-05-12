@@ -32,7 +32,7 @@ public class CrossValidatedClassificationExperiment implements Task {
 
     @Override
     public Object get() {
-        int foldSize = dataset.getDatabaseSize() / folds;
+        var foldSize = dataset.getDatabaseSize() / folds;
         IntStream.range(0, folds-1)
             .parallel()
             .forEach( fold -> {

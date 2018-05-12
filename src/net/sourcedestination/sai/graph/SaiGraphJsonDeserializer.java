@@ -12,8 +12,8 @@ import java.util.stream.Stream;
  */
 public class SaiGraphJsonDeserializer implements GraphDeserializer<MutableGraph> {
     public MutableGraph apply(String json) {
-        MutableGraph g = new MutableGraph();
-        JSONObject parsedGraph = new JSONObject(json);
+        var g = new MutableGraph();
+        var parsedGraph = new JSONObject(json);
 
         // consumer which processes each feature in a JSONArray of features
         Consumer2<Consumer<Feature>,JSONArray> processFeatures =
@@ -27,11 +27,11 @@ public class SaiGraphJsonDeserializer implements GraphDeserializer<MutableGraph>
         processFeatures.accept(g::addFeature, parsedGraph.getJSONArray("features"));
 
         // process nodes
-        JSONArray nodes = parsedGraph.getJSONArray("nodes");
+        var nodes = parsedGraph.getJSONArray("nodes");
         Stream.iterate(0, n->n+1).limit(nodes.length())
                 .map(nodes::getJSONObject)
                 .forEach(n -> {
-                    int nodeID = n.getInt("ID");
+                    var nodeID = n.getInt("ID");
                     g.addNode(nodeID);
                     processFeatures.accept(
                             f -> g.addNodeFeature(nodeID, f),
@@ -39,11 +39,11 @@ public class SaiGraphJsonDeserializer implements GraphDeserializer<MutableGraph>
                 });
 
         // process edges
-        JSONArray edges = parsedGraph.getJSONArray("edges");
+        var edges = parsedGraph.getJSONArray("edges");
         Stream.iterate(0, n->n+1).limit(edges.length())
                 .map(edges::getJSONObject)
                 .forEach(e -> {
-                    int edgeID = e.getInt("ID");
+                    var edgeID = e.getInt("ID");
                     g.addEdge(edgeID, e.getInt("fromID"), e.getInt("toID"));
                     processFeatures.accept(
                             f -> g.addEdgeFeature(edgeID, f),

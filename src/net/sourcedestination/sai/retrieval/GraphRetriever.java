@@ -58,8 +58,6 @@ public interface GraphRetriever<DB extends DBInterface> {
 			final Function<Graph,Set<Feature>> indexGenerator,
 			final FeatureIndexBasedRetriever ibRetriever
 			) {
-
-		Logger logger = LogManager.getLogger(GraphRetriever.class);
 		logger.info("creating phase-1 retriever using index generator");
 		return (db, q) -> ibRetriever.retrieve(db, indexGenerator.apply(q).stream());
 	}

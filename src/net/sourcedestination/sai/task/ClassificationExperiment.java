@@ -35,12 +35,12 @@ public class ClassificationExperiment implements Task {
     @Override
     public Object get() {
         logger.info(ID + ": test beginning");
-        int size = testSet.getDatabaseSize();
-        int correct = (int)graphIds
+        var size = testSet.getDatabaseSize();
+        var correct = (int)graphIds
                 .filter(gid -> {
-                    Graph g = testSet.retrieveGraph(gid);
-                    String result = expectedClasses.apply(g);
-                    String expected = model.apply(g);
+                    var g = testSet.retrieveGraph(gid);
+                    var result = expectedClasses.apply(g);
+                    var expected = model.apply(g);
                     logger.info(ID + ": classified " + gid + " + as " + result + " expected " + expected);
                     return expected.equals(result);
                 })

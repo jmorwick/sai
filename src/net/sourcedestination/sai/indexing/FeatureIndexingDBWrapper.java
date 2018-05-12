@@ -17,7 +17,7 @@ public class FeatureIndexingDBWrapper extends DBWrapper {
 	
 	@Override
 	public int addGraph(Graph g) {
-		MutableGraph g1 = new MutableGraph(g);
+		var g1 = new MutableGraph(g);
 		for(Feature f : gen.apply(g))
 			g1.addFeature(f);
 			

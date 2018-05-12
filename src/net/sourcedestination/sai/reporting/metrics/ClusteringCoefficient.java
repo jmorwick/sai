@@ -21,19 +21,19 @@ public class ClusteringCoefficient implements GraphMetric {
         g.getNodeIDs().forEach(n -> {
 
             // The following stores all of the neighboring nodes of node "n" in a set.
-            Set<Integer> neighborsOfN = g.getIncidentFromEdges(n).map(g::getEdgeSourceNodeID).collect(Collectors.toSet());
+            var neighborsOfN = g.getIncidentFromEdges(n).map(g::getEdgeSourceNodeID).collect(Collectors.toSet());
 
             // The following finds "Kn", the degree of the current node "n".
-            int degreeOfCurrentNode = neighborsOfN.size();
+            var degreeOfCurrentNode = neighborsOfN.size();
 
             /* The following creates an integer instance to represent "Ln",
              the number of edges between the "Kn" neighbors of node "n". */
-            int numberOfNodeTriangles = 0;
+            var numberOfNodeTriangles = 0;
 
             // The following finds "Ln" for a given node "n".
-            for (int firstNeighborOfN : neighborsOfN) {
+            for (var firstNeighborOfN : neighborsOfN) {
 
-                for (int secondNeighborOfN : neighborsOfN) {
+                for (var secondNeighborOfN : neighborsOfN) {
 
                     // The following increases the number of node triangles found at current node "n" in the given graph "g".
                     if (g.areConnectedNodes(firstNeighborOfN, secondNeighborOfN)

@@ -34,7 +34,7 @@ public class StreamUtil {
 
 			@Override
 			public Spliterator<T> trySplit() {
-				Spliterator<T> split = s.trySplit();
+				var split = s.trySplit();
 				if(split == null) return null;
 				return listen(split, listener);
 			}
@@ -56,7 +56,7 @@ public class StreamUtil {
 	 * TODO: consider a more efficient, linked-list based implementation, or 3rd party lib
 	 */
 	public static <T> List<T> concatenateLists(List<T> a, List<T> b) {
-		List<T> c = Lists.newArrayList(a);
+		var c = Lists.newArrayList(a);
 		c.addAll(b);
 		return c;
 	}

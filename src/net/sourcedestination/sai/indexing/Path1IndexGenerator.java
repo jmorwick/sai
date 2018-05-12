@@ -19,7 +19,7 @@ public class Path1IndexGenerator implements FeatureIndexGenerator {
     }
 
     public static Set<Feature> generatePath1IndexFeatures(Graph s, String ... featureNames) {
-    	Set<Feature> ret = Sets.newHashSet();
+    	var ret = Sets.<Feature>newHashSet();
     	FeatureIndexGenerator.enumeratePaths(s, 1,1, featureNames)
                 .map(ls -> new Feature(PATH1NAME, generatePathKIndexFeature(ls)))
                 .forEach(ret::add);
@@ -31,8 +31,8 @@ public class Path1IndexGenerator implements FeatureIndexGenerator {
     	return replacementPattern.matcher(v).replaceAll("\\\\$1");
     }
     private static String generatePathKIndexFeature(List<Feature> ls) {
-        String ret = "";
-        for(Feature f : ls) {
+        var ret = "";
+        for(var f : ls) {
             ret += ret.length() == 0 ? "" : ", ";
             ret += "[" + encodeValue(f.getName()) + ":" + encodeValue(f.getValue()) + "]";
         }

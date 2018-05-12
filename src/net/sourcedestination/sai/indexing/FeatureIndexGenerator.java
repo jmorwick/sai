@@ -33,7 +33,7 @@ public interface FeatureIndexGenerator extends Function<Graph,Set<Feature>> {
         assert length >= 0;
         assert s != null;
         assert s.getNodeIDsSet().contains(nid);
-        Set<String> featureNameSet = Sets.newHashSet(featureNames);
+        var featureNameSet = Sets.newHashSet(featureNames);
 
         if(length == 0) // stream singleton lists for each relevant feature
             return s.getNodeFeatures(nid)
@@ -70,7 +70,7 @@ public interface FeatureIndexGenerator extends Function<Graph,Set<Feature>> {
         assert length > 0;
         assert s != null;
         assert s.getNodeIDsSet().contains(nid);
-        Set<String> featureNameSet = Sets.newHashSet(featureNames);
+        var featureNameSet = Sets.newHashSet(featureNames);
 
         if(length == 1) // stream singleton lists for each relevant feature
             return s.getNodeFeatures(nid)

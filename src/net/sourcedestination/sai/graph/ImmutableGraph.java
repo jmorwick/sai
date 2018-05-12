@@ -44,7 +44,7 @@ public class ImmutableGraph implements Graph {
                         edgeID ->
                                 Pair.makePair(g.getEdgeSourceNodeID(edgeID),
                                         g.getEdgeTargetNodeID(edgeID)))));
-        Multimap<Integer, Feature> tempMap = HashMultimap.create();
+        var tempMap = HashMultimap.<Integer, Feature>create();
         g.getNodeIDs().forEach(nodeID -> {
             g.getNodeFeatures(nodeID)
                     .forEach(f -> tempMap.put(nodeID, f));
@@ -94,8 +94,8 @@ public class ImmutableGraph implements Graph {
 
     @Override
     public String toString() {
-        StringWriter sout = new StringWriter();
-        PrintWriter out = new PrintWriter(sout);
+        var sout = new StringWriter();
+        var out = new PrintWriter(sout);
         out.print(getNodeIDs().count() + ",");
         out.print(getEdgeIDs().count());
         getFeatures().sorted().forEach(f -> out.print("," + f));
