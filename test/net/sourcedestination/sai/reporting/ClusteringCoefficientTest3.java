@@ -2,7 +2,7 @@ package net.sourcedestination.sai.reporting;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
-import net.sourcedestination.sai.reporting.metrics.graph.ClusteringCoefficient;
+import net.sourcedestination.sai.reporting.metrics.ClusteringCoefficient;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

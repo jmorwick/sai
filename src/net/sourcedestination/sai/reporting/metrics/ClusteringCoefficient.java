@@ -1,7 +1,6 @@
-package net.sourcedestination.sai.reporting.metrics.graph;
+package net.sourcedestination.sai.reporting.metrics;
 
 import net.sourcedestination.sai.graph.Graph;
-import net.sourcedestination.sai.reporting.metrics.graph.GraphMetric;
 
 import java.util.Set;
 import java.util.stream.Collectors;

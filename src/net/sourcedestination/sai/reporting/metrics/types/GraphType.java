@@ -1,7 +1,7 @@
-package net.sourcedestination.sai.reporting.metrics.graph.types;
+package net.sourcedestination.sai.reporting.metrics.types;
 
 import net.sourcedestination.sai.graph.Graph;
-import net.sourcedestination.sai.reporting.metrics.graph.GraphMetric;
+import net.sourcedestination.sai.reporting.metrics.GraphMetric;
 
 import java.util.function.Predicate;
 

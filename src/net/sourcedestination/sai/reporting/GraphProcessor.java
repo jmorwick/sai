@@ -1,7 +1,7 @@
 package net.sourcedestination.sai.reporting;
 
 import net.sourcedestination.sai.graph.Graph;
-import net.sourcedestination.sai.reporting.metrics.graph.GraphMetric;
+import net.sourcedestination.sai.reporting.metrics.GraphMetric;
 import org.apache.log4j.Logger;
 
 import java.util.function.Consumer;

@@ -1,7 +1,7 @@
-package net.sourcedestination.sai.reporting.metrics.graph;
+package net.sourcedestination.sai.reporting.metrics;
 
 import net.sourcedestination.sai.graph.Graph;
-import net.sourcedestination.sai.reporting.metrics.graph.GraphMetric;
+import net.sourcedestination.sai.reporting.metrics.GraphMetric;
 
 /* A graph metric that computes the
  total number of nodes in a given graph.
