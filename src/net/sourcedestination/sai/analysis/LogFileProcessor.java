@@ -1,11 +1,14 @@
 package net.sourcedestination.sai.analysis;
 
 import net.sourcedestination.sai.task.Task;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -13,6 +16,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LogFileProcessor implements Task<Map<String, JSONObject>> {
+
+    static Logger logger = LogManager.getLogger(LogFileProcessor.class);
+
 
     private final ExperimentLogProcessor[] processors;
     private final Scanner in;
@@ -40,28 +46,40 @@ public class LogFileProcessor implements Task<Map<String, JSONObject>> {
 
     @Override
     public Map<String, JSONObject> get() {
-        Map<ExperimentLogProcessor,Pattern> compiledPatterns = new HashMap<>();
-        for(var processor : processors) {
-            compiledPatterns.put(processor, Pattern.compile(processor.getPattern()));
-        }
+        Map<String, JSONObject> reportModel = new HashMap<>();
+        try {
+            logger.info("beginning log analysiss");
+            Map<ExperimentLogProcessor, Pattern> compiledPatterns = new HashMap<>();
+            for (var processor : processors) {
+                compiledPatterns.put(processor, Pattern.compile(processor.getPattern()));
+            }
 
-        while(in.hasNextLine()) {
-            String line = in.nextLine();
-            bytesRead += line.length() + 1;
-            for (Map.Entry<ExperimentLogProcessor, Pattern> e : compiledPatterns.entrySet()) {
-                Matcher m = e.getValue().matcher(line);
-                String[] groups = new String[m.groupCount()];
-                for(int i=0; i<groups.length; i++)
-                    groups[i] = m.group(i);
-                if(groups.length > 0) {
-                    e.getKey().processLogMessage(groups);
+            while (in.hasNextLine()) {
+                String line = in.nextLine().trim();
+
+                bytesRead += line.length() + 1;
+                for (Map.Entry<ExperimentLogProcessor, Pattern> e : compiledPatterns.entrySet()) {
+                    Matcher m = e.getValue().matcher(line);
+                    if (m.find()) {
+                        String[] groups = new String[m.groupCount()+1];
+                        for (int i = 0; i < groups.length; i++)
+                            groups[i] = m.group(i);
+
+                        try {
+                            e.getKey().processLogMessage(groups);
+                        } catch (Exception ex) {
+                            logger.error("error analyzing line: " + line, ex);
+                        }
+                    }
                 }
             }
-        }
 
-        Map<String,JSONObject> reportModel = new HashMap<>();
-        for(var processor : processors) {
-            reportModel.putAll(processor.get());
+            for (var processor : processors) {
+                reportModel.putAll(processor.get());
+            }
+            logger.info("log analysis complete");
+        }catch(Exception ex) {
+            logger.error("unexpected error during execution of log analyzer", ex);
         }
         return reportModel;
     }
