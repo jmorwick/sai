@@ -1,6 +1,7 @@
-package net.sourcedestination.sai.reporting.metrics;
+package net.sourcedestination.sai.analysis.metrics;
 
 import net.sourcedestination.sai.graph.Graph;
+import net.sourcedestination.sai.analysis.GraphMetric;
 
 /* A DB metric that computes the
  average degree of the nodes in a given graph.

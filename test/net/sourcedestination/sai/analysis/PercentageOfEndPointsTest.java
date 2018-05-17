@@ -1,8 +1,8 @@
-package net.sourcedestination.sai.reporting;
+package net.sourcedestination.sai.analysis;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
-import net.sourcedestination.sai.reporting.metrics.PercentageOfEndPoints;
+import net.sourcedestination.sai.analysis.metrics.PercentageOfEndPoints;
 import org.junit.Test;
 
 import java.nio.file.AccessDeniedException;

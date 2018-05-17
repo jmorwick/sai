@@ -1,7 +1,7 @@
-package net.sourcedestination.sai.reporting.metrics;
+package net.sourcedestination.sai.analysis.metrics;
 
 import net.sourcedestination.sai.graph.Graph;
-import net.sourcedestination.sai.reporting.metrics.GraphMetric;
+import net.sourcedestination.sai.analysis.GraphMetric;
 
 /* A DB metric that finds the ratio of isolated nodes, those with
  degree zero, to the total number of nodes in the entire graph.

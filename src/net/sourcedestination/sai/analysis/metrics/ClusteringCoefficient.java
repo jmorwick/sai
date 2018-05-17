@@ -1,8 +1,8 @@
-package net.sourcedestination.sai.reporting.metrics;
+package net.sourcedestination.sai.analysis.metrics;
 
 import net.sourcedestination.sai.graph.Graph;
+import net.sourcedestination.sai.analysis.GraphMetric;
 
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /* A DB metric that computes the local average

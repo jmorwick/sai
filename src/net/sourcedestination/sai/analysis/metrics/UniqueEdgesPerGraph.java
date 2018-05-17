@@ -1,9 +1,9 @@
-package net.sourcedestination.sai.reporting.metrics;
+package net.sourcedestination.sai.analysis.metrics;
 
 import net.sourcedestination.funcles.tuple.Triple;
 import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;
-import net.sourcedestination.sai.reporting.metrics.GraphMetric;
+import net.sourcedestination.sai.analysis.GraphMetric;
 
 import java.util.HashSet;
 import java.util.Set;

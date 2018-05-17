@@ -1,4 +1,4 @@
-package net.sourcedestination.sai.reporting;
+package net.sourcedestination.sai.analysis;
 
 import com.google.common.collect.Sets;
 import net.sourcedestination.sai.db.BasicDBInterface;
