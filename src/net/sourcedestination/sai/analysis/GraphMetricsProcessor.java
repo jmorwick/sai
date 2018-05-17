@@ -5,7 +5,6 @@ import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.graph.Graph;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 import java.util.*;
 import java.util.stream.DoubleStream;
@@ -74,9 +73,8 @@ public class GraphMetricsProcessor implements ExperimentLogProcessor {
     }
 
     @Override
-    public Map<String,JSONObject> get() {
-        Map<String,JSONObject> results = new HashMap<>();
-
+    public Map<String,Object> get() {
+        Map<String,Object> results = new HashMap<>();
 
         for(String metricName : metrics.keySet()) {
             OptionalDouble d = (aggregationTypes.containsKey(metricName) ?
@@ -86,8 +84,8 @@ public class GraphMetricsProcessor implements ExperimentLogProcessor {
                             .mapToDouble(x -> x));
             results.put(metricName,
                     d.isPresent() ?
-                            new JSONObject(d.getAsDouble()) :
-                            new JSONObject()
+                            ""+d.getAsDouble() :
+                            "n/a"
             );
         }
 

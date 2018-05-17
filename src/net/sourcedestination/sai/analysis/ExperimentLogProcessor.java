@@ -1,12 +1,10 @@
 package net.sourcedestination.sai.analysis;
 
-import org.json.JSONObject;
-
 import java.util.Map;
 import java.util.function.Supplier;
 
 /** interface for a class that processes log results for a report */
-public interface ExperimentLogProcessor extends Supplier<Map<String,JSONObject>> {
+public interface ExperimentLogProcessor extends Supplier<Map<String,Object>> {
 
     /** returns a regular-expression to match against log messages
      *

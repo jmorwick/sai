@@ -3,19 +3,17 @@ package net.sourcedestination.sai.analysis;
 import net.sourcedestination.sai.task.Task;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LogFileProcessor implements Task<Map<String, JSONObject>> {
+public class LogFileProcessor implements Task<Map<String, Object>> {
 
     static Logger logger = LogManager.getLogger(LogFileProcessor.class);
 
@@ -45,8 +43,8 @@ public class LogFileProcessor implements Task<Map<String, JSONObject>> {
     }
 
     @Override
-    public Map<String, JSONObject> get() {
-        Map<String, JSONObject> reportModel = new HashMap<>();
+    public Map<String, Object> get() {
+        Map<String, Object> reportModel = new HashMap<>();
         try {
             logger.info("beginning log analysiss");
             Map<ExperimentLogProcessor, Pattern> compiledPatterns = new HashMap<>();
