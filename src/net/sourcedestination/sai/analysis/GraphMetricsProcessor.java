@@ -3,12 +3,17 @@ package net.sourcedestination.sai.analysis;
 import net.sourcedestination.funcles.tuple.Tuple3;
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.graph.Graph;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import java.util.*;
 import java.util.stream.DoubleStream;
 
 public class GraphMetricsProcessor implements ExperimentLogProcessor {
+
+    static Logger logger = LogManager.getLogger(GraphMetricsProcessor.class);
+
 
     public enum AggregationType {
         MIN {
@@ -38,7 +43,6 @@ public class GraphMetricsProcessor implements ExperimentLogProcessor {
     public GraphMetricsProcessor(Map<String, DBInterface> dbs,
                                  Tuple3<String, AggregationType, GraphMetric> ... metrics) {
         this.dbs = dbs;
-
         this.metrics = new HashMap<>();
         this.aggregationTypes = new HashMap<>();
         this.metricValues = new HashMap<>();
@@ -47,6 +51,9 @@ public class GraphMetricsProcessor implements ExperimentLogProcessor {
             this.metrics.put(t._1, t._3);
             metricValues.put(t._1, new ArrayList<>());
         }
+
+        logger.info("created with dbs: " + dbs.keySet() +
+                " and metrics " + this.metrics.keySet());
     }
 
     @Override
@@ -84,6 +91,6 @@ public class GraphMetricsProcessor implements ExperimentLogProcessor {
             );
         }
 
-        return null;
+        return results;
     }
 }
