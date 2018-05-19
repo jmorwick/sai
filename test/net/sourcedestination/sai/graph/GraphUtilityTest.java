@@ -22,8 +22,6 @@ import java.nio.file.AccessDeniedException;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.SampleDBs;
-import net.sourcedestination.sai.graph.Graph;
-import net.sourcedestination.sai.graph.MutableGraph;
 
 import org.junit.*;
 
@@ -32,6 +30,8 @@ import com.google.common.collect.Sets;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.Assert.*;
 import static net.sourcedestination.sai.graph.SampleGraphs.assertGraphsAreIdentical;
+import static net.sourcedestination.sai.graph.GraphSerializer.saiJsonEncode;
+import static net.sourcedestination.sai.graph.GraphDeserializer.saiJsonDecode;
 
 /**
  *
@@ -71,15 +71,13 @@ public class GraphUtilityTest {
     @Test
     public void testJSONCopy() throws AccessDeniedException {
         Graph g = SampleGraphs.getSmallGraph1();
-        GraphSerializer encoder = new SaiGraphJsonSerializer();
-        GraphDeserializer<MutableGraph> decoder = new SaiGraphJsonDeserializer();
-    	assertGraphsAreIdentical(g, decoder.apply(encoder.apply(g)));
+    	assertGraphsAreIdentical(g, saiJsonDecode(saiJsonEncode(g)));
         g = SampleGraphs.getSmallGraph2();
-    	assertGraphsAreIdentical(g, decoder.apply(encoder.apply(g)));
+    	assertGraphsAreIdentical(g, saiJsonDecode(saiJsonEncode(g)));
         g = SampleGraphs.getSmallGraph3();
-    	assertGraphsAreIdentical(g, decoder.apply(encoder.apply(g)));
+    	assertGraphsAreIdentical(g, saiJsonDecode(saiJsonEncode(g)));
         g = SampleGraphs.getSmallGraph4();
-    	assertGraphsAreIdentical(g, decoder.apply(encoder.apply(g)));
+    	assertGraphsAreIdentical(g, saiJsonDecode(saiJsonEncode(g)));
     }
     
 }
