@@ -20,17 +20,29 @@ public interface FeatureIndexBasedRetriever {
      */
     public static Stream<Integer> retreiveByBasicFeatureIndexCount(
     		final DBInterface db, Stream<Feature> indices) {
-        return indices
+
+        Multiset<Integer> retrievedGraphIds = indices
         		// retrieve graphs with each index
         		.map(db::retrieveGraphsWithFeature)
         		// combine all streams of graphs together
                 .reduce(Stream::concat).get()
                 // combine all graph id's in to a multiset
-                .collect(Collectors.toCollection(ConcurrentHashMultiset::create))
-                .entrySet().stream() // stream this multiset
-        		//sort by multiplicity
+                .collect(Collectors.toCollection(ConcurrentHashMultiset::create));
+
+        double max = retrievedGraphIds.entrySet().stream()
+				.mapToInt(entry -> entry.getCount())
+				.max().getAsInt();
+
+        return retrievedGraphIds.entrySet().stream() // stream this multiset
+				// log similarities
+				.map(entry -> {
+					GraphRetriever.logger.info("considered graph #"+entry.getElement() + " has " +
+							(entry.getCount() / max) + " similarity to query");
+					return entry;
+				})
+        		// sort by multiplicity
 				.sorted((l,r) -> -Integer.compare(l.getCount(), r.getCount()))
-        		// convert from multiset entries to graph id's
-        		.map(Multiset.Entry::getElement);
+				// convert from multiset entries to graph id's
+				.map(Multiset.Entry::getElement);
     }
 }
