@@ -11,6 +11,10 @@ import java.util.function.Function;
 @FunctionalInterface
 public interface GraphSerializer extends Function<Graph,String> {
 
+    public static int canonicalId(Graph g) {
+        return saiJsonEncode(g).hashCode();
+    }
+
     public static GraphSerializer saiJsonEncoder() {
         return GraphSerializer::saiJsonEncode;
     }

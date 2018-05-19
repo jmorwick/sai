@@ -40,6 +40,7 @@ public class SampleDBs {
         int bd = db.addGraph(SampleGraphs.getOneEdgeIndex("b", "d", "a")); // 8
         int cd = db.addGraph(SampleGraphs.getOneEdgeIndex("c", "d", "a")); // 9
 
+        /* TODO: change how indexing works -- use multiple DB interfaces
         db.addIndex(g1, ab); //5
         db.addIndex(g1, bc); //7
         db.addIndex(g1, bd); //8
@@ -54,6 +55,7 @@ public class SampleDBs {
 
         db.addIndex(g4, ab); //5
         db.addIndex(g4, ad); //6
+        */
         return db;
     }
 
@@ -70,6 +72,7 @@ public class SampleDBs {
         int bd = db.addGraph(SampleGraphs.getOneEdgeIndex("b", "d", "a"));
         int cd = db.addGraph(SampleGraphs.getOneEdgeIndex("c", "d", "a"));
 
+        /*
         db.addIndex(g4, ab); //5
         db.addIndex(g4, bc); //7
         db.addIndex(g4, cd); //9
@@ -84,6 +87,7 @@ public class SampleDBs {
 
         db.addIndex(g1, ab); //5
         db.addIndex(g1, ad); //6
+        */
         return db;
     }
 }

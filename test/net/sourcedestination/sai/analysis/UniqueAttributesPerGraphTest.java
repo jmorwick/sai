@@ -25,7 +25,7 @@ public class UniqueAttributesPerGraphTest {
         UniqueAttributesPerGraph stat = new UniqueAttributesPerGraph();
 
         // The last parameter for "assertEquals" represents the amount of error allowed for the test results.
-        assertEquals(5, stat.apply(db.retrieveGraph(1)), 0);
+        assertEquals(4, stat.apply(db.retrieveGraph(1)), 0);
     }
 
 }
