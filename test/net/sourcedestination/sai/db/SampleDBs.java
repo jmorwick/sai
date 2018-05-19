@@ -5,13 +5,15 @@ import java.nio.file.AccessDeniedException;
 import net.sourcedestination.sai.db.BasicDBInterface;
 import net.sourcedestination.sai.graph.SampleGraphs;
 
+import static net.sourcedestination.sai.db.GraphIdAutoAssigning.addSurrogateIdAssigner;
+
 public class SampleDBs {
-    public static BasicDBInterface getEmptyDB() {
-        return new BasicDBInterface();
+    public static GraphIdAutoAssigning getEmptyDB() {
+        return addSurrogateIdAssigner(new BasicDBInterface());
     }
 
-    public static BasicDBInterface smallGraphsDB() {
-        BasicDBInterface db = getEmptyDB();
+    public static GraphIdAutoAssigning smallGraphsDB() {
+        GraphIdAutoAssigning db = getEmptyDB();
         db.addGraph(SampleGraphs.getSmallGraph1());
         db.addGraph(SampleGraphs.getSmallGraph2());
         db.addGraph(SampleGraphs.getSmallGraph3());
@@ -27,8 +29,8 @@ public class SampleDBs {
     }
 
 
-    public static BasicDBInterface smallGraphsDBWithCorrectIndices() {
-        BasicDBInterface db = getEmptyDB();
+    public static GraphIdAutoAssigning smallGraphsDBWithCorrectIndices() {
+        GraphIdAutoAssigning db = getEmptyDB();
         int g1 = db.addGraph(SampleGraphs.getSmallGraph1()); //1
         int g2 = db.addGraph(SampleGraphs.getSmallGraph2()); //2
         int g3 = db.addGraph(SampleGraphs.getSmallGraph3()); //3
@@ -59,8 +61,8 @@ public class SampleDBs {
         return db;
     }
 
-    public static BasicDBInterface smallGraphsDBWithIncorrectIndices() {
-        BasicDBInterface db = getEmptyDB();
+    public static GraphIdAutoAssigning smallGraphsDBWithIncorrectIndices() {
+        GraphIdAutoAssigning db = getEmptyDB();
         int g1 = db.addGraph(SampleGraphs.getSmallGraph1());
         int g2 = db.addGraph(SampleGraphs.getSmallGraph2());
         int g3 = db.addGraph(SampleGraphs.getSmallGraph3());

@@ -1,5 +1,6 @@
 package net.sourcedestination.sai.db;
 
+import static net.sourcedestination.sai.db.GraphIdAutoAssigning.addSurrogateIdAssigner;
 import static org.junit.Assert.*;
 import static net.sourcedestination.sai.graph.Graph.*;
 import static net.sourcedestination.sai.graph.SampleGraphs.*;
@@ -49,7 +50,7 @@ public class BasicDBInterfaceTest {
 	@Test
 	public void testGraphIterator() throws AccessDeniedException {
 		GraphFactory gf = MutableGraph::new;
-		BasicDBInterface db = new BasicDBInterface();
+		GraphIdAutoAssigning db = addSurrogateIdAssigner(new BasicDBInterface());
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(getSmallGraph1());
 		int gid2 = db.addGraph(getSmallGraph2());
@@ -77,7 +78,7 @@ public class BasicDBInterfaceTest {
 
 	@Test
 	public void testDeletingGraphs() throws AccessDeniedException {
-		BasicDBInterface db = new BasicDBInterface();
+		GraphIdAutoAssigning db = addSurrogateIdAssigner(new BasicDBInterface());
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(getSmallGraph1());
 		int gid3 = db.addGraph(getSmallGraph3());
