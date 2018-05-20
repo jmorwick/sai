@@ -15,7 +15,7 @@ public interface GraphSerializer extends Function<Graph,String> {
         return saiJsonEncode(g).hashCode();
     }
 
-    public static GraphSerializer saiJsonEncoder() {
+    public static GraphSerializer saiJsonEncoderFactory() {
         return GraphSerializer::saiJsonEncode;
     }
 
