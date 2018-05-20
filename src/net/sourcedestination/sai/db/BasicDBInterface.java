@@ -10,18 +10,27 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
+import static net.sourcedestination.sai.graph.GraphSerializer.canonicalId;
 public class BasicDBInterface implements DBInterface {
 	private Map<Integer, Graph> db;
 	private Multimap<String, Feature> featuresWithName;
 	private Multimap<String, Integer> graphsWithFeatureName;
 	private Multimap<Feature, Integer> graphsWithFeature;
+	private final boolean USE_NATURAL_KEYS;
+	private int lastGraphIdGenerated = 0;
 
-	public BasicDBInterface() {
+	public BasicDBInterface(boolean useNaturalKeys) {
 		featuresWithName = HashMultimap.create();
 		db = Maps.newHashMap();
 		graphsWithFeatureName = HashMultimap.create();
 		graphsWithFeature = HashMultimap.create();
+		this.USE_NATURAL_KEYS = useNaturalKeys;
 	}
+
+	public BasicDBInterface() {
+		this(false);
+	}
+
 
 	@Override
 	public void disconnect() {
@@ -82,30 +91,39 @@ public class BasicDBInterface implements DBInterface {
 	 * @return the id of the graph after it was added to the database
 	 */
 	@Override
-	public void addGraph(int graphId, Graph g) {
+	public int addGraph(Graph g) {
+		final int newGraphID;
+		if(USE_NATURAL_KEYS) {
+			newGraphID = canonicalId(g);
+		} else synchronized(this) {
+			newGraphID = ++lastGraphIdGenerated;
+		}
+
 		//insert into db
-		db.put(graphId, g);
+		db.put(newGraphID, g);
 
 		//index on all features
 		g.getFeatures().forEach(f -> {
 			addFeature(f);
-			graphsWithFeatureName.put(f.getName(), graphId);
-			graphsWithFeature.put(f, graphId);
+			graphsWithFeatureName.put(f.getName(), newGraphID);
+			graphsWithFeature.put(f, newGraphID);
 		});
 		g.getNodeIDs().forEach(nid -> {
 			g.getNodeFeatures(nid).forEach(f -> {
 				addFeature(f);
-				graphsWithFeatureName.put(f.getName(), graphId);
-				graphsWithFeature.put(f, graphId);
+				graphsWithFeatureName.put(f.getName(), newGraphID);
+				graphsWithFeature.put(f, newGraphID);
 			});
 		});
 		g.getNodeIDs().forEach(eid -> {
 			g.getEdgeFeatures(eid).forEach(f -> {
 				addFeature(f);
-				graphsWithFeatureName.put(f.getName(), graphId);
-				graphsWithFeature.put(f, graphId);
+				graphsWithFeatureName.put(f.getName(), newGraphID);
+				graphsWithFeature.put(f, newGraphID);
 			});
 		});
+
+		return newGraphID;
 	}
 
 }

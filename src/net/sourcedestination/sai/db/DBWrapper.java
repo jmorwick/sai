@@ -13,15 +13,15 @@ import net.sourcedestination.sai.graph.GraphFactory;
  * @author jmorwick
  *
  */
-public class DBWrapper<D extends DBInterface> implements DBInterface {
+public class DBWrapper implements DBInterface {
 
-	private final D db;
+	private final DBInterface db;
 	
-	public DBWrapper(D wrappedDB) {
+	public DBWrapper(DBInterface wrappedDB) {
 		this.db = wrappedDB;
 	}
 	
-	public D getWrappedDB() { return db; }
+	public DBInterface getWrappedDB() { return db; }
 	
 	@Override
 	public void disconnect() {
@@ -59,8 +59,8 @@ public class DBWrapper<D extends DBInterface> implements DBInterface {
 	}
 
 	@Override
-	public void addGraph(int graphID, Graph g) {
-		db.addGraph(graphID, g);
+	public int addGraph(Graph g) {
+		return db.addGraph(g);
 	}
 
 	@Override

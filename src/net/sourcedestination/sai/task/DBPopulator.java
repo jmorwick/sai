@@ -5,16 +5,15 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import net.sourcedestination.sai.db.DBInterface;
-import net.sourcedestination.sai.db.GraphIdAutoAssigning;
 import net.sourcedestination.sai.graph.Graph;
 
-public abstract class DBPopulator implements Function<GraphIdAutoAssigning,Task> {
+public abstract class DBPopulator implements Function<DBInterface,Task> {
 
 	public abstract Stream<Graph> getGraphStream();
 	public abstract int getNumGraphs();
 
 	@Override
-	public Task apply(GraphIdAutoAssigning db) {
+	public Task apply(DBInterface db) {
 		Class dbpopClass = this.getClass();
 		return new Task() {
 			private boolean cancel = false;

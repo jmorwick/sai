@@ -10,7 +10,7 @@ public interface DBInterface {
 	public boolean isConnected();
 
 	public Graph retrieveGraph(int graphID);
-	public void addGraph(int graphID, Graph g);
+	public int addGraph(Graph g);
     public void deleteGraph(int graphID);
 	public int getDatabaseSize();
 	
@@ -20,6 +20,6 @@ public interface DBInterface {
 
     public static void copyDBs(DBInterface fromDB, DBInterface toDB) {
   	 fromDB.getGraphIDStream().forEach(
-  			 id -> toDB.addGraph(id, fromDB.retrieveGraph(id)));
+  			 id -> toDB.addGraph(fromDB.retrieveGraph(id)));
     }
 }
