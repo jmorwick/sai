@@ -59,8 +59,8 @@ public class DBWrapper implements DBInterface {
 	}
 
 	@Override
-	public int addGraph(Graph g) {
-		return db.addGraph(g);
+	public void addGraph(int graphId, Graph g) {
+		db.addGraph(graphId, g);
 	}
 
 	@Override

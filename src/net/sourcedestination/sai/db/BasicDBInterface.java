@@ -85,45 +85,49 @@ public class BasicDBInterface implements DBInterface {
 		return featuresWithName.keySet();
 	}
 
+
+	@Override
+	public int addGraph(Graph g) {
+		final int graphId;
+		if (USE_NATURAL_KEYS) {
+			graphId = canonicalId(g);
+		} else synchronized (this) {
+			graphId = ++lastGraphIdGenerated;
+		}
+		addGraph(graphId, g);
+		return graphId;
+	}
+
 	/** assigns a fresh id to the graph and adds it to the database
 	 *
 	 * @param g the graph to be added to the database
 	 * @return the id of the graph after it was added to the database
 	 */
 	@Override
-	public int addGraph(Graph g) {
-		final int newGraphID;
-		if(USE_NATURAL_KEYS) {
-			newGraphID = canonicalId(g);
-		} else synchronized(this) {
-			newGraphID = ++lastGraphIdGenerated;
-		}
-
+	public void addGraph(int graphId, Graph g) {
 		//insert into db
-		db.put(newGraphID, g);
+		db.put(graphId, g);
 
 		//index on all features
 		g.getFeatures().forEach(f -> {
 			addFeature(f);
-			graphsWithFeatureName.put(f.getName(), newGraphID);
-			graphsWithFeature.put(f, newGraphID);
+			graphsWithFeatureName.put(f.getName(), graphId);
+			graphsWithFeature.put(f, graphId);
 		});
 		g.getNodeIDs().forEach(nid -> {
 			g.getNodeFeatures(nid).forEach(f -> {
 				addFeature(f);
-				graphsWithFeatureName.put(f.getName(), newGraphID);
-				graphsWithFeature.put(f, newGraphID);
+				graphsWithFeatureName.put(f.getName(), graphId);
+				graphsWithFeature.put(f, graphId);
 			});
 		});
 		g.getNodeIDs().forEach(eid -> {
 			g.getEdgeFeatures(eid).forEach(f -> {
 				addFeature(f);
-				graphsWithFeatureName.put(f.getName(), newGraphID);
-				graphsWithFeature.put(f, newGraphID);
+				graphsWithFeatureName.put(f.getName(), graphId);
+				graphsWithFeature.put(f, graphId);
 			});
 		});
-
-		return newGraphID;
 	}
 
 }

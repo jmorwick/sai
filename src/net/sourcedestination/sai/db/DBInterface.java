@@ -6,20 +6,28 @@ import net.sourcedestination.sai.graph.Feature;
 import net.sourcedestination.sai.graph.Graph;
 
 public interface DBInterface {
-	public void disconnect();
-	public boolean isConnected();
+	void disconnect();
+	boolean isConnected();
 
-	public Graph retrieveGraph(int graphID);
-	public int addGraph(Graph g);
-    public void deleteGraph(int graphID);
-	public int getDatabaseSize();
+	Graph retrieveGraph(int graphID);
+	void addGraph(int graphId, Graph g);
+    void deleteGraph(int graphID);
+	int getDatabaseSize();
 	
-    public Stream<Integer> getGraphIDStream();
-	public Stream<Integer> retrieveGraphsWithFeature(Feature f);
-	public Stream<Integer> retrieveGraphsWithFeatureName(String name);
+    Stream<Integer> getGraphIDStream();
+	Stream<Integer> retrieveGraphsWithFeature(Feature f);
+	Stream<Integer> retrieveGraphsWithFeatureName(String name);
 
     public static void copyDBs(DBInterface fromDB, DBInterface toDB) {
-  	 fromDB.getGraphIDStream().forEach(
-  			 id -> toDB.addGraph(fromDB.retrieveGraph(id)));
+    	fromDB.getGraphIDStream().forEach(
+    			id -> toDB.addGraph(fromDB.retrieveGraph(id))
+		);
     }
+
+    default int addGraph(Graph g) {
+		int id = getDatabaseSize();
+		if(retrieveGraph(id) != null) id++;
+		addGraph(id, g);
+		return id;
+	}
 }
