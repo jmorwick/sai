@@ -1,7 +1,6 @@
 package net.sourcedestination.sai.db.indexing;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -14,7 +13,7 @@ import static net.sourcedestination.sai.util.StreamUtil.concatenateLists;
 import com.google.common.base.Function;
 
 @FunctionalInterface
-public interface FeatureIndexGenerator extends Function<Graph,Set<Feature>> {
+public interface IndexGenerator<I> extends Function<Graph,Stream<I>> {
 
     public static Stream<List<Feature>> enumeratePaths(Graph s,
                                                        int minLength,

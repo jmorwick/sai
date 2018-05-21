@@ -39,14 +39,14 @@ import java.util.function.Function;
  * @author Joseph Kendall-Morwick
  */
 @FunctionalInterface
-public interface GraphRetriever<DB extends DBInterface> {
+public interface GraphRetriever<DB extends DBInterface, Q> {
 
 	static Logger logger = LogManager.getLogger(GraphRetriever.class);
 
     Stream<Integer> retrieve(DB db, Graph q);
 
-	public static <DB extends DBInterface> GraphRetriever<DB> createPhase1Retriever(
-			GraphRetriever<DB> indexRetriever,
+	public static <DB extends DBInterface,Q> GraphRetriever<DB,Q> createPhase1Retriever(
+			GraphRetriever<DB,Q> indexRetriever,
 			GraphIndexBasedRetriever ibRetriever
 			) {
 
@@ -54,7 +54,7 @@ public interface GraphRetriever<DB extends DBInterface> {
 		return (db, q) -> ibRetriever.retrieve(db, indexRetriever.retrieve(db, q));
 	}
 	
-	public static <DB extends DBInterface>  GraphRetriever<DB> createPhase1Retriever(
+	public static <DB extends DBInterface,Q>  GraphRetriever<DB,Q> createPhase1Retriever(
 			final Function<Graph,Set<Feature>> indexGenerator,
 			final FeatureIndexBasedRetriever ibRetriever
 			) {
@@ -62,8 +62,8 @@ public interface GraphRetriever<DB extends DBInterface> {
 		return (db, q) -> ibRetriever.retrieve(db, indexGenerator.apply(q).stream());
 	}
 
-	public static <DB extends DBInterface> Stream<Graph> twoPhasedRetrieval(
-			final GraphRetriever<DB> phase1,
+	public static <DB extends DBInterface,Q> Stream<Graph> twoPhasedRetrieval(
+			final GraphRetriever<DB,Q> phase1,
 			DB db,
 			final Comparator<Graph> ordering,
 			Graph query,
@@ -78,7 +78,7 @@ public interface GraphRetriever<DB extends DBInterface> {
 	}
 
 	public static <G extends Graph, DB extends DBInterface> Stream<G> twoPhasedRetrieval(
-			final GraphRetriever<DB> phase1,
+			final GraphRetriever<DB,G> phase1,
 			DB db,
 			GraphFactory<G> graphFactory,
 			final Comparator<G> ordering,

@@ -3,14 +3,13 @@ package net.sourcedestination.sai.db.indexing;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import net.sourcedestination.sai.db.graph.Feature;
 import net.sourcedestination.sai.db.graph.Graph;
 
 import com.google.common.collect.Sets;
-//TODO: update to generalize to longer paths, perhaps move everything in to FeatureIndexGenerator
-public class Path1IndexGenerator implements FeatureIndexGenerator {
-    public static final String PATH1NAME = "path1-index";
+public class Path1IndexGenerator implements IndexGenerator<String> {
     
     private final String[] featureNames;
     
@@ -18,10 +17,10 @@ public class Path1IndexGenerator implements FeatureIndexGenerator {
     	this.featureNames = featureNames;
     }
 
-    public static Set<Feature> generatePath1IndexFeatures(Graph s, String ... featureNames) {
-    	var ret = Sets.<Feature>newHashSet();
-    	FeatureIndexGenerator.enumeratePaths(s, 1,1, featureNames)
-                .map(ls -> new Feature(PATH1NAME, generatePathKIndexFeature(ls)))
+    public static Set<String> generatePath1IndexFeatures(Graph s, String ... featureNames) {
+    	var ret = Sets.<String>newHashSet();
+    	IndexGenerator.enumeratePaths(s, 1,1, featureNames)
+                .map(ls -> generatePathKIndexFeature(ls))
                 .forEach(ret::add);
     	return ret;
     }
@@ -40,8 +39,8 @@ public class Path1IndexGenerator implements FeatureIndexGenerator {
     }
 
 	@Override
-	public Set<Feature> apply(Graph g) {
-		return generatePath1IndexFeatures(g, featureNames);
+	public Stream<String> apply(Graph g) {
+        return generatePath1IndexFeatures(g, featureNames).stream();
 	}
 
 }

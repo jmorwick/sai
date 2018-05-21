@@ -8,6 +8,7 @@ import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.graph.Feature;
 
 import com.google.common.collect.ConcurrentHashMultiset;
+import net.sourcedestination.sai.db.indexing.Index;
 
 @FunctionalInterface
 public interface FeatureIndexBasedRetriever {
@@ -19,11 +20,12 @@ public interface FeatureIndexBasedRetriever {
      * related with.
      */
     public static Stream<Integer> retreiveByBasicFeatureIndexCount(
-    		final DBInterface db, Stream<Feature> indices) {
+			final Index<Feature> retrieveGraphsWithFeature,
+			Stream<Feature> indices) {
 
         Multiset<Integer> retrievedGraphIds = indices
         		// retrieve graphs with each index
-        		.map(db::retrieveGraphsWithFeature)
+        		.map(retrieveGraphsWithFeature::getRelatedGraphIds)
         		// combine all streams of graphs together
                 .reduce(Stream::concat).get()
                 // combine all graph id's in to a multiset
