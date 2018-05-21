@@ -2,13 +2,13 @@ package net.sourcedestination.sai.analysis;
 
 import com.google.common.collect.Sets;
 import net.sourcedestination.sai.db.BasicDBInterface;
-import net.sourcedestination.sai.retrieval.GraphHidingDBWrapper;
+import net.sourcedestination.sai.experiment.retrieval.GraphHidingDBWrapper;
 import org.junit.Test;
 
 import java.nio.file.AccessDeniedException;
 import java.util.Set;
 
-import static net.sourcedestination.sai.graph.SampleGraphs.*;
+import static net.sourcedestination.sai.db.graph.SampleGraphs.*;
 import static org.junit.Assert.assertEquals;
 
 public class GraphHidingDBWrapperTest {

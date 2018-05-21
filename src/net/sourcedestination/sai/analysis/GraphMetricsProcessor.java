@@ -2,7 +2,7 @@ package net.sourcedestination.sai.analysis;
 
 import net.sourcedestination.funcles.tuple.Tuple3;
 import net.sourcedestination.sai.db.DBInterface;
-import net.sourcedestination.sai.graph.Graph;
+import net.sourcedestination.sai.db.graph.Graph;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 

@@ -1,12 +1,9 @@
 package net.sourcedestination.sai.db;
 
-import java.util.Set;
 import java.util.stream.Stream;
 
-import net.sourcedestination.sai.db.DBInterface;
-import net.sourcedestination.sai.graph.Feature;
-import net.sourcedestination.sai.graph.Graph;
-import net.sourcedestination.sai.graph.GraphFactory;
+import net.sourcedestination.sai.db.graph.Feature;
+import net.sourcedestination.sai.db.graph.Graph;
 
 /** a starter class for creating custom DB wrappers with default behavior for each required method.
  * 

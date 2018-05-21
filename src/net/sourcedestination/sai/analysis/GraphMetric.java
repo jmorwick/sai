@@ -1,6 +1,6 @@
 package net.sourcedestination.sai.analysis;
 
-import net.sourcedestination.sai.graph.Graph;
+import net.sourcedestination.sai.db.graph.Graph;
 
 import java.util.function.Function;
 

@@ -1,6 +1,6 @@
 package net.sourcedestination.sai.analysis;
 
-import net.sourcedestination.sai.task.Task;
+import net.sourcedestination.sai.util.Task;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 

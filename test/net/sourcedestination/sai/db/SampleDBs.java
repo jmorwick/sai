@@ -1,9 +1,6 @@
 package net.sourcedestination.sai.db;
 
-import java.nio.file.AccessDeniedException;
-
-import net.sourcedestination.sai.db.BasicDBInterface;
-import net.sourcedestination.sai.graph.SampleGraphs;
+import net.sourcedestination.sai.db.graph.SampleGraphs;
 
 public class SampleDBs {
     public static BasicDBInterface getEmptyDB() {

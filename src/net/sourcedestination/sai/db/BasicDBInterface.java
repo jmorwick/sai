@@ -3,14 +3,14 @@ package net.sourcedestination.sai.db;
 import java.util.*;
 import java.util.stream.Stream;
 
-import net.sourcedestination.sai.graph.Feature;
-import net.sourcedestination.sai.graph.Graph;
+import net.sourcedestination.sai.db.graph.Feature;
+import net.sourcedestination.sai.db.graph.Graph;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-import static net.sourcedestination.sai.graph.GraphSerializer.canonicalId;
+import static net.sourcedestination.sai.db.graph.GraphSerializer.canonicalId;
 public class BasicDBInterface implements DBInterface {
 	private Map<Integer, Graph> db;
 	private Multimap<String, Feature> featuresWithName;

@@ -1,6 +1,6 @@
 package net.sourcedestination.sai.analysis.metrics;
 
-import net.sourcedestination.sai.graph.Graph;
+import net.sourcedestination.sai.db.graph.Graph;
 import net.sourcedestination.sai.analysis.GraphMetric;
 
 /* A graph metric that finds the ratio of end points, those with

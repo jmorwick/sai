@@ -1,8 +1,8 @@
 package net.sourcedestination.sai.db;
 
 import static org.junit.Assert.*;
-import static net.sourcedestination.sai.graph.Graph.*;
-import static net.sourcedestination.sai.graph.SampleGraphs.*;
+import static net.sourcedestination.sai.db.graph.Graph.*;
+import static net.sourcedestination.sai.db.graph.SampleGraphs.*;
 
 import java.io.File;
 import java.nio.file.AccessDeniedException;
@@ -10,10 +10,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import net.sourcedestination.sai.db.BasicDBInterface;
-import net.sourcedestination.sai.db.DBInterface;
-import net.sourcedestination.sai.graph.GraphFactory;
-import net.sourcedestination.sai.graph.MutableGraph;
+import net.sourcedestination.sai.db.graph.GraphFactory;
+import net.sourcedestination.sai.db.graph.MutableGraph;
 
 import org.junit.After;
 import org.junit.Before;
