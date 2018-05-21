@@ -15,8 +15,6 @@ public interface DBInterface {
 	int getDatabaseSize();
 	
     Stream<Integer> getGraphIDStream();
-	Stream<Integer> retrieveGraphsWithFeature(Feature f);
-	Stream<Integer> retrieveGraphsWithFeatureName(String name);
 
     public static void copyDBs(DBInterface fromDB, DBInterface toDB) {
     	fromDB.getGraphIDStream().forEach(

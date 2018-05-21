@@ -11,7 +11,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import static net.sourcedestination.sai.db.graph.GraphSerializer.canonicalId;
-public class BasicDBInterface implements DBInterface {
+
+public class BasicDBInterface implements DBInterface  {
 	private Map<Integer, Graph> db;
 	private Multimap<String, Feature> featuresWithName;
 	private Multimap<String, Integer> graphsWithFeatureName;
@@ -71,12 +72,10 @@ public class BasicDBInterface implements DBInterface {
 		return db.size();
 	}
 
-	@Override
 	public Stream<Integer> retrieveGraphsWithFeature(Feature f) {
 		return graphsWithFeature.get(f).stream();
 	}
 
-	@Override
 	public Stream<Integer> retrieveGraphsWithFeatureName(String name) {
 		return graphsWithFeatureName.get(name).stream();
 	}
