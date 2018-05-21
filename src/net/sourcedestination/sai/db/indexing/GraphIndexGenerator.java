@@ -13,7 +13,7 @@ import static net.sourcedestination.sai.util.StreamUtil.concatenateLists;
 import com.google.common.base.Function;
 
 @FunctionalInterface
-public interface IndexGenerator<I> extends Function<Graph,Stream<I>> {
+public interface GraphIndexGenerator<I> extends Function<Graph,Stream<I>> {
 
     public static Stream<List<Feature>> enumeratePaths(Graph s,
                                                        int minLength,

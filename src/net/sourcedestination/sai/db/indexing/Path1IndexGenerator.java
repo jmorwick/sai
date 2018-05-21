@@ -9,7 +9,7 @@ import net.sourcedestination.sai.db.graph.Feature;
 import net.sourcedestination.sai.db.graph.Graph;
 
 import com.google.common.collect.Sets;
-public class Path1IndexGenerator implements IndexGenerator<String> {
+public class Path1IndexGenerator implements GraphIndexGenerator<String> {
     
     private final String[] featureNames;
     
@@ -19,7 +19,7 @@ public class Path1IndexGenerator implements IndexGenerator<String> {
 
     public static Set<String> generatePath1IndexFeatures(Graph s, String ... featureNames) {
     	var ret = Sets.<String>newHashSet();
-    	IndexGenerator.enumeratePaths(s, 1,1, featureNames)
+    	GraphIndexGenerator.enumeratePaths(s, 1,1, featureNames)
                 .map(ls -> generatePathKIndexFeature(ls))
                 .forEach(ret::add);
     	return ret;

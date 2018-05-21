@@ -6,16 +6,17 @@ import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.DBWrapper;
 import net.sourcedestination.sai.db.graph.Graph;
 import net.sourcedestination.sai.db.graph.ImmutableGraph;
+import net.sourcedestination.sai.experiment.retrieval.Retriever;
 
 import java.util.stream.Stream;
 
-public class BasicIndexingDBWrapper<I>  extends DBWrapper implements Index<I> {
+public class BasicIndexingDBWrapper<I>  extends DBWrapper implements Retriever<I> {
 
     private final Multimap<I,Integer> internalIndexImplementation = HashMultimap.create();
     private final IndexGenerator<I> gen;
 
 
-	public BasicIndexingDBWrapper(DBInterface wrappedDB, IndexGenerator<I> gen) {
+	public BasicIndexingDBWrapper(DBInterface wrappedDB, GraphIndexGenerator<I> gen) {
 		super(wrappedDB);
 		this.gen = gen;
 	}
@@ -28,7 +29,7 @@ public class BasicIndexingDBWrapper<I>  extends DBWrapper implements Index<I> {
 	}
 
     @Override
-    public Stream<Integer> getRelatedGraphIds(I index) {
+    public Stream<Integer> retrieve(I index) {
         return internalIndexImplementation.get(index).stream();
     }
 
