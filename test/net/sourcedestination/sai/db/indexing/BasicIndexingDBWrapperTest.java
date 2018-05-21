@@ -2,7 +2,7 @@ package net.sourcedestination.sai.db.indexing;
 
 import org.junit.Test;
 
-public class FeatureIndexingDBWrapperTest {
+public class BasicIndexingDBWrapperTest {
 
 	@Test
 	public void testAddGraph() {

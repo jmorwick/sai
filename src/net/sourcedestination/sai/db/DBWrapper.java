@@ -41,16 +41,6 @@ public class DBWrapper implements DBInterface {
 	}
 
 	@Override
-	public Stream<Integer> retrieveGraphsWithFeature(Feature f) {
-		return db.retrieveGraphsWithFeature(f);
-	}
-
-	@Override
-	public Stream<Integer> retrieveGraphsWithFeatureName(String name) {
-		return db.retrieveGraphsWithFeatureName(name);
-	}
-
-	@Override
 	public void deleteGraph(int graphID) {
 		db.deleteGraph(graphID);
 	}
