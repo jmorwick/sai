@@ -25,7 +25,7 @@ public class RetrievalUtilTest {
 	@Test
 	public void testBasicCountRetriever() throws AccessDeniedException {
 		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices();
-		GraphIndexBasedRetriever r = GraphIndexBasedRetriever::retrieveByBasicGraphIndexCount;
+		IndexBasedRetriever r = IndexBasedRetriever::retrieveByBasicGraphIndexCount;
 		Iterator<Integer> i;
 		i = r.retrieve(db, Sets.newHashSet(5, 6, 7, 8).stream()).iterator();
 		assertTrue(i.hasNext());
@@ -120,7 +120,7 @@ public class RetrievalUtilTest {
 	public void testBuildPhase1Retriever() throws AccessDeniedException {
 		GraphFactory gf = new MutableGraphFactory();
 		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices();
-		GraphRetriever r = RetrievalUtil.createPhase1Retriever(
+		Retriever r = RetrievalUtil.createPhase1Retriever(
 				new BasicPath1IndexRetriever("test"), 
 				new BasicGraphIndexCount());
 		Iterator<Integer> i = r.retrieve(db, SampleGraphs.getSmallGraph1());
@@ -164,7 +164,7 @@ public class RetrievalUtilTest {
 		MatchingGenerator gen = MatchingUtil.createCompleteMatchingGenerator(
 				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil.lexicalChecker()), 
 				h);
-		GraphRetriever phase1 = RetrievalUtil.createPhase1Retriever(
+		Retriever phase1 = RetrievalUtil.createPhase1Retriever(
 				new BasicPath1IndexRetriever("test"), 
 				new BasicGraphIndexCount());
 		BasicDBInterface db = SampleDBs.smallGraphsDBWithIncorrectIndices();
