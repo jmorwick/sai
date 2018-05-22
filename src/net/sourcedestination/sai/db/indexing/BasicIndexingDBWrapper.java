@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 public class BasicIndexingDBWrapper<I>  extends DBWrapper implements Retriever<I> {
 
     private final Multimap<I,Integer> internalIndexImplementation = HashMultimap.create();
-    private final IndexGenerator<I> gen;
+    private final GraphIndexGenerator<I> gen;
 
 
 	public BasicIndexingDBWrapper(DBInterface wrappedDB, GraphIndexGenerator<I> gen) {
