@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 import com.google.common.collect.ConcurrentHashMultiset;
 import com.google.common.collect.Multiset;
 import net.sourcedestination.funcles.tuple.Tuple2;
+import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.graph.Graph;
 import net.sourcedestination.sai.db.indexing.GraphIndexGenerator;
 import org.apache.log4j.LogManager;
@@ -49,10 +50,10 @@ public interface Retriever<Q> {
 
     Stream<Integer> retrieve(Q q);
 
-    static Stream<Integer> rerank(Stream<Integer> graphIds, Function<Integer,Double> querySimilarity) {
+    static Stream<Integer> rerank(Stream<Integer> graphIds, DBInterface db, ResultQualityMetric q) {
         return graphIds
                 .map(id -> {
-                    double s = querySimilarity.apply(id);
+                    double s = q.apply(db.retrieveGraph(id));
                     logger.info("Considered Graph ID #"+id+" has similarity " + s + " to query");
                     return makeTuple(id, s);
                 })
