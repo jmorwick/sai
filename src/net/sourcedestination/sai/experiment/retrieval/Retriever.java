@@ -20,8 +20,6 @@
 package net.sourcedestination.sai.experiment.retrieval;
 
 import java.util.Comparator;
-import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -87,5 +85,18 @@ public interface Retriever<Q> {
 
     static <Q> Retriever<Graph> indexCountRetrieverFactory(Retriever<Q> index, GraphIndexGenerator<Q> gen) {
         return query -> retrieveByIndexCount(index, gen, query);
+    }
+
+    static Retriever simpleSequentialRetrieverFactory(DBInterface db, String dbname) {
+        return new Retriever() {
+            @Override
+            public Stream<Integer> retrieve(Object query) {
+                return db.getGraphIDStream().map(gid -> {
+                    logger.info("retrieved Graph ID #"+gid+
+                            (dbname != null ? " from "+dbname : ""));
+                    return gid;
+                });
+            }
+        };
     }
 }
