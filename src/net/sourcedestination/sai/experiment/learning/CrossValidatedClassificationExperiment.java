@@ -2,11 +2,13 @@ package net.sourcedestination.sai.experiment.learning;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.graph.Graph;
-import net.sourcedestination.sai.experiment.retrieval.GraphHidingDBWrapper;
+import net.sourcedestination.sai.experiment.retrieval.GraphHidingDB;
 import net.sourcedestination.sai.util.Task;
 
 import java.util.function.Function;
 import java.util.stream.IntStream;
+
+import static net.sourcedestination.sai.experiment.retrieval.GraphHidingDB.wrap;
 
 public class CrossValidatedClassificationExperiment implements Task {
 
@@ -35,13 +37,13 @@ public class CrossValidatedClassificationExperiment implements Task {
         IntStream.range(0, folds-1)
             .parallel()
             .forEach( fold -> {
-                GraphHidingDBWrapper trainingSet = new GraphHidingDBWrapper(dataset);
+                GraphHidingDB trainingSet = wrap(dataset, "training-fold-"+fold);
                 dataset.getGraphIDStream()
                         .skip(fold * foldSize)
                         .limit(foldSize)
                         .forEach(trainingSet::hideGraph);
 
-                GraphHidingDBWrapper testSet = new GraphHidingDBWrapper(dataset);
+                GraphHidingDB testSet = wrap(dataset, "test-fold-"+fold);
                 dataset.getGraphIDStream()
                         .limit(fold * foldSize)
                         .forEach(trainingSet::hideGraph);

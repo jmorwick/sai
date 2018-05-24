@@ -2,13 +2,14 @@ package net.sourcedestination.sai.analysis;
 
 import com.google.common.collect.Sets;
 import net.sourcedestination.sai.db.BasicDBInterface;
-import net.sourcedestination.sai.experiment.retrieval.GraphHidingDBWrapper;
+import net.sourcedestination.sai.experiment.retrieval.GraphHidingDB;
 import org.junit.Test;
 
 import java.nio.file.AccessDeniedException;
 import java.util.Set;
 
 import static net.sourcedestination.sai.db.graph.SampleGraphs.*;
+import static net.sourcedestination.sai.experiment.retrieval.GraphHidingDB.wrap;
 import static org.junit.Assert.assertEquals;
 
 public class GraphHidingDBWrapperTest {
@@ -16,7 +17,7 @@ public class GraphHidingDBWrapperTest {
     @Test
     public void testHidingGraphs() throws AccessDeniedException {
         BasicDBInterface db = new BasicDBInterface();
-        GraphHidingDBWrapper db2 = new GraphHidingDBWrapper(db);
+        GraphHidingDB db2 = wrap(db, "test");
         assertEquals(0, db2.getDatabaseSize());
         int gid1 = db2.addGraph(getSmallGraph1());
         int gid2 = db2.addGraph(getSmallGraph2());

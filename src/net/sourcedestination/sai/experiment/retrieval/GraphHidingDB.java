@@ -12,18 +12,33 @@ import java.util.stream.Stream;
 /**
  * Created by jmorwick on 6/7/17.
  */
-public class GraphHidingDBWrapper extends DBWrapper {
+public interface GraphHidingDB extends DBInterface {
+
+    void hideGraph(int graphId);
+
+    void unhideGraph(int graphId);
+
+    static GraphHidingDB wrap(DBInterface db, String name) {
+        return new GraphHidingDBWrapper(db, name);
+    }
+
+}
+
+
+class GraphHidingDBWrapper extends DBWrapper implements GraphHidingDB {
 
     private final Set<Integer> hiddenGraphs;
+    private final String name;
 
-    public GraphHidingDBWrapper(DBInterface db) {
+    public GraphHidingDBWrapper(DBInterface db, String name) {
         super(db);
         hiddenGraphs = Sets.newHashSet();
+        this.name = name;
     }
 
     @Override
     public Graph retrieveGraph(int graphID) {
-        if(hiddenGraphs.contains(graphID))
+        if (hiddenGraphs.contains(graphID))
             return null;
 
         return getWrappedDB().retrieveGraph(graphID);
@@ -40,10 +55,12 @@ public class GraphHidingDBWrapper extends DBWrapper {
         return new HashSet<>(hiddenGraphs);
     }
 
+    @Override
     public void hideGraph(int graphID) {
         hiddenGraphs.add(graphID);
     }
 
+    @Override
     public void unhideGraph(int graphID) {
         hiddenGraphs.remove(graphID);
     }

@@ -7,14 +7,17 @@ import net.sourcedestination.sai.db.DBWrapper;
 import net.sourcedestination.sai.db.graph.Graph;
 import net.sourcedestination.sai.db.graph.ImmutableGraph;
 import net.sourcedestination.sai.experiment.retrieval.Retriever;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import java.util.stream.Stream;
 
 public class BasicIndexingDBWrapper<I>  extends DBWrapper implements Retriever<I> {
 
+	static Logger logger = LogManager.getLogger(BasicIndexingDBWrapper.class);
+
     private final Multimap<I,Integer> internalIndexImplementation = HashMultimap.create();
     private final GraphIndexGenerator<I> gen;
-
 
 	public BasicIndexingDBWrapper(DBInterface wrappedDB, GraphIndexGenerator<I> gen) {
 		super(wrappedDB);

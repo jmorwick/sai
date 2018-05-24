@@ -48,6 +48,16 @@ public interface Retriever<Q> {
 
     Stream<Integer> retrieve(Q q);
 
+    static Retriever<Integer> hideGraphBeforeRetrieval(GraphHidingDB db, Retriever<Graph> r) {
+        return (id) -> {
+            Graph q = db.retrieveGraph(id);
+            db.hideGraph(id);
+            Stream<Integer> results = r.retrieve(q);
+            db.unhideGraph(id);
+            return results;
+        };
+    }
+
     static Stream<Integer> rerank(Stream<Integer> graphIds, DBInterface db, ResultQualityMetric q) {
         return graphIds
                 .map(id -> {
