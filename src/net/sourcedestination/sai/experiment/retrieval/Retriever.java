@@ -29,6 +29,7 @@ import net.sourcedestination.funcles.tuple.Tuple2;
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.graph.Graph;
 import net.sourcedestination.sai.db.indexing.GraphIndexGenerator;
+import net.sourcedestination.sai.util.Task;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -106,6 +107,24 @@ public interface Retriever<Q> {
                             (dbname != null ? " from "+dbname : ""));
                     return gid;
                 });
+            }
+        };
+    }
+
+    static <Q> Task retrievalExperiment(Retriever<Q> r, QueryGenerator<Q> gen, Retriever<Q> expectedResults) {
+        return new Task() {  // TODO: add progress tracking?
+            @Override
+            public Object get() {
+                gen.get().forEach( q -> {
+                    logger.info("Issueing query #"+q.hashCode());
+                    expectedResults.retrieve(q).forEach(id -> {
+                        logger.info("Expecting graph #" + id + " for query #"+q.hashCode());
+                    });
+                    r.retrieve(q).forEach(id -> {
+                        logger.info("retrieved graph #"+id+" for query #"+q.hashCode());
+                    });
+                });
+                return null;
             }
         };
     }
