@@ -57,7 +57,7 @@ public class GraphMetricsProcessor implements ExperimentLogProcessor {
 
     @Override
     public String getPattern() {
-        return "retrieved Graph ID #(\\d+) from (.*)$";
+        return "retrieved graph #(\\d+) from (.*)$";
     }
 
     @Override

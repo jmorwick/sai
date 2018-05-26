@@ -11,9 +11,18 @@ public interface QueryGenerator<Q> extends Supplier<Stream<Q>> {
     @Override
     Stream<Q> get();
 
+    default Stream<Integer> getExpectedResults(Q query) {
+        return Stream.empty();
+    }
+
+    default int size() {
+        return -1;
+    }
+
     public static <Q> QueryGenerator<Q> of(Q ... queries) {
         return () -> Stream.of(queries);
     }
+
 
     public static  QueryGenerator<Graph> graphsFrom(DBInterface db) {
         Stream<Integer> ids = db.getGraphIDStream();

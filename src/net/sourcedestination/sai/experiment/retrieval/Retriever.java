@@ -20,6 +20,7 @@
 package net.sourcedestination.sai.experiment.retrieval;
 
 import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,6 +49,10 @@ public interface Retriever<Q> {
 	static Logger logger = LogManager.getLogger(Retriever.class);
 
     Stream<Integer> retrieve(Q q);
+
+    default int size() {
+        return -1;
+    }
 
     static Retriever<Integer> hideGraphBeforeRetrieval(GraphHidingDB db, Retriever<Graph> r) {
         return (id) -> {
@@ -103,7 +108,7 @@ public interface Retriever<Q> {
             @Override
             public Stream<Integer> retrieve(Object query) {
                 return db.getGraphIDStream().map(gid -> {
-                    logger.info("retrieved Graph ID #"+gid+
+                    logger.info("retrieved graph #"+gid+
                             (dbname != null ? " from "+dbname : ""));
                     return gid;
                 });
@@ -111,20 +116,34 @@ public interface Retriever<Q> {
         };
     }
 
-    static <Q> Task retrievalExperiment(Retriever<Q> r, QueryGenerator<Q> gen, Retriever<Q> expectedResults) {
-        return new Task() {  // TODO: add progress tracking?
+    static <Q> Task retrievalExperiment(Retriever<Q> r, QueryGenerator<Q> gen) {
+        return new Task() {
+
+            final AtomicInteger progress = new AtomicInteger(0);
+
             @Override
             public Object get() {
                 gen.get().forEach( q -> {
                     logger.info("Issueing query #"+q.hashCode());
-                    expectedResults.retrieve(q).forEach(id -> {
+                    gen.getExpectedResults(q).forEach(id -> {
                         logger.info("Expecting graph #" + id + " for query #"+q.hashCode());
                     });
                     r.retrieve(q).forEach(id -> {
                         logger.info("retrieved graph #"+id+" for query #"+q.hashCode());
                     });
+                    progress.incrementAndGet();
                 });
                 return null;
+            }
+
+            @Override
+            public int getProgressUnits() {
+                return progress.get();
+            }
+
+            @Override
+            public int getTotalProgressUnits() {
+                return r.size();
             }
         };
     }
