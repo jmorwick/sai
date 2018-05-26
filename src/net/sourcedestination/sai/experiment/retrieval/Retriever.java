@@ -134,7 +134,8 @@ public interface Retriever<Q> {
             public Object get() {
                 logger.info("starting retrieval experiment #" + id );
                 gen.get().forEach( q -> {
-                    logger.info("Issueing query #"+q.hashCode());
+                    if(!q.equals("unused query"))
+                        logger.info("Issuing query #"+q.hashCode());
                     gen.getExpectedResults(q)
                             .skip(skipResults)
                             .limit(maxResults)
@@ -145,7 +146,8 @@ public interface Retriever<Q> {
                             .skip(skipResults)
                             .limit(maxResults)
                             .forEach(id -> {
-                        logger.info("retrieved graph #"+id+" for query #"+q.hashCode());
+                        if(!q.equals("unused query"))
+                            logger.info("retrieved graph #"+id+" for query #"+q.hashCode());
                     });
                     progress.incrementAndGet();
                 });
