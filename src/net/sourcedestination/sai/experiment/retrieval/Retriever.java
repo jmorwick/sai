@@ -103,13 +103,12 @@ public interface Retriever<Q> {
         return query -> retrieveByIndexCount(index, gen, query);
     }
 
-    static Retriever simpleSequentialRetrieverFactory(DBInterface db, String dbname) {
+    static Retriever simpleSequentialRetrieverFactory(DBInterface db) {
         return new Retriever() {
             @Override
             public Stream<Integer> retrieve(Object query) {
                 return db.getGraphIDStream().map(gid -> {
-                    logger.info("retrieved graph #"+gid+
-                            (dbname != null ? " from "+dbname : ""));
+                    logger.info("retrieved graph #"+gid+" from " + db.toString());
                     return gid;
                 });
             }

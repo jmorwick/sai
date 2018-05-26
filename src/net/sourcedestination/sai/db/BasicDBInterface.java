@@ -17,20 +17,28 @@ public class BasicDBInterface implements DBInterface  {
 	private Multimap<String, Feature> featuresWithName;
 	private Multimap<String, Integer> graphsWithFeatureName;
 	private Multimap<Feature, Integer> graphsWithFeature;
+	private String name;
 	private final boolean USE_NATURAL_KEYS;
 	private int lastGraphIdGenerated = 0;
 
-	public BasicDBInterface(boolean useNaturalKeys) {
+	public BasicDBInterface(String name, boolean useNaturalKeys) {
 		featuresWithName = HashMultimap.create();
 		db = Maps.newHashMap();
 		graphsWithFeatureName = HashMultimap.create();
 		graphsWithFeature = HashMultimap.create();
 		this.USE_NATURAL_KEYS = useNaturalKeys;
+		this.name = name;
+	}
+	public BasicDBInterface(String name) {
+		this(name, false);
+	}
+	public BasicDBInterface(boolean useNaturalKeys) {
+		this("default-db", useNaturalKeys);
+	}
+	public BasicDBInterface() {
+		this("default-db", false);
 	}
 
-	public BasicDBInterface() {
-		this(false);
-	}
 
 
 	@Override
@@ -128,5 +136,8 @@ public class BasicDBInterface implements DBInterface  {
 			});
 		});
 	}
+
+	@Override
+    public String toString() { return name; }
 
 }
