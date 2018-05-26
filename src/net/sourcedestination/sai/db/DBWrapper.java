@@ -13,7 +13,7 @@ import net.sourcedestination.sai.db.graph.Graph;
 public class DBWrapper implements DBInterface {
 
 	private final DBInterface db;
-	
+
 	public DBWrapper(DBInterface wrappedDB) {
 		this.db = wrappedDB;
 	}
@@ -54,5 +54,8 @@ public class DBWrapper implements DBInterface {
 	public int getDatabaseSize() {
 		return db.getDatabaseSize();
 	}
+
+	@Override
+	public String toString() { return db.toString(); }
 
 }
