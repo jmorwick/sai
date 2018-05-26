@@ -67,11 +67,11 @@ public interface Retriever<Q> {
         };
     }
 
-    static Stream<Integer> rerank(Stream<Integer> graphIds, DBInterface db, ResultQualityMetric q) {
-        logger.info("re-ranking graph ids from " + db + " accourding to quality metric " + q);
+    static Stream<Integer> rerank(Stream<Integer> graphIds, DBInterface db, ResultQualityMetric quality) {
+        logger.info("re-ranking graph ids from " + db + " according to quality metric " + quality);
         return graphIds
                 .map(id -> {
-                    double s = q.apply(db.retrieveGraph(id));
+                    double s = quality.apply(db.retrieveGraph(id));
                     logger.info("Considered Graph ID #"+id+" has similarity " + s + " to query");
                     return makeTuple(id, s);
                 })
@@ -100,6 +100,14 @@ public interface Retriever<Q> {
                 .map(Multiset.Entry::getElement);
     }
 
+    static <Q> Retriever<Q> skipResults(Retriever<Q> retriever, long skip) {
+        return (q) -> retriever.retrieve(q).skip(skip);
+    }
+
+    static <Q> Retriever<Q> limitResults(Retriever<Q> retriever, long limit) {
+        return (q) -> retriever.retrieve(q).limit(limit);
+    }
+
     static <Q> Stream<Integer> retrieveByIndexCount(Retriever<Q> index, GraphIndexGenerator<Q> gen, Graph query) {
         return retrieveByIndexCount(index, gen.apply(query));
     }
@@ -122,10 +130,9 @@ public interface Retriever<Q> {
         };
     }
 
-    static <Q> Task retrievalExperiment(Retriever<Q> r, QueryGenerator<Q> gen, int skipResults, int maxResults) {
+    static <Q> Task retrievalExperiment(Retriever<Q> r, QueryGenerator<Q> gen) {
         int id = nextExperimentId.incrementAndGet();
-        logger.info("creating retrieval experiment #" + id + " with retriever " + r + " and query generator " +
-            gen + " skipping first " + skipResults + " results and stopping at " + maxResults + " results.");
+        logger.info("creating retrieval experiment #" + id + " with retriever " + r + " and query generator " + gen);
         return new Task() {
 
             final AtomicInteger progress = new AtomicInteger(0);
@@ -137,14 +144,10 @@ public interface Retriever<Q> {
                     if(!q.equals("unused query"))
                         logger.info("Issuing query #"+q.hashCode());
                     gen.getExpectedResults(q)
-                            .skip(skipResults)
-                            .limit(maxResults)
                             .forEach(id -> {
                         logger.info("Expecting graph #" + id + " for query #"+q.hashCode());
                     });
                     r.retrieve(q)
-                            .skip(skipResults)
-                            .limit(maxResults)
                             .forEach(id -> {
                         if(!q.equals("unused query"))
                             logger.info("retrieved graph #"+id+" for query #"+q.hashCode());
