@@ -5,9 +5,15 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import net.sourcedestination.sai.db.graph.Graph;
+import net.sourcedestination.sai.experiment.retrieval.Retriever;
 import net.sourcedestination.sai.util.Task;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 public abstract class DBPopulator implements Function<DBInterface,Task> {
+
+	static Logger logger = LogManager.getLogger(DBPopulator.class);
+
 
 	public abstract Stream<Graph> getGraphStream();
 	public abstract int getNumGraphs();
@@ -22,11 +28,13 @@ public abstract class DBPopulator implements Function<DBInterface,Task> {
 
 			@Override
 			public Object get() {
+				logger.info("begining task " + getTaskName() + " populating " + db);
 				getGraphStream().filter(g -> {
-					db.addGraph(g);
+					logger.info("added graph #" + db.addGraph(g) + " to " + db);
 					graphsProcessed.incrementAndGet();
 					return cancel; // if this is true, the stream will exit
 				}).findFirst();
+				logger.info("finished task " + getTaskName() + " populating " + db);
 				return graphsProcessed.get();
 			}
 
