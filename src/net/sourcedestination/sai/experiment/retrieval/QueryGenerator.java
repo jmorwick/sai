@@ -36,8 +36,8 @@ public interface QueryGenerator<Q> extends Supplier<Stream<Q>> {
 
     public static  QueryGenerator<Graph> graphsFrom(DBInterface db) {
         logger.info("creating query generator with graph queries from " + db);
-        Stream<Integer> ids = db.getGraphIDStream();
         return () -> {
+            Stream<Integer> ids = db.getGraphIDStream();
             logger.info("generating queries from all graphs in " + db);
             return ids.map(id -> db.retrieveGraph(id));
 
