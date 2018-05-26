@@ -79,6 +79,10 @@ public interface Retriever<Q> {
                 .map(Tuple2::_1);
     }
 
+    static Retriever<Graph> rerankingRetriever(Retriever<Graph> retriever, DBInterface db, GraphSimilarityMetric sim) {
+        return q -> rerank(retriever.retrieve(q), db, ResultQualityMetric.createForGraphQuery(sim,q));
+    }
+
     static <Q> Stream<Integer> retrieveByIndexCount(Retriever<Q> index, Stream<Q> indexValues) {
         logger.info("initiating retrieval by index count");
         Multiset<Integer> relatedGraphs = indexValues.map(i -> index.retrieve(i)) // transform indexes in to streams of related graph ids
