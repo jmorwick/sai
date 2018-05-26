@@ -115,7 +115,7 @@ public interface Retriever<Q> {
         };
     }
 
-    static <Q> Task retrievalExperiment(Retriever<Q> r, QueryGenerator<Q> gen) {
+    static <Q> Task retrievalExperiment(Retriever<Q> r, QueryGenerator<Q> gen, int skipResults, int maxResults) {
         return new Task() {
 
             final AtomicInteger progress = new AtomicInteger(0);
@@ -124,10 +124,16 @@ public interface Retriever<Q> {
             public Object get() {
                 gen.get().forEach( q -> {
                     logger.info("Issueing query #"+q.hashCode());
-                    gen.getExpectedResults(q).forEach(id -> {
+                    gen.getExpectedResults(q)
+                            .skip(skipResults)
+                            .limit(maxResults)
+                            .forEach(id -> {
                         logger.info("Expecting graph #" + id + " for query #"+q.hashCode());
                     });
-                    r.retrieve(q).forEach(id -> {
+                    r.retrieve(q)
+                            .skip(skipResults)
+                            .limit(maxResults)
+                            .forEach(id -> {
                         logger.info("retrieved graph #"+id+" for query #"+q.hashCode());
                     });
                     progress.incrementAndGet();
