@@ -2,12 +2,18 @@ package net.sourcedestination.sai.experiment.retrieval;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.graph.Graph;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @FunctionalInterface
 public interface QueryGenerator<Q> extends Supplier<Stream<Q>> {
+
+    static Logger logger = LogManager.getLogger(Retriever.class);
+
     @Override
     Stream<Q> get();
 
@@ -20,18 +26,29 @@ public interface QueryGenerator<Q> extends Supplier<Stream<Q>> {
     }
 
     public static <Q> QueryGenerator<Q> of(Q ... queries) {
-        return () -> Stream.of(queries);
+        logger.info("creating a query generator holding queries: " + Arrays.toString(queries));
+        return () -> {
+            logger.info("generating queries from supplied list of queries");
+            return Stream.of(queries);
+        };
     }
 
 
     public static  QueryGenerator<Graph> graphsFrom(DBInterface db) {
+        logger.info("creating query generator with graph queries from " + db);
         Stream<Integer> ids = db.getGraphIDStream();
-        return () -> ids.map(id -> {
-            return db.retrieveGraph(id);
-        });
+        return () -> {
+            logger.info("generating queries from all graphs in " + db);
+            return ids.map(id -> db.retrieveGraph(id));
+
+        };
     }
 
     public static QueryGenerator<Integer> idsFrom(DBInterface db) {
-        return () -> db.getGraphIDStream();
+        logger.info("creating query generator with graph id queries from " + db);
+        return () -> {
+            logger.info("generating queries from all graph ids in " + db);
+            return db.getGraphIDStream();
+        };
     }
 }

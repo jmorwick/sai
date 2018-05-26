@@ -48,6 +48,8 @@ public interface Retriever<Q> {
 
 	static Logger logger = LogManager.getLogger(Retriever.class);
 
+	static AtomicInteger nextExperimentId = new AtomicInteger(0);
+
     Stream<Integer> retrieve(Q q);
 
     default int size() {
@@ -55,6 +57,7 @@ public interface Retriever<Q> {
     }
 
     static Retriever<Integer> hideGraphBeforeRetrieval(GraphHidingDB db, Retriever<Graph> r) {
+        logger.info("wrapping retriever " + r + " to hid graph ids from " + db + " before a query with the same id");
         return (id) -> {
             Graph q = db.retrieveGraph(id);
             db.hideGraph(id);
@@ -65,6 +68,7 @@ public interface Retriever<Q> {
     }
 
     static Stream<Integer> rerank(Stream<Integer> graphIds, DBInterface db, ResultQualityMetric q) {
+        logger.info("re-ranking graph ids from " + db + " accourding to quality metric " + q);
         return graphIds
                 .map(id -> {
                     double s = q.apply(db.retrieveGraph(id));
@@ -76,6 +80,7 @@ public interface Retriever<Q> {
     }
 
     static <Q> Stream<Integer> retrieveByIndexCount(Retriever<Q> index, Stream<Q> indexValues) {
+        logger.info("initiating retrieval by index count");
         Multiset<Integer> relatedGraphs = indexValues.map(i -> index.retrieve(i)) // transform indexes in to streams of related graph ids
                 .reduce(Stream::concat).get() //concatenate streams of graph ids together
                 // combine all graph id's in to a multiset
@@ -100,10 +105,12 @@ public interface Retriever<Q> {
     }
 
     static <Q> Retriever<Graph> indexCountRetrieverFactory(Retriever<Q> index, GraphIndexGenerator<Q> gen) {
+        logger.info("generating index-count based retriever for index + " + index + " and index generator " + gen);
         return query -> retrieveByIndexCount(index, gen, query);
     }
 
     static Retriever simpleSequentialRetrieverFactory(DBInterface db) {
+        logger.info("generating simple sequential retriever for db " + db);
         return new Retriever() {
             @Override
             public Stream<Integer> retrieve(Object query) {
@@ -116,12 +123,16 @@ public interface Retriever<Q> {
     }
 
     static <Q> Task retrievalExperiment(Retriever<Q> r, QueryGenerator<Q> gen, int skipResults, int maxResults) {
+        int id = nextExperimentId.incrementAndGet();
+        logger.info("creating retrieval experiment #" + id + " with retriever " + r + " and query generator " +
+            gen + " skipping first " + skipResults + " results and stopping at " + maxResults + " results.");
         return new Task() {
 
             final AtomicInteger progress = new AtomicInteger(0);
 
             @Override
             public Object get() {
+                logger.info("starting retrieval experiment #" + id );
                 gen.get().forEach( q -> {
                     logger.info("Issueing query #"+q.hashCode());
                     gen.getExpectedResults(q)
@@ -138,6 +149,7 @@ public interface Retriever<Q> {
                     });
                     progress.incrementAndGet();
                 });
+                logger.info("completed retrieval experiment #" + id );
                 return null;
             }
 
