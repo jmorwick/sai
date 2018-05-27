@@ -4,6 +4,29 @@ import java.util.stream.Stream;
 
 public class GraphWrapper<G extends Graph> implements Graph {
 
+    public static <G extends Graph> GraphWrapper<G> maskFeature(G graph, String featureName) {
+        return new GraphWrapper<G>(graph) {
+
+            @Override
+            public Stream<Feature> getFeatures() {
+                return super.getFeatures()
+                        .filter(f -> f.getName().equals(featureName));
+            }
+
+            @Override
+            public Stream<Feature> getNodeFeatures(int nid) {
+                return super.getNodeFeatures(nid)
+                        .filter(f -> f.getName().equals(featureName));
+            }
+
+            @Override
+            public Stream<Feature> getEdgeFeatures(int eid) {
+                return super.getEdgeFeatures(eid)
+                        .filter(f -> f.getName().equals(featureName));
+            }
+        };
+    }
+
     private G wrappedGraph;
 
     public GraphWrapper(G g) {
