@@ -28,6 +28,7 @@ import com.google.common.collect.ConcurrentHashMultiset;
 import com.google.common.collect.Multiset;
 import net.sourcedestination.funcles.tuple.Tuple2;
 import net.sourcedestination.sai.db.DBInterface;
+import net.sourcedestination.sai.db.GraphHidingDB;
 import net.sourcedestination.sai.db.graph.Graph;
 import net.sourcedestination.sai.db.indexing.GraphIndexGenerator;
 import net.sourcedestination.sai.util.Task;

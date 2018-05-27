@@ -2,13 +2,13 @@ package net.sourcedestination.sai.experiment.learning;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.graph.Graph;
-import net.sourcedestination.sai.experiment.retrieval.GraphHidingDB;
+import net.sourcedestination.sai.db.GraphHidingDB;
 import net.sourcedestination.sai.util.Task;
 
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
-import static net.sourcedestination.sai.experiment.retrieval.GraphHidingDB.wrap;
+import static net.sourcedestination.sai.db.GraphHidingDB.wrap;
 
 public class CrossValidatedClassificationExperiment implements Task {
 

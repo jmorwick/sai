@@ -1,8 +1,6 @@
-package net.sourcedestination.sai.experiment.retrieval;
+package net.sourcedestination.sai.db;
 
 import com.google.common.collect.Sets;
-import net.sourcedestination.sai.db.DBInterface;
-import net.sourcedestination.sai.db.DBWrapper;
 import net.sourcedestination.sai.db.graph.Graph;
 
 import java.util.HashSet;
