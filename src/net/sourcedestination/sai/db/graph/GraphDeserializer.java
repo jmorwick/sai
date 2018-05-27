@@ -1,11 +1,17 @@
 package net.sourcedestination.sai.db.graph;
 
 import net.sourcedestination.funcles.consumer.Consumer2;
+import net.sourcedestination.sai.db.DBPopulator;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -19,8 +25,11 @@ public interface GraphDeserializer extends Function<String,Graph> {
     }
 
     public static MutableGraph saiJsonDecode(String json) {
+        return saiJsonDecode(new JSONObject(json));
+    }
+
+    public static MutableGraph saiJsonDecode(JSONObject parsedGraph) {
         var g = new MutableGraph();
-        var parsedGraph = new JSONObject(json);
 
         // consumer which processes each feature in a JSONArray of features
         Consumer2<Consumer<Feature>,JSONArray> processFeatures =
