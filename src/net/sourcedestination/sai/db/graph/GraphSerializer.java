@@ -12,6 +12,8 @@ import java.util.function.Function;
 public interface GraphSerializer extends Function<Graph,String> {
 
     public static int canonicalId(Graph g) {
+        while(g instanceof GraphWrapper)
+            g = ((GraphWrapper)g).getWrappedGraph();
         return saiJsonEncode(g).hashCode();
     }
 
