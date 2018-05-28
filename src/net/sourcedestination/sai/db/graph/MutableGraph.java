@@ -29,7 +29,7 @@ public class MutableGraph implements Graph {
     /**
      * creates a mutable graph from the given graph for editing purposes.
      *
-     * @param g the graph to copy
+     * @param g the graph to transform
      */
     public MutableGraph(Graph g) {
         g.getFeatures().forEach(this::addFeature);

@@ -12,7 +12,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 Lesser GNU General Public License for more details.
 
-You should have received a copy of the Lesser GNU General Public License
+You should have received a transform of the Lesser GNU General Public License
 along with jmorwick-javalib.  If not, see <http://www.gnu.org/licenses/>.
 
  */
@@ -45,7 +45,7 @@ public class GraphUtilityTest {
     	DBInterface db = SampleDBs.getEmptyDB();
         Graph g = SampleGraphs.getSmallGraph1();
         g.getEdgeIDs().forEach(e-> {
-            Graph ng = g.copyWithoutEdge(MutableGraph::new, e);
+            Graph ng = g.copyWithoutEdge(e);
             assertEquals(ng.getEdgeIDs().count(), g.getEdgeIDs().count()-1);
             assertEquals(ng.getNodeIDs().count(), g.getNodeIDs().count());
         });
@@ -55,7 +55,7 @@ public class GraphUtilityTest {
     public void testCopyWithoutNode() throws AccessDeniedException {
         Graph g = SampleGraphs.getSmallGraph1();
         g.getNodeIDs().forEach(n-> {
-            Graph ng = g.copyWithoutNode(MutableGraph::new, n);
+            Graph ng = g.copyWithoutNode(n);
             if(n == 1)
             	assertEquals(Sets.newHashSet(2, 3, 4), ng.getEdgeIDs().collect(toSet()));
             else if(n == 2)

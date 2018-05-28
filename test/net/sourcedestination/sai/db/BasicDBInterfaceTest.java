@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import net.sourcedestination.sai.db.graph.GraphFactory;
+import net.sourcedestination.sai.db.graph.GraphTransformation;
 import net.sourcedestination.sai.db.graph.MutableGraph;
 
 import org.junit.After;
@@ -46,7 +46,6 @@ public class BasicDBInterfaceTest {
 
 	@Test
 	public void testGraphIterator() throws AccessDeniedException {
-		GraphFactory gf = MutableGraph::new;
 		BasicDBInterface db = new BasicDBInterface();
 		assertEquals(0, db.getDatabaseSize());
 		int gid1 = db.addGraph(getSmallGraph1());

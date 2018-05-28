@@ -141,18 +141,18 @@ public interface Graph {
         return features.size() == 1 ? features.iterator().next() : null;
     }
 
-    public default <G extends Graph> G copyWithoutEdge(GraphFactory<G> gf, int edgeID) {
+    public default Graph copyWithoutEdge(int edgeID) {
         var t = new MutableGraph(this);
         if (t.getEdgeIDs().anyMatch(eid -> eid == edgeID))
             t.removeEdge(edgeID);
-        return gf.copy(t);
+        return t;
     }
 
-    public default <G extends Graph> G copyWithoutNode(GraphFactory<G> gf, int nodeID) {
+    public default Graph copyWithoutNode(int nodeID) {
         MutableGraph t = new MutableGraph(this);
         if (t.getNodeIDs().anyMatch(nid -> nid == nodeID))
             t.removeNode(nodeID);
-        return gf.copy(t);
+        return t;
     }
 
     /**

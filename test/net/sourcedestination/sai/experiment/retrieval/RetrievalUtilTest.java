@@ -118,7 +118,7 @@ public class RetrievalUtilTest {
 	 *
 	@Test
 	public void testBuildPhase1Retriever() throws AccessDeniedException {
-		GraphFactory gf = new MutableGraphFactory();
+		GraphTransformation gf = new MutableGraphFactory();
 		BasicDBInterface db = SampleDBs.smallGraphsDBWithCorrectIndices();
 		Retriever r = RetrievalUtil.createPhase1Retriever(
 				new BasicPath1IndexRetriever("test"), 
@@ -159,7 +159,7 @@ public class RetrievalUtilTest {
 	
 	@Test
 	public void testBuild2PhasedRetriever() throws AccessDeniedException {
-		GraphFactory gf = new MutableGraphFactory();
+		GraphTransformation gf = new MutableGraphFactory();
 		GraphMatchingDistance h = Heuristics.basicEdgeCount();
 		MatchingGenerator gen = MatchingUtil.createCompleteMatchingGenerator(
 				CompatibilityUtil.greedy1To1Checker(CompatibilityUtil.lexicalChecker()), 

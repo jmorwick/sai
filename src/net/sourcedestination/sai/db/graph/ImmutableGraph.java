@@ -28,7 +28,7 @@ public class ImmutableGraph implements Graph {
     /**
      * creates an immutable graph from the given graph for editing purposes.
      *
-     * @param g the graph to copy
+     * @param g the graph to transform
      */
     public ImmutableGraph(Graph g) {
 

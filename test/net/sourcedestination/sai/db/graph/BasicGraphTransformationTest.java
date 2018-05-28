@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static net.sourcedestination.sai.db.graph.SampleGraphs.assertGraphsAreIdentical;
 
-public class BasicGraphFactoryTest {
+public class BasicGraphTransformationTest {
 
 	@Test
 	public void testCopyGraph() {
