@@ -2,10 +2,11 @@ package net.sourcedestination.sai.experiment.learning;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.graph.Graph;
+import net.sourcedestination.sai.db.indexing.BasicIndexingDBWrapper;
 import net.sourcedestination.sai.util.Task;
-import org.apache.log4j.Logger;
 
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class ClassificationExperiment implements Task {
@@ -17,7 +18,7 @@ public class ClassificationExperiment implements Task {
     private final int ID;
     private static int nextID = 1;
 
-    private static Logger logger = Logger.getLogger(ClassificationExperiment.class);
+    private static Logger logger = Logger.getLogger(ClassificationExperiment.class.getCanonicalName());
 
     public ClassificationExperiment(DBInterface testSet,
                                     Stream<Integer> graphIds,

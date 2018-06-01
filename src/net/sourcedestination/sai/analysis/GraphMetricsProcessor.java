@@ -3,15 +3,14 @@ package net.sourcedestination.sai.analysis;
 import net.sourcedestination.funcles.tuple.Tuple3;
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.graph.Graph;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.DoubleStream;
 
 public class GraphMetricsProcessor implements ExperimentLogProcessor {
 
-    static Logger logger = LogManager.getLogger(GraphMetricsProcessor.class);
+    private static Logger logger = Logger.getLogger(GraphMetricsProcessor.class.getCanonicalName());
 
 
     public enum AggregationType {

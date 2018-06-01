@@ -2,17 +2,15 @@ package net.sourcedestination.sai.experiment.retrieval;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.graph.Graph;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
 import java.util.Arrays;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 @FunctionalInterface
 public interface QueryGenerator<Q> extends Supplier<Stream<Q>> {
 
-    static Logger logger = LogManager.getLogger(Retriever.class);
+    Logger logger = Logger.getLogger(QueryGenerator.class.getCanonicalName());
 
     @Override
     Stream<Q> get();

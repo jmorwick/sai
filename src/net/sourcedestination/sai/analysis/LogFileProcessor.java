@@ -1,8 +1,6 @@
 package net.sourcedestination.sai.analysis;
 
 import net.sourcedestination.sai.util.Task;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,13 +8,13 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LogFileProcessor implements Task<Map<String, Object>> {
 
-    static Logger logger = LogManager.getLogger(LogFileProcessor.class);
-
+    private static Logger logger = Logger.getLogger(LogFileProcessor.class.getCanonicalName());
 
     private final ExperimentLogProcessor[] processors;
     private final Scanner in;
@@ -66,7 +64,8 @@ public class LogFileProcessor implements Task<Map<String, Object>> {
                         try {
                             e.getKey().processLogMessage(groups);
                         } catch (Exception ex) {
-                            logger.error("error analyzing line: " + line, ex);
+                            logger.throwing(getClass().getCanonicalName(),
+                                    "error analyzing line: " + line, ex);
                         }
                     }
                 }
@@ -77,7 +76,8 @@ public class LogFileProcessor implements Task<Map<String, Object>> {
             }
             logger.info("log analysis complete");
         }catch(Exception ex) {
-            logger.error("unexpected error during execution of log analyzer", ex);
+            logger.throwing(getClass().getCanonicalName(),
+                    "unexpected error during execution of log analyzer", ex);
         }
         return reportModel;
     }

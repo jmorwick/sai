@@ -21,6 +21,7 @@ package net.sourcedestination.sai.experiment.retrieval;
 
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,8 +33,6 @@ import net.sourcedestination.sai.db.GraphHidingDB;
 import net.sourcedestination.sai.db.graph.Graph;
 import net.sourcedestination.sai.db.indexing.GraphIndexGenerator;
 import net.sourcedestination.sai.util.Task;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
 import static net.sourcedestination.funcles.tuple.Tuple.makeTuple;
 
@@ -47,7 +46,7 @@ import static net.sourcedestination.funcles.tuple.Tuple.makeTuple;
 @FunctionalInterface
 public interface Retriever<Q> {
 
-	static Logger logger = LogManager.getLogger(Retriever.class);
+    Logger logger = Logger.getLogger(Retriever.class.getCanonicalName());
 
 	static AtomicInteger nextExperimentId = new AtomicInteger(0);
 

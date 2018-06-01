@@ -1,14 +1,13 @@
 package net.sourcedestination.sai.analysis;
 
 import net.sourcedestination.sai.db.graph.Graph;
-import org.apache.log4j.Logger;
-
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 /** processes and logs data about a graph in a experimental context */
 public interface GraphProcessor extends Consumer<Graph> {
 
-    final static Logger logger = Logger.getLogger(GraphProcessor.class);
+    Logger logger = Logger.getLogger(GraphProcessor.class.getCanonicalName());
 
     public static GraphProcessor from(GraphMetric metric, String name) {
         return g -> {

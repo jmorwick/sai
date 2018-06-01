@@ -6,22 +6,20 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import jdk.nashorn.api.scripting.URLReader;
 import net.sourcedestination.sai.db.graph.Graph;
 import net.sourcedestination.sai.db.graph.GraphDeserializer;
-import net.sourcedestination.sai.experiment.retrieval.Retriever;
 import net.sourcedestination.sai.util.Task;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONTokener;
 
 public abstract class DBPopulator implements Function<DBInterface,Task> {
 
-	static Logger logger = LogManager.getLogger(DBPopulator.class);
+	private static Logger logger = Logger.getLogger(DBPopulator.class.getCanonicalName());
 
 
 	public abstract Stream<Graph> getGraphStream();
