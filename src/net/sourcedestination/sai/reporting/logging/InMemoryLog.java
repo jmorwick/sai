@@ -5,7 +5,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import java.util.List;
 import java.util.Vector;
 
-
 public class InMemoryLog extends InteractiveAppender {
 
     private List<String> log = new Vector<>();
@@ -13,7 +12,7 @@ public class InMemoryLog extends InteractiveAppender {
 
     @Override
     protected void append(ILoggingEvent event) {
-        log.add(event.toString());
+        if(listening) log.add(event.toString());
     }
 
     @Override
