@@ -2,42 +2,42 @@ package net.sourcedestination.sai.analysis;
 
 import net.sourcedestination.sai.util.Task;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class LogFileProcessor implements Task<Map<String, Object>> {
 
     private static Logger logger = Logger.getLogger(LogFileProcessor.class.getCanonicalName());
 
     private final ExperimentLogProcessor[] processors;
-    private final Scanner in;
-    private final long bytesInLogFile;
+    private final Stream<String> in;
+    private long bytesInLogFile = -1;
+    private int linesInLogFile = -1;
 
     private long bytesRead = 0;
+    private int linesRead = 0;
 
-    public LogFileProcessor(InputStream in, ExperimentLogProcessor ... processors) {
+    public LogFileProcessor(Stream<String> in, ExperimentLogProcessor ... processors) {
+        this.in = in;
         this.processors = processors;
-        this.in = new Scanner(in);
-        this.bytesInLogFile = -1;
     }
 
-    public LogFileProcessor(InputStream in, long bytesInLogFile, ExperimentLogProcessor ... processors) {
-        this.processors = processors;
-        this.in = new Scanner(in);
-        this.bytesInLogFile = bytesInLogFile;
+    public LogFileProcessor(Stream<String> in, int lines, ExperimentLogProcessor ... processors) {
+        this(in, processors);
+        this.linesInLogFile = lines;
+
     }
 
-    public LogFileProcessor(File f, ExperimentLogProcessor ... processors) throws FileNotFoundException {
-        this.processors = processors;
-        this.bytesInLogFile = f.length();
-        this.in = new Scanner(f);
+    public LogFileProcessor(Path path, ExperimentLogProcessor ... processors) throws IOException {
+        this(Files.lines(path), processors);
+        this.bytesInLogFile = path.toFile().length();
     }
 
     @Override
@@ -50,10 +50,10 @@ public class LogFileProcessor implements Task<Map<String, Object>> {
                 compiledPatterns.put(processor, Pattern.compile(processor.getPattern()));
             }
 
-            while (in.hasNextLine()) {
-                String line = in.nextLine().trim();
-
+            in.forEach(line -> {
                 bytesRead += line.length() + 1;
+                linesRead++;
+                line = line.trim();
                 for (Map.Entry<ExperimentLogProcessor, Pattern> e : compiledPatterns.entrySet()) {
                     Matcher m = e.getValue().matcher(line);
                     if (m.find()) {
@@ -69,7 +69,7 @@ public class LogFileProcessor implements Task<Map<String, Object>> {
                         }
                     }
                 }
-            }
+            });
 
             for (var processor : processors) {
                 reportModel.putAll(processor.get());
@@ -86,7 +86,7 @@ public class LogFileProcessor implements Task<Map<String, Object>> {
      */
     @Override
     public int getProgressUnits() {
-        return (int)(bytesRead / 1024);
+        return bytesInLogFile != -1 ? (int)(bytesRead / 1024) : linesRead;
     }
 
     /** returns size of log stream (if known) in kilobytes.
@@ -94,6 +94,6 @@ public class LogFileProcessor implements Task<Map<String, Object>> {
      */
     @Override
     public int getTotalProgressUnits() {
-        return (int)(bytesInLogFile / 1024);
+        return bytesInLogFile != 0 ? (int)(bytesInLogFile / 1024) : linesInLogFile;
     }
 }
