@@ -12,9 +12,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-public class LogFileProcessor implements Task<Map<String, Object>> {
+public class LogProcessingTask implements Task<Map<String, Object>> {
 
-    private static Logger logger = Logger.getLogger(LogFileProcessor.class.getCanonicalName());
+    private static Logger logger = Logger.getLogger(LogProcessingTask.class.getCanonicalName());
 
     private final ExperimentLogProcessor[] processors;
     private final Stream<String> in;
@@ -24,18 +24,18 @@ public class LogFileProcessor implements Task<Map<String, Object>> {
     private long bytesRead = 0;
     private int linesRead = 0;
 
-    public LogFileProcessor(Stream<String> in, ExperimentLogProcessor ... processors) {
+    public LogProcessingTask(Stream<String> in, ExperimentLogProcessor ... processors) {
         this.in = in;
         this.processors = processors;
     }
 
-    public LogFileProcessor(Stream<String> in, int lines, ExperimentLogProcessor ... processors) {
+    public LogProcessingTask(Stream<String> in, int lines, ExperimentLogProcessor ... processors) {
         this(in, processors);
         this.linesInLogFile = lines;
 
     }
 
-    public LogFileProcessor(Path path, ExperimentLogProcessor ... processors) throws IOException {
+    public LogProcessingTask(Path path, ExperimentLogProcessor ... processors) throws IOException {
         this(Files.lines(path), processors);
         this.bytesInLogFile = path.toFile().length();
     }
