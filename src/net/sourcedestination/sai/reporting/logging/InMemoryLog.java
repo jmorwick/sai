@@ -4,6 +4,8 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 
 import java.util.List;
 import java.util.Vector;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class InMemoryLog extends InteractiveAppender {
 
@@ -22,9 +24,10 @@ public class InMemoryLog extends InteractiveAppender {
     }
 
     @Override
-    public List<String> stopListening() {
+    public Supplier<Stream<String>> stopListening() {
         listening = false;
-        return log;
+        List<String> logForClosure = this.log; // fields aren't captured for closures
+        return () -> logForClosure.stream();
     }
 
     @Override
