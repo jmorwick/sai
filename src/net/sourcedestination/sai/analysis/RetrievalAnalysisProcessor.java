@@ -2,7 +2,7 @@ package net.sourcedestination.sai.analysis;
 
 import java.util.Map;
 
-public class GraphRetrievalMetricProcessor {
+public class RetrievalAnalysisProcessor {
 
     static ExperimentLogProcessor retrievalTimeFactory() {
         return new ExperimentLogProcessor() {
