@@ -38,6 +38,12 @@ public class GraphMetricsProcessor implements ExperimentLogProcessor {
     private final Map<String,AggregationType> aggregationTypes;
     private final Map<String,List<Double>> metricValues;
 
+    static ExperimentLogProcessor.Factory<GraphMetricsProcessor>
+     getFactory(Map<String, DBInterface> dbs,
+                                 Tuple3<String, AggregationType, GraphMetric> ... metrics) {
+        return () -> new GraphMetricsProcessor(dbs, metrics);
+    }
+
     public GraphMetricsProcessor(Map<String, DBInterface> dbs,
                                  Tuple3<String, AggregationType, GraphMetric> ... metrics) {
         this.dbs = dbs;

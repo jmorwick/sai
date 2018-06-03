@@ -22,4 +22,5 @@ public interface ExperimentLogProcessor extends Supplier<Map<String,Object>> {
      */
     public void processLogMessage(String ... groups);
 
+    interface Factory<T extends ExperimentLogProcessor> extends Supplier<T> {}
 }
