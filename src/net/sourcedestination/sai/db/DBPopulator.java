@@ -17,6 +17,9 @@ import net.sourcedestination.sai.util.Task;
 import org.json.JSONArray;
 import org.json.JSONTokener;
 
+import static java.time.LocalDateTime.now;
+import static java.time.format.DateTimeFormatter.ofPattern;
+
 public abstract class DBPopulator implements Function<DBInterface,Task> {
 
 	private static Logger logger = Logger.getLogger(DBPopulator.class.getCanonicalName());
@@ -46,7 +49,10 @@ public abstract class DBPopulator implements Function<DBInterface,Task> {
 			}
 
 			@Override
-			public String getTaskName() { return dbpopClass.getCanonicalName(); }
+			public String getTaskName() {
+				return dbpopClass.getSimpleName() +
+					now().format(ofPattern("yyyy-MM-dd-HH:mm:ss"));
+			}
 
 			@Override
 			public void cancel() {

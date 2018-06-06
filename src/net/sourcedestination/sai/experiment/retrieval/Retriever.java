@@ -34,6 +34,8 @@ import net.sourcedestination.sai.db.graph.Graph;
 import net.sourcedestination.sai.db.indexing.GraphIndexGenerator;
 import net.sourcedestination.sai.util.Task;
 
+import static java.time.LocalDateTime.now;
+import static java.time.format.DateTimeFormatter.ofPattern;
 import static net.sourcedestination.funcles.tuple.Tuple.makeTuple;
 
 /**
@@ -160,6 +162,11 @@ public interface Retriever<Q> {
                 });
                 logger.info("completed retrieval experiment #" + id );
                 return null;
+            }
+
+            @Override
+            public String getTaskName() {
+                return "Retriever" + now().format(ofPattern("yyyy-MM-dd-HH:mm:ss"));
             }
 
             @Override

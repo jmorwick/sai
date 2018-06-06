@@ -2,6 +2,9 @@ package net.sourcedestination.sai.util;
 
 import java.util.function.Supplier;
 
+import static java.time.LocalDateTime.now;
+import static java.time.format.DateTimeFormatter.ofPattern;
+
 /** represents a loggable task executing over a SAI database.
  * 
  * @author jmorwick
@@ -32,7 +35,8 @@ public interface Task<T> extends Supplier<T> {
 	default int getTotalProgressUnits() { return -1; }
 	
 	default String getTaskName() {
-		return this.getClass().getCanonicalName();
+		return this.getClass().getSimpleName() +
+				now().format(ofPattern("yyyy-MM-dd-HH:mm:ss"));
 	}
 	
 	default void cancel() {
