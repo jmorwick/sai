@@ -2,10 +2,17 @@ package net.sourcedestination.sai.reporting.logging;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Vector;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+
+import static java.time.LocalDateTime.now;
+import static java.time.format.DateTimeFormatter.ofPattern;
 
 public class InMemoryLog extends InteractiveAppender {
 
@@ -14,7 +21,13 @@ public class InMemoryLog extends InteractiveAppender {
 
     @Override
     protected void append(ILoggingEvent event) {
-        if(listening) log.add(event.toString());
+
+        if(listening)
+            log.add(LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getTimeStamp()),
+                        ZoneId.systemDefault()).format(ofPattern("yyyy-MM-dd-HH:mm:ss.SSS"))
+                    +  "  [" + event.getThreadName() + "] " +
+                    event.getLoggerName() + " : "
+                    + event.toString());
     }
 
     @Override
