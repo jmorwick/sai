@@ -54,6 +54,9 @@ public interface Retriever<Q> {
 
     Stream<Integer> retrieve(Q q);
 
+    /** returns true if this retriever ignores queries issued to it */
+    default boolean ignoresQueries() { return false; }
+
     default int size() {
         return -1;
     }
@@ -126,6 +129,10 @@ public interface Retriever<Q> {
     static Retriever simpleSequentialRetrieverFactory(DBInterface db) {
         logger.info("generating simple sequential retriever for db " + db);
         return new Retriever() {
+
+            @Override
+            public boolean ignoresQueries() { return true; }
+
             @Override
             public Stream<Integer> retrieve(Object query) {
                 return db.getGraphIDStream().map(gid -> {
