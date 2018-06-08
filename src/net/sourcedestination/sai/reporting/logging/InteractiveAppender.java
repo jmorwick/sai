@@ -13,4 +13,5 @@ public abstract class InteractiveAppender extends AppenderBase<ILoggingEvent> {
     public abstract Supplier<Stream<String>> stopListening();
 
     public abstract boolean isListening();
+
 }

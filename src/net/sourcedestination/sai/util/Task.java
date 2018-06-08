@@ -1,5 +1,6 @@
 package net.sourcedestination.sai.util;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import static java.time.LocalDateTime.now;
@@ -11,7 +12,7 @@ import static java.time.format.DateTimeFormatter.ofPattern;
  *
  */
 public interface Task<T> extends Supplier<T> {
-	
+
 	/** optional method which reports how much of the task's work is remaining.
 	 *  By default, this always returns 0.0.
 	 * 
@@ -35,8 +36,7 @@ public interface Task<T> extends Supplier<T> {
 	default int getTotalProgressUnits() { return -1; }
 	
 	default String getTaskName() {
-		return this.getClass().getSimpleName() +
-				now().format(ofPattern("yyyy-MM-dd-HH:mm:ss"));
+		return this.getClass().getSimpleName();
 	}
 	
 	default void cancel() {

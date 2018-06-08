@@ -173,7 +173,7 @@ public interface Retriever<Q> {
 
             @Override
             public String getTaskName() {
-                return "Retriever" + now().format(ofPattern("yyyy-MM-dd-HH:mm:ss"));
+                return "Retriever" + id;
             }
 
             @Override

@@ -24,14 +24,18 @@ public abstract class DBPopulator implements Function<DBInterface,Task> {
 
 	private static Logger logger = Logger.getLogger(DBPopulator.class.getCanonicalName());
 
+	private static AtomicInteger nextId = new AtomicInteger(0);
 
 	public abstract Stream<Graph> getGraphStream();
 	public abstract int getNumGraphs();
+
+
 
 	@Override
 	public Task apply(DBInterface db) {
 		Class dbpopClass = this.getClass();
 		return new Task() {
+			private String name = dbpopClass.getSimpleName() + nextId.incrementAndGet();
 			private boolean cancel = false;
 			private boolean finished = false;
 			private AtomicInteger graphsProcessed = new AtomicInteger(0);
@@ -50,8 +54,7 @@ public abstract class DBPopulator implements Function<DBInterface,Task> {
 
 			@Override
 			public String getTaskName() {
-				return dbpopClass.getSimpleName() +
-					now().format(ofPattern("yyyy-MM-dd-HH:mm:ss"));
+				return name;
 			}
 
 			@Override
