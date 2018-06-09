@@ -4,11 +4,20 @@ import java.util.Map;
 
 public class RetrievalAnalysisProcessor {
 
+    public static String DATE_PATTERN = "(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d) (\\d\\d):(\\d\\d):(\\d\\d).(\\d\\d\\d)";
+    public static String ISSUING_QUERY_PATTERN = "(issuing query \\#(\\d+))";
+    public static String EXPECTING_GRAPH_PATTERN =
+            "(expecting graph \\#(\\d+)( from ([a-zA-Z0-9-]+)?( for query \\#(\\d+))?)";
+    public static String RETRIEVED_GRAPH_PATTERN =
+            "(retrieved graph \\#(\\d+)( from ([a-zA-Z0-9-]+)?( for query \\#(\\d+))?)";
+
     static ExperimentLogProcessor retrievalTimeFactory() {
         return new ExperimentLogProcessor() {
             @Override
             public String getPattern() {
-                return null; // TODO: determine pattern for reading both query issued and initial response
+                return "("+DATE_PATTERN+")?("+
+                            ISSUING_QUERY_PATTERN+"|"+
+                            RETRIEVED_GRAPH_PATTERN+")";
             }
 
             @Override

@@ -155,10 +155,10 @@ public interface Retriever<Q> {
                 logger.info("starting retrieval experiment #" + id );
                 gen.get().forEach( q -> {
                     if(!q.equals("unused query"))
-                        logger.info("Issuing query #"+q.hashCode());
+                        logger.info("issuing query #"+q.hashCode());
                     gen.getExpectedResults(q)
                             .forEach(id -> {
-                        logger.info("Expecting graph #" + id + " for query #"+q.hashCode());
+                        logger.info("expecting graph #" + id + " for query #"+q.hashCode());
                     });
                     r.retrieve(q)
                             .forEach(id -> {
