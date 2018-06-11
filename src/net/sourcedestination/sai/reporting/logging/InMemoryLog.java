@@ -24,7 +24,7 @@ public class InMemoryLog extends InteractiveAppender {
 
         if(listening)
             log.add(LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getTimeStamp()),
-                        ZoneId.systemDefault()).format(ofPattern("yyyy-MM-dd-HH:mm:ss.SSS"))
+                        ZoneId.systemDefault()).format(ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
                     +  "  [" + event.getThreadName() + "] " +
                     event.getLoggerName() + " : "
                     + event.toString());
