@@ -34,8 +34,6 @@ import net.sourcedestination.sai.db.graph.Graph;
 import net.sourcedestination.sai.db.indexing.GraphIndexGenerator;
 import net.sourcedestination.sai.util.Task;
 
-import static java.time.LocalDateTime.now;
-import static java.time.format.DateTimeFormatter.ofPattern;
 import static net.sourcedestination.funcles.tuple.Tuple.makeTuple;
 
 /**
@@ -135,8 +133,9 @@ public interface Retriever<Q> {
 
             @Override
             public Stream<Integer> retrieve(Object query) {
+                logger.info("issuing query #1");
                 return db.getGraphIDStream().map(gid -> {
-                    logger.info("retrieved graph #"+gid+" from " + db.toString());
+                    logger.info("retrieved graph #"+gid+" from " + db.toString() + " for query #1");
                     return gid;
                 });
             }
