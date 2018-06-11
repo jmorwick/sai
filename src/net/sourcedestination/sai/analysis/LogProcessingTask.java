@@ -5,8 +5,10 @@ import net.sourcedestination.sai.util.Task;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,40 +46,47 @@ public class LogProcessingTask implements Task<Map<String, Object>> {
     public Map<String, Object> get() {
         Map<String, Object> reportModel = new HashMap<>();
         try {
-            logger.info("beginning log analysiss");
             Map<ExperimentLogProcessor, Pattern> compiledPatterns = new HashMap<>();
             for (var processor : processors) {
-                compiledPatterns.put(processor, Pattern.compile(processor.getPattern()));
+                String pattern = processor.getPattern();
+                logger.info("using " +processor + " to process messages matching: " + pattern);
+                compiledPatterns.put(processor, Pattern.compile(pattern));
             }
 
+
+            logger.info("beginning log analysis");
             in.forEach(line -> {
                 bytesRead += line.length() + 1;
                 linesRead++;
                 line = line.trim();
+                logger.info("examining line #" + linesRead + ": " + line);
                 for (Map.Entry<ExperimentLogProcessor, Pattern> e : compiledPatterns.entrySet()) {
                     Matcher m = e.getValue().matcher(line);
+                    logger.info("using " + e.getKey()+ " to check message");
                     if (m.find()) {
                         String[] groups = new String[m.groupCount()+1];
                         for (int i = 0; i < groups.length; i++)
                             groups[i] = m.group(i);
-
+                        logger.info("match found: " + Arrays.toString(groups));
                         try {
                             e.getKey().processLogMessage(groups);
                         } catch (Exception ex) {
                             logger.throwing(getClass().getCanonicalName(),
                                     "error analyzing line: " + line, ex);
                         }
+                    } else {
+                        logger.info("no match");
                     }
                 }
             });
 
+            logger.info("log analysis complete");
             for (var processor : processors) {
                 reportModel.putAll(processor.get());
             }
-            logger.info("log analysis complete");
-        }catch(Exception ex) {
-            logger.throwing(getClass().getCanonicalName(),
-                    "unexpected error during execution of log analyzer", ex);
+            logger.info("report compiled");
+        } catch(Exception ex) {
+            logger.log(Level.SEVERE, "error encountered duing exeuction of log analyzer", ex);
         }
         return reportModel;
     }
