@@ -3,6 +3,7 @@ package net.sourcedestination.sai.analysis;
 import net.sourcedestination.funcles.tuple.Tuple3;
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.graph.Graph;
+import net.sourcedestination.sai.reporting.Report;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -78,8 +79,8 @@ public class GraphMetricsProcessor implements ExperimentLogProcessor {
     }
 
     @Override
-    public Map<String,Object> get() {
-        Map<String,Object> results = new HashMap<>();
+    public Report get() {
+        Report results = new Report();
 
         for(String metricName : metrics.keySet()) {
             OptionalDouble d = (aggregationTypes.containsKey(metricName) ?
