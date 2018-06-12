@@ -2,9 +2,9 @@ package net.sourcedestination.sai.experiment.learning;
 
 import net.sourcedestination.sai.db.DBInterface;
 import net.sourcedestination.sai.db.graph.Graph;
-import net.sourcedestination.sai.db.indexing.BasicIndexingDBWrapper;
 import net.sourcedestination.sai.util.Task;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -16,38 +16,46 @@ public class ClassificationExperiment implements Task {
     private final Function<Graph,String> expectedClasses;
     private final Stream<Integer> graphIds;
     private final int ID;
-    private static int nextID = 1;
+    private final String dbname;
+    private static AtomicInteger nextID = new AtomicInteger(0);
 
     private static Logger logger = Logger.getLogger(ClassificationExperiment.class.getCanonicalName());
 
     public ClassificationExperiment(DBInterface testSet,
+                                    String dbname,
                                     Stream<Integer> graphIds,
                                     ClassificationModel model,
                                     Function<Graph,String> expectedClasses) {
         this.testSet = testSet;
         this.model = model;
+        this.dbname = dbname;
         this.graphIds = graphIds;
         this.expectedClasses = expectedClasses;
         synchronized (ClassificationExperiment.class) {
-            ID = nextID++;
+            ID = nextID.incrementAndGet();
         }
     }
 
+    public int getExperimentId() { return ID; }
+
     @Override
     public Object get() {
-        logger.info(ID + ": test beginning");
+        logger.info("beginning classification experiment #" + ID);
         var size = testSet.getDatabaseSize();
         var correct = (int)graphIds
                 .filter(gid -> {
+                    logger.info("in experiment #" + ID + " beginning test for graph #" + gid);
                     var g = testSet.retrieveGraph(gid);
-                    var result = expectedClasses.apply(g);
-                    var expected = model.apply(g);
-                    logger.info(ID + ": classified " + gid + " + as " + result + " expected " + expected);
+                    logger.info("in experiment #" + ID + " retrieved test graph #" + gid + " from " + dbname);
+                    var expected = expectedClasses.apply(g);
+                    logger.info("in experiment #" + ID + " expecting " + expected + " for graph #" + gid);
+                    var result = model.apply(g);
+                    logger.info("in experiment #" + ID + " classified graph #" + gid + " as " + result);
                     return expected.equals(result);
                 })
                 .count();
-        logger.info(ID + ": test complete");
-        logger.info(ID + ": classified " + correct + " out of " + size + " correctly ");
+        logger.info("experiment #" + ID + " complete with " + correct + " out of " + size +
+                        "classified correctly");
         return null;
     }
 }

@@ -13,6 +13,7 @@ import static net.sourcedestination.sai.db.GraphHidingDB.wrap;
 public class CrossValidatedClassificationExperiment implements Task {
 
     private int folds;
+    private String dbname;
     private DBInterface dataset;
     private Function<Graph, String> model;
     private Function<Graph,String> expectedClasses;
@@ -22,17 +23,20 @@ public class CrossValidatedClassificationExperiment implements Task {
             int folds,
             ClassificationModelGenerator gen,
             DBInterface dataset,
+            String dbname,
             ClassificationModel model,
             Function<Graph,String> expectedClasses) {
         this.folds = folds;
         this.dataset = dataset;
         this.model = model;
+        this.dbname = dbname;
         this.expectedClasses = expectedClasses;
         this.gen = gen;
     }
 
     @Override
     public Object get() {
+        // TODO: log epoch training/test set ranges
         var foldSize = dataset.getDatabaseSize() / folds;
         IntStream.range(0, folds-1)
             .parallel()
@@ -53,6 +57,7 @@ public class CrossValidatedClassificationExperiment implements Task {
 
                 ClassificationExperiment foldExp = new ClassificationExperiment(
                         dataset,
+                        dbname,
                         dataset.getGraphIDStream()
                                 .skip(fold * foldSize)
                                 .limit(foldSize),
