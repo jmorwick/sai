@@ -93,6 +93,13 @@ public interface Graph {
         return getEdgeFeatures(e).collect(Collectors.toSet());
     }
 
+    public default Feature getFeature(String featureName) {
+        var features = getFeatures()
+                .filter(f -> f.getName().equals(featureName))
+                .collect(Collectors.toSet());
+        return features.size() == 1 ? features.iterator().next() : null;
+    }
+
     /**
      * if Node nid has only one feature, this method returns it. Otherwise it returns null.
      *
