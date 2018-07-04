@@ -62,4 +62,7 @@ class GraphHidingDBWrapper extends DBWrapper implements GraphHidingDB {
     public void unhideGraph(int graphID) {
         hiddenGraphs.remove(graphID);
     }
+
+    @Override
+    public int getDatabaseSize() { return (int)getGraphIDStream().count(); }
 }
