@@ -124,7 +124,7 @@ public interface Retriever<Q> {
         return query -> retrieveByIndexCount(index, gen, query);
     }
 
-    static Retriever simpleSequentialRetrieverFactory(DBInterface db) {
+    static Retriever<Graph> simpleSequentialRetrieverFactory(DBInterface db) {
         logger.info("generating simple sequential retriever for db " + db);
         return new Retriever() {
 
@@ -133,7 +133,8 @@ public interface Retriever<Q> {
 
             @Override
             public Stream<Integer> retrieve(Object query) {
-                logger.info("issuing query #1");
+                logger.info("issuing query #?? in db of size " + db.getDatabaseSize()
+                 + ", " + db.getGraphIDStream().count());
                 return db.getGraphIDStream().map(gid -> {
                     logger.info("retrieved graph #"+gid+" from " + db.toString() + " for query #1");
                     return gid;
