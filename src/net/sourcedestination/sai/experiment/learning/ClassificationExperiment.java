@@ -9,12 +9,11 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-public class ClassificationExperiment implements Task {
+public class ClassificationExperiment implements Task<Integer> {
 
     private final DBInterface testSet;
     private final Function<Graph, String> model;
     private final Function<Graph,String> expectedClasses;
-    private final Stream<Integer> graphIds;
     private final int ID;
     private final String dbname;
     private static AtomicInteger nextID = new AtomicInteger(0);
@@ -23,13 +22,11 @@ public class ClassificationExperiment implements Task {
 
     public ClassificationExperiment(DBInterface testSet,
                                     String dbname,
-                                    Stream<Integer> graphIds,
                                     ClassificationModel model,
                                     Function<Graph,String> expectedClasses) {
         this.testSet = testSet;
         this.model = model;
         this.dbname = dbname;
-        this.graphIds = graphIds;
         this.expectedClasses = expectedClasses;
         synchronized (ClassificationExperiment.class) {
             ID = nextID.incrementAndGet();
@@ -39,10 +36,10 @@ public class ClassificationExperiment implements Task {
     public int getExperimentId() { return ID; }
 
     @Override
-    public Object get() {
+    public Integer get() {
         logger.info("beginning classification experiment #" + ID);
         var size = testSet.getDatabaseSize();
-        var correct = (int)graphIds
+        var correct = (int)testSet.getGraphIDStream()
                 .filter(gid -> {
                     logger.info("in experiment #" + ID + " beginning test for graph #" + gid);
                     var g = testSet.retrieveGraph(gid);
@@ -55,7 +52,7 @@ public class ClassificationExperiment implements Task {
                 })
                 .count();
         logger.info("experiment #" + ID + " complete with " + correct + " out of " + size +
-                        "classified correctly");
-        return null;
+                        " classified correctly");
+        return correct;
     }
 }
