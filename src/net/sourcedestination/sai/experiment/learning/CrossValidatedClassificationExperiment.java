@@ -10,12 +10,11 @@ import java.util.stream.IntStream;
 
 import static net.sourcedestination.sai.db.GraphHidingDB.wrap;
 
-public class CrossValidatedClassificationExperiment implements Task {
+public class CrossValidatedClassificationExperiment implements Task<Integer> {
 
     private int folds;
     private String dbname;
     private DBInterface dataset;
-    private Function<Graph, String> model;
     private Function<Graph,String> expectedClasses;
     private ClassificationModelGenerator gen;
 
@@ -24,23 +23,31 @@ public class CrossValidatedClassificationExperiment implements Task {
             ClassificationModelGenerator gen,
             DBInterface dataset,
             String dbname,
-            ClassificationModel model,
             Function<Graph,String> expectedClasses) {
         this.folds = folds;
         this.dataset = dataset;
-        this.model = model;
         this.dbname = dbname;
         this.expectedClasses = expectedClasses;
         this.gen = gen;
     }
 
+    /** leave one out test */
+    public CrossValidatedClassificationExperiment(
+            ClassificationModelGenerator gen,
+            DBInterface dataset,
+            String dbname,
+            Function<Graph,String> expectedClasses
+    ) {
+        this(dataset.getDatabaseSize(), gen, dataset, dbname, expectedClasses);
+    }
+
     @Override
-    public Object get() {
+    public Integer get() {
         // TODO: log epoch training/test set ranges
         var foldSize = dataset.getDatabaseSize() / folds;
-        IntStream.range(0, folds-1)
-            .parallel()
-            .forEach( fold -> {
+
+        return IntStream.range(0, folds-1)
+            .map( fold -> {
                 GraphHidingDB trainingSet = wrap(dataset, "training-fold-"+fold);
                 dataset.getGraphIDStream()
                         .skip(fold * foldSize)
@@ -50,20 +57,17 @@ public class CrossValidatedClassificationExperiment implements Task {
                 GraphHidingDB testSet = wrap(dataset, "test-fold-"+fold);
                 dataset.getGraphIDStream()
                         .limit(fold * foldSize)
-                        .forEach(trainingSet::hideGraph);
+                        .forEach(testSet::hideGraph);
                 dataset.getGraphIDStream()
                         .skip((1 + fold) * foldSize)
-                        .forEach(trainingSet::hideGraph);
+                        .forEach(testSet::hideGraph);
 
                 ClassificationExperiment foldExp = new ClassificationExperiment(
-                        dataset,
+                        testSet,
                         dbname,
-                        dataset.getGraphIDStream()
-                                .skip(fold * foldSize)
-                                .limit(foldSize),
                         gen.apply(trainingSet, expectedClasses),
                         expectedClasses);
-            });
-        return null;
+                return foldExp.get();
+            }).sum();
     }
 }
