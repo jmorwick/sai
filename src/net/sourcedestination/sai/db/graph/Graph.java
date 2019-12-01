@@ -1,12 +1,11 @@
 package net.sourcedestination.sai.db.graph;
 
+import Jama.Matrix;
 import com.google.common.collect.Streams;
 import net.sourcedestination.sai.util.StreamUtil;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.security.cert.CollectionCertStoreParameters;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -212,6 +211,24 @@ public interface Graph {
      given nodes are connected to each other by an edge. */
     public default boolean areConnectedNodes(int nid1, int nid2) {
         return this.getIncidentEdges(nid1).anyMatch(eid -> this.getEdgeSourceNodeID(eid) == nid2 || this.getEdgeTargetNodeID(eid) == nid2);
+    }
+
+
+    public default Matrix getAdjacencyMatrix() {
+        var nodeCount = (int)getNodeIDs().count();
+        var nodeIds = getNodeIDs().sorted().collect(Collectors.toList());
+        var nodeIdMap = new HashMap<Integer,Integer>();
+        for(int i=0; i<nodeIds.size(); i++)
+            nodeIdMap.put(nodeIds.get(i), i);
+
+        var matrix = new Matrix(nodeCount, nodeCount);
+        getEdgeIDs().forEach(eid -> {
+            matrix.set(
+                    nodeIdMap.get(getEdgeSourceNodeID(eid)),
+                    nodeIdMap.get(getEdgeTargetNodeID(eid)),
+                    1);
+        });
+        return matrix;
     }
 
     /** streams all paths through the graph as lists starting with a node ID
