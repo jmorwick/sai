@@ -7,7 +7,7 @@ public class PathLength implements GraphMetric {
     @Override
     public Double apply(Graph g) {
         return g.allPaths()
-                .mapToDouble(path -> (path.size()+1)/2)
+                .mapToDouble(path -> (path.size()-1)/2)
                 .average().getAsDouble();
     }
 }

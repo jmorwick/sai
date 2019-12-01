@@ -233,13 +233,14 @@ public interface Graph {
                 .flatMap(path -> getIncidentToEdges(path.get(path.size() - 1))
                         .map(eid -> extendList(extendList(path, eid), getEdgeTargetNodeID(eid)))
                         .filter(duplicateNode));
-        return Streams.concat(allPaths(depth-1), terminals);
+        return Streams.concat(allPaths(depth-1), terminals).distinct();
     }
 
     /** streams all paths through the graph as lists starting with a node ID
      * and following with a sequence of pairs of edge ID's and node ID's in the path.
      */
     public default Stream<List<Integer>> allPaths() {
-        return allPaths(getNodeIDs().count());
+        return allPaths(getNodeIDs().count())
+                .filter(path -> path.size() > 1); // remove paths wtihout edges
     }
 }
