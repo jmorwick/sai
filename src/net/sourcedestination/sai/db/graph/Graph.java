@@ -1,9 +1,18 @@
 package net.sourcedestination.sai.db.graph;
 
+import com.google.common.collect.Streams;
+import net.sourcedestination.sai.util.StreamUtil;
+
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import static net.sourcedestination.sai.util.StreamUtil.extendList;
 
 /*
  The core graph interface for use within SAI.
@@ -203,5 +212,34 @@ public interface Graph {
      given nodes are connected to each other by an edge. */
     public default boolean areConnectedNodes(int nid1, int nid2) {
         return this.getIncidentEdges(nid1).anyMatch(eid -> this.getEdgeSourceNodeID(eid) == nid2 || this.getEdgeTargetNodeID(eid) == nid2);
+    }
+
+    /** streams all paths through the graph as lists starting with a node ID
+     * and following with a sequence of pairs of edge ID's and node ID's in the path.
+     *
+     * Only paths of the specified length or shorter are returned.
+     * @param depth maximum length of the paths to be discovered
+     */
+    public default Stream<List<Integer>> allPaths(long depth) {
+
+        Predicate<List<Integer>> duplicateNode = ls -> {
+            var nodeIds = new HashSet<Integer>();
+            for(int i=0; i<ls.size(); i+= 2) nodeIds.add(ls.get(i));
+            return nodeIds.size() == (ls.size() + 1) / 2; // fewer unique node ID's than in the list
+        };
+
+        if(depth == 1) return getNodeIDs().map(nid -> List.of(nid));
+        var terminals = allPaths(depth - 1)
+                .flatMap(path -> getIncidentToEdges(path.get(path.size() - 1))
+                        .map(eid -> extendList(extendList(path, eid), getEdgeTargetNodeID(eid)))
+                        .filter(duplicateNode));
+        return Streams.concat(allPaths(depth-1), terminals);
+    }
+
+    /** streams all paths through the graph as lists starting with a node ID
+     * and following with a sequence of pairs of edge ID's and node ID's in the path.
+     */
+    public default Stream<List<Integer>> allPaths() {
+        return allPaths(getNodeIDs().count());
     }
 }
