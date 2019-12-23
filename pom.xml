@@ -18,6 +18,13 @@
         </configuration>
       </plugin>
     </plugins>
+  <extensions>
+    <extension>
+      <groupId>io.packagecloud.maven.wagon</groupId>
+      <artifactId>maven-packagecloud-wagon</artifactId>
+      <version>0.0.4</version>
+    </extension>
+  </extensions>
   </build>
 
   <properties>
@@ -57,8 +64,18 @@
       <artifactId>jama</artifactId>
       <version>1.0.3</version>
     </dependency>
-
   </dependencies>
 
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>github packages repository</name>
+      <url>https://maven.pkg.github.com/jmorwick</url>
+    </repository>  
+    <snapshotRepository>
+      <id>packagecloud-jbkm</id>
+      <url>packagecloud+https://packagecloud.io/jbkm/sourcedestination-staging</url>
+    </snapshotRepository>
+  </distributionManagement>
 
 </project>
